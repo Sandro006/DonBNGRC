@@ -182,3 +182,5 @@ class BaseModel
         return $this->db->fetchRow($query, $params);
     }
 }
+
+//fin
