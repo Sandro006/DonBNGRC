@@ -208,7 +208,7 @@
                                                 <br/><small class="text-muted"><?= htmlspecialchars($region['region_nom'] ?? '') ?></small>
                                             </td>
                                             <td>
-                                                <div class="flex gap-1" style="height: 30px; align-items: center;">
+                                                <div style="display: flex; gap: var(--spacing-1); height: 30px; align-items: center;">
                                                     <?php if ($nature_pct > 0): ?>
                                                         <div class="progress-segment" style="width: <?= $nature_pct ?>%; background-color: #22c55e; border-radius: 4px 0 0 4px;"></div>
                                                     <?php endif; ?>
@@ -219,7 +219,7 @@
                                                         <div class="progress-segment" style="width: <?= $fonds_pct ?>%; background-color: #f59e0b; border-radius: 0 4px 4px 0;"></div>
                                                     <?php endif; ?>
                                                 </div>
-                                                <div class="flex gap-2 mt-1" style="font-size: 0.75rem;">
+                                                <div style="display: flex; gap: var(--spacing-2); margin-top: var(--spacing-1); font-size: 0.75rem;">
                                                     <span><i class="bi bi-square-fill" style="color: #22c55e; margin-right: 4px;"></i>Nature</span>
                                                     <span><i class="bi bi-square-fill" style="color: #3b82f6; margin-right: 4px;"></i>Matériel</span>
                                                     <span><i class="bi bi-square-fill" style="color: #f59e0b; margin-right: 4px;"></i>Fonds</span>
