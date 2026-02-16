@@ -6,7 +6,11 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>BNGRC - National Office for Risk and Disaster Management</title>
-    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+
     <style>
         :root {
             --primary-color: #1152d4;
@@ -159,6 +163,46 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Filters -->
+            <div class="card mb-4 p-3">
+                <form method="get" class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small">Date début</label>
+                        <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Date fin</label>
+                        <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Ville</label>
+                        <select name="ville_id" class="form-select">
+                            <option value="">Toutes</option>
+                            <?php if (!empty($cities)) {
+                                foreach ($cities as $ct) { ?>
+                                    <option value="<?= htmlspecialchars($ct['id'] ?? '') ?>" <?= (isset($_GET['ville_id']) && $_GET['ville_id'] == ($ct['id'] ?? '')) ? 'selected' : '' ?>><?= htmlspecialchars($ct['nom'] ?? '') ?></option>
+                            <?php }
+                            } ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small">Catégorie</label>
+                        <select name="categorie_id" class="form-select">
+                            <option value="">Toutes</option>
+                            <?php if (!empty($categories)) {
+                                foreach ($categories as $cat) { ?>
+                                    <option value="<?= htmlspecialchars($cat['id'] ?? '') ?>" <?= (isset($_GET['categorie_id']) && $_GET['categorie_id'] == ($cat['id'] ?? '')) ? 'selected' : '' ?>><?= htmlspecialchars($cat['libelle'] ?? '') ?></option>
+                            <?php }
+                            } ?>
+                        </select>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button class="btn btn-primary">Appliquer</button>
+                        <a href="<?= htmlspecialchars(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) ?>" class="btn btn-link">Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
                     <div class="kpi-card h-100">
@@ -260,6 +304,80 @@
                 </div>
                 <div class="card-footer bg-white text-center py-3">
                     <button class="btn btn-link text-muted text-decoration-none fw-bold">View All 22 Assisted Regions</button>
+                </div>
+            </div>
+
+            <!-- Filtered data tables: Donations & Needs -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5 class="fw-bold">Dons (extrait)</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Ville</th>
+                                        <th>Catégorie</th>
+                                        <th>Quantité</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($dons)) {
+                                        foreach ($dons as $d) { ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($d['date_don'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($d['ville_nom'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($d['quantite'] ?? '') ?></td>
+                                            </tr>
+                                        <?php }
+                                    } else { ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Aucun don trouvé</td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <h5 class="fw-bold">Besoins (extrait)</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Ville</th>
+                                        <th>Catégorie</th>
+                                        <th>Quantité</th>
+                                        <th>Prix unitaire</th>
+                                        <th>Montant total</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($besoins)) {
+                                        foreach ($besoins as $b) { ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($b['ville_nom'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($b['categorie_nom'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($b['quantite'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($b['prix_unitaire'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($b['montant_total'] ?? '') ?></td>
+                                                <td><?= htmlspecialchars($b['status_nom'] ?? '') ?></td>
+                                            </tr>
+                                        <?php }
+                                    } else { ?>
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">Aucun besoin trouvé</td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
