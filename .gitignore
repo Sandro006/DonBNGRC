@@ -2,3 +2,4 @@
 .htaccess
 public/.htaccess
 app/config/config.php
+app/views/Config
