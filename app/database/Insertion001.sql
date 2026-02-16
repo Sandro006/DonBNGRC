@@ -8,6 +8,7 @@ INSERT INTO bngrc_region (nom) VALUES
 ('Vakinakaratra'),
 ('Antsinana');
 
+
 -- ===== INSERTION DES VILLES =====
 INSERT INTO bngrc_ville (region_id, nom, nombre_sinistres) VALUES
 (1, 'Antananarivo', 5),

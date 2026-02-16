@@ -1,5 +1,6 @@
 USE bngrc;
 
+
 CREATE TABLE bngrc_dispatch (
     id INT AUTO_INCREMENT PRIMARY KEY,
     don_id INT NOT NULL,
