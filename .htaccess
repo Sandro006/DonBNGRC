@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /4168_4349_4123/public/
+RewriteBase /S3/projet_final/DonBNGRC/public/
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
