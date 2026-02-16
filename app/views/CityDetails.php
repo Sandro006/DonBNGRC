@@ -45,6 +45,9 @@
                                             <td><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($d['quantite'] ?? '') ?></td>
                                             <td>
+                                                <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" class="btn btn-sm btn-info">
+                                                    Simuler
+                                                </a>
                                                 <form method="POST" action="<?= Flight::get('flight.base_url') ?>/don/supprimer/<?= htmlspecialchars($d['id'] ?? '') ?>" style="display:inline;">
                                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce don ?');">
                                                         Supprimer

@@ -1,6 +1,7 @@
 <?php
 
 use app\controllers\ApiExampleController;
+use app\controllers\SimulationController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -286,9 +287,16 @@ $router->group('', function (Router $router) use ($app) {
 		}
 	});
 
+	// Simulation: show simulation page for donation dispatch
+	$router->get('/simulation/@id:[0-9]+', [SimulationController::class, 'show']);
+
 	$router->group('/api', function () use ($router) {
 		$router->get('/users', [ApiExampleController::class, 'getUsers']);
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
 		$router->post('/users/@id:[0-9]', [ApiExampleController::class, 'updateUser']);
+
+		// Simulation API endpoints
+		$router->post('/simulation/simulate', [SimulationController::class, 'apiSimulate']);
+		$router->post('/simulation/validate', [SimulationController::class, 'apiValidate']);
 	});
 }, [SecurityHeadersMiddleware::class]);
