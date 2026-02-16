@@ -4,7 +4,7 @@ namespace app\models;
 
 class Status extends BaseModel
 {
-    protected $table = 'bngrc_status';
+    protected $table = 'status';
     protected $primaryKey = 'id';
 
     /**
@@ -15,7 +15,7 @@ class Status extends BaseModel
         $query = "SELECT s.*, 
                   COUNT(b.id) as besoins_count
                   FROM {$this->table} s 
-                  LEFT JOIN bngrc_besoin b ON s.id = b.status_id 
+                  LEFT JOIN besoin b ON s.id = b.status_id 
                   GROUP BY s.id 
                   ORDER BY s.libelle ASC";
         return $this->db->fetchAll($query);

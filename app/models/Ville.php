@@ -4,7 +4,7 @@ namespace app\models;
 
 class Ville extends BaseModel
 {
-    protected $table = 'bngrc_ville';
+    protected $table = 'ville';
     protected $primaryKey = 'id';
 
     /**
@@ -14,7 +14,7 @@ class Ville extends BaseModel
     {
         $query = "SELECT v.*, r.nom as region_nom 
                   FROM {$this->table} v 
-                  INNER JOIN bngrc_region r ON v.region_id = r.id 
+                  INNER JOIN region r ON v.region_id = r.id 
                   ORDER BY r.nom ASC, v.nom ASC";
         return $this->db->fetchAll($query);
     }
@@ -34,7 +34,7 @@ class Ville extends BaseModel
     {
         $query = "SELECT v.*, r.nom as region_nom 
                   FROM {$this->table} v 
-                  INNER JOIN bngrc_region r ON v.region_id = r.id 
+                  INNER JOIN region r ON v.region_id = r.id 
                   WHERE v.id = :id";
         return $this->db->fetchRow($query, [':id' => $id]);
     }

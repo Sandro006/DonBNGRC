@@ -4,7 +4,7 @@ namespace app\models;
 
 class Categorie extends BaseModel
 {
-    protected $table = 'bngrc_categorie';
+    protected $table = 'categorie';
     protected $primaryKey = 'id';
 
     /**
@@ -13,8 +13,8 @@ class Categorie extends BaseModel
     public function getAllWithUsageCount()
     {
         $query = "SELECT c.*, 
-                  (SELECT COUNT(*) FROM bngrc_besoin WHERE categorie_id = c.id) as besoins_count,
-                  (SELECT COUNT(*) FROM bngrc_don WHERE categorie_id = c.id) as dons_count
+                  (SELECT COUNT(*) FROM besoin WHERE categorie_id = c.id) as besoins_count,
+                  (SELECT COUNT(*) FROM don WHERE categorie_id = c.id) as dons_count
                   FROM {$this->table} c 
                   ORDER BY c.libelle ASC";
         return $this->db->fetchAll($query);
