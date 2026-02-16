@@ -4,462 +4,847 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Simulation de Dispatch - Don</title>
-    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <title>Simulation - BNGRC</title>
+    
+    <!-- Design System -->
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/design-system.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/components.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/layout.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/utilities.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/pages.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/custom.css" rel="stylesheet" />
+    
+    <!-- Bootstrap Icons -->
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+
     <style>
-        .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-        }
-        .simulation-box {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-        }
-        .need-item {
-            background: white;
-            border: 1px solid #dee2e6;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        .need-item:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .badge-dispatch {
-            background: #28a745;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            font-weight: 600;
-        }
-        .badge-remaining {
-            background: #ffc107;
-            color: #333;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            font-weight: 600;
-        }
-        .stats-row {
+        /* Simulation Detail Styles */
+        .sim-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-6);
+            margin-bottom: var(--spacing-8);
         }
-        .stat-box {
-            background: white;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: 1px solid #dee2e6;
-            text-align: center;
-        }
-        .stat-label {
-            font-size: 0.875rem;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-        }
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-        .button-group {
+
+        .sim-info-item {
             display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
+            flex-direction: column;
+            gap: var(--spacing-1);
+            padding: var(--spacing-3) 0;
+        }
+
+        .sim-info-item + .sim-info-item {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .sim-info-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .sim-info-value {
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sim-quantity-highlight {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sim-quantity-unit {
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .dispatch-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-4);
+        }
+
+        .dispatch-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-4) var(--spacing-6);
+            transition: all var(--transition-base);
+        }
+
+        .dispatch-item:hover {
+            border-color: var(--primary-200);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dispatch-item-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            margin-bottom: var(--spacing-3);
             flex-wrap: wrap;
         }
-        .btn-lg-custom {
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            font-size: 1rem;
+
+        .dispatch-item-desc {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-4);
         }
-        .loading {
-            display: none;
+
+        .dispatch-flow {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+            flex-wrap: wrap;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-3) var(--spacing-4);
         }
-        .loading.active {
-            display: inline-block;
+
+        .dispatch-flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-1);
         }
-        .alert-simulation {
-            margin-top: 1rem;
-            display: none;
+
+        .dispatch-flow-arrow {
+            color: var(--text-tertiary);
+            font-size: var(--font-size-xl);
         }
-        .alert-simulation.active {
-            display: block;
-            animation: slideIn 0.3s ease;
+
+        .sim-actions {
+            display: flex;
+            gap: var(--spacing-4);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: var(--spacing-8) 0;
         }
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
+
+        .sim-section-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            margin-bottom: var(--spacing-6);
+        }
+
+        .sim-section-title h3 {
+            margin: 0;
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+        }
+
+        .sim-section-title i {
+            color: var(--primary);
+            font-size: var(--font-size-xl);
+        }
+
+        @media (max-width: 768px) {
+            .sim-info-grid {
+                grid-template-columns: 1fr;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .dispatch-flow {
+                flex-direction: column;
+                gap: var(--spacing-2);
             }
-        }
-        .success-animation {
-            animation: bounce 0.6s ease;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+            .dispatch-flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .dispatch-item {
+                padding: var(--spacing-4);
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container my-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="fw-bold">
-                <i class="bi bi-shuffle me-2"></i>
-                Simulation de Dispatch
-            </h2>
-            <a href="<?= Flight::get('flight.base_url') ?>" class="btn btn-link">← Retour</a>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="bi bi-gift me-2"></i>
-                    Don de <?= htmlspecialchars($don['donateur_nom'] ?? 'Anonyme') ?>
-                </h5>
+    <!-- Layout Container -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">🌊</div>
+                <div class="sidebar-brand-text">
+                    <h2>BNGRC</h2>
+                    <small>Management System</small>
+                </div>
             </div>
 
-            <div class="card-body">
-                <!-- Donation Details -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="simulation-box">
-                            <h6 class="fw-bold mb-3">📋 Détails du Don</h6>
-                            <p class="mb-2">
-                                <strong>Catégorie:</strong> 
-                                <span class="badge bg-info"><?= htmlspecialchars($don['categorie_nom'] ?? '-') ?></span>
-                            </p>
-                            <p class="mb-2">
-                                <strong>Ville:</strong> 
-                                <span><?= htmlspecialchars($don['ville_nom'] ?? '-') ?></span>
-                            </p>
-                            <p class="mb-2">
-                                <strong>Région:</strong> 
-                                <span><?= htmlspecialchars($don['region_nom'] ?? '-') ?></span>
-                            </p>
-                            <p class="mb-2">
-                                <strong>Quantité:</strong> 
-                                <span class="badge bg-primary"><?= (int)$don['quantite'] ?> unités</span>
-                            </p>
-                            <p class="mb-0">
-                                <strong>Date du don:</strong> 
-                                <span><?= date('d/m/Y H:i', strtotime($don['date_don'] ?? 'now')) ?></span>
-                            </p>
-                        </div>
-                    </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
+                        <i class="bi bi-gift"></i>
+                        <span>Ajouter don</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link active">
+                        <i class="bi bi-diagram-3"></i>
+                        <span>Simulation</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-                    <div class="col-md-6">
-                        <div class="simulation-box">
-                            <h6 class="fw-bold mb-3">👤 Informations Donateur</h6>
-                            <p class="mb-2"><strong>Nom:</strong> <?= htmlspecialchars($don['donateur_nom'] ?? '-') ?></p>
-                            <p class="mb-2"><strong>Email:</strong> <?= htmlspecialchars($don['donateur_email'] ?? '-') ?></p>
-                            <p class="mb-0"><strong>Téléphone:</strong> <?= htmlspecialchars($don['donateur_telephone'] ?? '-') ?></p>
+        <!-- Main Content -->
+        <div class="layout-main">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-container">
+                    <button class="sidebar-toggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700;">📊 BNGRC - Simulation</h1>
+                    <div class="header-actions" style="margin-left: auto;">
+                        <div class="header-user">
+                            <div class="header-user-avatar">AD</div>
+                            <span style="font-size: 0.875rem;">Admin</span>
                         </div>
                     </div>
                 </div>
+            </header>
 
-                <!-- Statistics -->
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-label">Total à dispatcher</div>
-                        <div class="stat-value" id="stat-total"><?= (int)$don['quantite'] ?></div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Besoins trouvés</div>
-                        <div class="stat-value" id="stat-needs"><?= count($simulation['dispatch_results'] ?? []) ?></div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Besoins satisfaits</div>
-                        <div class="stat-value" id="stat-satisfied">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Quantité restante</div>
-                        <div class="stat-value" id="stat-remaining"><?= (int)$simulation['remaining_quantity'] ?></div>
-                    </div>
-                </div>
+            <!-- Main Content -->
+            <main class="layout-content">
 
-                <!-- Simulation Results -->
-                <div id="simulation-container">
-                    <?php if (!empty($simulation['dispatch_results'])): ?>
-                        <div class="alert alert-simulation active alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <strong>Résultats de la simulation:</strong> 
-                            La donation sera dispatcher sur <?= count($simulation['dispatch_results']) ?> besoin(s).
+                <?php if (!empty($is_list)): ?>
+                <!-- ============================================ -->
+                <!-- SIMULATION LIST VIEW                         -->
+                <!-- ============================================ -->
+
+                    <!-- BREADCRUMB -->
+                    <div class="breadcrumb-nav">
+                        <ol>
+                            <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
+                            <li>Simulation</li>
+                        </ol>
+                    </div>
+
+                    <!-- PAGE HEADER -->
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h1><i class="bi bi-diagram-3"></i> Simulations</h1>
+                            <p>Sélectionnez un don pour simuler sa distribution</p>
+                        </div>
+                    </div>
+
+                    <!-- DONATIONS LIST -->
+                    <div class="card">
+                        <div class="card-header bg-primary">
+                            <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
+                                <i class="bi bi-list-ul"></i>
+                                Dons disponibles pour simulation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <?php if (!empty($dons)): ?>
+                                <div class="cards-grid">
+                                    <?php foreach ($dons as $d): ?>
+                                        <div class="card" style="cursor: pointer;">
+                                            <div class="card-body">
+                                                <h4 style="margin-top: 0; color: var(--primary);">
+                                                    <i class="bi bi-gift"></i>
+                                                    <?= htmlspecialchars($d['categorie_nom'] ?? 'Sans catégorie') ?>
+                                                </h4>
+                                                <p style="margin: var(--spacing-2) 0; color: var(--text-secondary);">
+                                                    <strong>Quantité:</strong> <?= htmlspecialchars($d['quantite'] ?? 0) ?>
+                                                </p>
+                                                <p style="margin: var(--spacing-2) 0; color: var(--text-secondary);">
+                                                    <strong>Ville:</strong> <?= htmlspecialchars($d['ville_nom'] ?? 'Non spécifiée') ?>
+                                                </p>
+                                                <p style="margin: var(--spacing-2) 0; color: var(--text-secondary);">
+                                                    <strong>Donateur:</strong> <?= htmlspecialchars($d['donateur_nom'] ?? 'Anonyme') ?>
+                                                </p>
+                                                <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id']) ?>" class="btn btn-primary btn-block" style="margin-top: var(--spacing-3);">
+                                                    <i class="bi bi-play"></i> Simuler la distribution
+                                                </a>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="bi bi-inbox"></i>
+                                    </div>
+                                    <div class="empty-state-title">Aucun don disponible</div>
+                                    <p class="empty-state-description">Aucun don disponible pour la simulation</p>
+                                    <div class="empty-state-action">
+                                        <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn btn-primary">
+                                            <i class="bi bi-plus"></i> Ajouter un don
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                <?php else: ?>
+                <!-- ============================================ -->
+                <!-- SIMULATION DETAIL VIEW                       -->
+                <!-- ============================================ -->
+
+                    <!-- BREADCRUMB -->
+                    <div class="breadcrumb-nav">
+                        <ol>
+                            <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
+                            <li><a href="<?= Flight::get('flight.base_url') ?>/simulation">Simulation</a></li>
+                            <li>Dispatch #<?= (int)$don_id ?></li>
+                        </ol>
+                    </div>
+
+                    <!-- PAGE HEADER -->
+                    <div class="page-header">
+                        <div class="page-title">
+                            <h1><i class="bi bi-diagram-3"></i> Simulation de Dispatch</h1>
+                            <p>Visualiser et valider la distribution du don sur les besoins</p>
+                        </div>
+                        <div class="page-actions">
+                            <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- DONATION & DONOR INFO CARDS -->
+                    <div class="sim-info-grid">
+                        <!-- Donation Info -->
+                        <div class="card">
+                            <div class="card-header bg-primary">
+                                <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <i class="bi bi-gift"></i> Détails du Don
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Donateur</span>
+                                    <span class="sim-info-value"><?= htmlspecialchars($don['donateur_nom'] ?? 'Anonyme') ?></span>
+                                </div>
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Catégorie</span>
+                                    <span><span class="badge badge-primary"><?= htmlspecialchars($don['categorie_nom'] ?? '-') ?></span></span>
+                                </div>
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Localisation</span>
+                                    <span class="sim-info-value"><?= htmlspecialchars($don['ville_nom'] ?? '-') ?></span>
+                                    <span class="text-sm text-gray-500"><?= htmlspecialchars($don['region_nom'] ?? '-') ?></span>
+                                </div>
+                                <div class="sim-info-item" style="border-top: 2px solid var(--primary-100);">
+                                    <span class="sim-info-label">Quantité totale</span>
+                                    <span class="sim-quantity-highlight">
+                                        <?= (int)$don['quantite'] ?> <span class="sim-quantity-unit">unités</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        <h6 class="fw-bold mb-3 mt-4">
-                            <i class="bi bi-arrow-left-right me-2"></i>
-                            Dispatch vers les besoins
-                        </h6>
+                        <!-- Donor Info -->
+                        <div class="card">
+                            <div class="card-header" style="background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%); color: white;">
+                                <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <i class="bi bi-person-circle"></i> Donateur
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Email</span>
+                                    <a href="mailto:<?= htmlspecialchars($don['donateur_email'] ?? '') ?>" style="color: var(--primary); text-decoration: none;">
+                                        <?= htmlspecialchars($don['donateur_email'] ?? '-') ?>
+                                    </a>
+                                </div>
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Téléphone</span>
+                                    <span class="sim-info-value"><?= htmlspecialchars($don['donateur_telephone'] ?? '-') ?></span>
+                                </div>
+                                <div class="sim-info-item">
+                                    <span class="sim-info-label">Date du don</span>
+                                    <span class="sim-info-value" style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                        <i class="bi bi-calendar" style="color: var(--primary);"></i>
+                                        <?= date('d/m/Y H:i', strtotime($don['date_don'] ?? 'now')) ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <?php foreach ($simulation['dispatch_results'] as $index => $dispatch): ?>
-                            <div class="need-item">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6">
-                                        <p class="mb-2">
-                                            <strong>Besoin #<?= htmlspecialchars($dispatch['besoin_id']) ?></strong>
-                                            <span class="text-muted float-end">Ville: <?= htmlspecialchars($dispatch['besoin_ville_nom'] ?? '-') ?></span>
-                                        </p>
-                                        <p class="text-muted small mb-0">
+                    <!-- STATISTICS ROW -->
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: var(--primary-100); color: var(--primary);">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Total à dispatcher</span>
+                                <span class="stat-value" id="stat-total" style="color: var(--primary);"><?= (int)$don['quantite'] ?></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: var(--info-100); color: var(--info);">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Besoins trouvés</span>
+                                <span class="stat-value" id="stat-needs" style="color: var(--info);"><?= count($simulation['dispatch_results'] ?? []) ?></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: var(--success-100); color: var(--success);">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Besoins satisfaits</span>
+                                <span class="stat-value" id="stat-satisfied" style="color: var(--success);">
+                                    <?php
+                                    $satisfied = 0;
+                                    if (!empty($simulation['dispatch_results'])) {
+                                        foreach ($simulation['dispatch_results'] as $dr) {
+                                            if (((int)($dr['new_need_quantity'] ?? 0)) === 0) {
+                                                $satisfied++;
+                                            }
+                                        }
+                                    }
+                                    echo $satisfied;
+                                    ?>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background-color: var(--warning-100); color: var(--warning);">
+                                <i class="bi bi-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-label">Quantité restante</span>
+                                <span class="stat-value" id="stat-remaining" style="color: var(--warning);"><?= (int)$simulation['remaining_quantity'] ?></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SIMULATION RESULTS -->
+                    <div id="simulation-container">
+                        <?php if (!empty($simulation['dispatch_results'])): ?>
+
+                            <!-- Info Alert -->
+                            <div class="alert alert-info" style="margin-bottom: var(--spacing-6);">
+                                <i class="bi bi-info-circle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                                <div>
+                                    <strong>Résultats de la simulation</strong>
+                                    <p style="margin: var(--spacing-1) 0 0 0;">
+                                        La donation sera dispatchée sur <strong><?= count($simulation['dispatch_results']) ?> besoin(s)</strong>.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Section Title -->
+                            <div class="sim-section-title">
+                                <i class="bi bi-arrow-left-right"></i>
+                                <h3>Distribution des besoins</h3>
+                            </div>
+
+                            <!-- Dispatch Items -->
+                            <div class="dispatch-list">
+                                <?php foreach ($simulation['dispatch_results'] as $index => $dispatch): ?>
+                                    <div class="dispatch-item">
+                                        <!-- Header -->
+                                        <div class="dispatch-item-header">
+                                            <span class="badge badge-primary">Besoin #<?= htmlspecialchars($dispatch['besoin_id']) ?></span>
+                                            <span class="badge badge-gray">
+                                                <i class="bi bi-geo-alt"></i>&nbsp;<?= htmlspecialchars($dispatch['besoin_ville_nom'] ?? '-') ?>
+                                            </span>
+                                        </div>
+
+                                        <!-- Description -->
+                                        <p class="dispatch-item-desc">
                                             <?= htmlspecialchars($dispatch['besoin_description'] ?? 'Sans description') ?>
                                         </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex justify-content-end gap-2 align-items-center flex-wrap">
-                                            <div>
-                                                <div class="small text-muted">Besoin initial</div>
-                                                <div class="badge bg-light text-dark"><?= (int)$dispatch['besoin_quantite_needed'] ?> unités</div>
+
+                                        <!-- Dispatch Flow -->
+                                        <div class="dispatch-flow">
+                                            <div class="dispatch-flow-step">
+                                                <span class="sim-info-label">Besoin</span>
+                                                <span class="badge badge-warning" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                                    <?= (int)$dispatch['besoin_quantite_needed'] ?>
+                                                </span>
                                             </div>
-                                            <div class="text-center">
-                                                <i class="bi bi-arrow-right text-success" style="font-size: 1.5rem;"></i>
+
+                                            <i class="bi bi-arrow-right dispatch-flow-arrow"></i>
+
+                                            <div class="dispatch-flow-step">
+                                                <span class="sim-info-label">Dispatché</span>
+                                                <span class="badge badge-success" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                                    <?= (int)$dispatch['dispatched_quantity'] ?>
+                                                </span>
                                             </div>
-                                            <div>
-                                                <div class="small text-muted">Dispatché</div>
-                                                <div class="badge-dispatch"><?= (int)$dispatch['dispatched_quantity'] ?> unités</div>
-                                            </div>
-                                            <div>
-                                                <div class="small text-muted">Après dispatch</div>
-                                                <div class="badge bg-light text-dark"><?= (int)$dispatch['new_need_quantity'] ?> unités</div>
+
+                                            <i class="bi bi-arrow-right dispatch-flow-arrow"></i>
+
+                                            <div class="dispatch-flow-step">
+                                                <span class="sim-info-label">Reste</span>
+                                                <span class="badge <?= ((int)$dispatch['new_need_quantity'] === 0) ? 'badge-success' : 'badge-danger' ?>" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                                    <?= (int)$dispatch['new_need_quantity'] ?>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <?php if ($simulation['remaining_quantity'] > 0): ?>
+                                <div class="alert alert-warning" style="margin-top: var(--spacing-6);">
+                                    <i class="bi bi-exclamation-triangle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                                    <div>
+                                        <strong>Quantité non utilisée</strong>
+                                        <p style="margin: var(--spacing-1) 0 0 0;">
+                                            <?= (int)$simulation['remaining_quantity'] ?> unité(s) restante(s) après satisfaction de tous les besoins.
+                                            Cette quantité peut être conservée pour d'autres distributions.
+                                        </p>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                        <?php else: ?>
+
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-circle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                                <div>
+                                    <strong>Aucun besoin trouvé</strong>
+                                    <p style="margin: var(--spacing-1) 0 0 0;">
+                                        Aucun besoin correspondant à cette catégorie et cette ville n'a été trouvé.
+                                    </p>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
 
-                        <?php if ($simulation['remaining_quantity'] > 0): ?>
-                            <div class="alert alert-warning mt-3">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Quantité non utilisée:</strong> 
-                                <?= (int)$simulation['remaining_quantity'] ?> unité(s) restante(s) 
-                                après satisfaction de tous les besoins.
-                            </div>
                         <?php endif; ?>
-                    <?php else: ?>
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-circle me-2"></i>
-                            <strong>Aucun besoin trouvé</strong> 
-                            pour cette catégorie et cette ville.
-                        </div>
-                    <?php endif; ?>
-                </div>
+                    </div>
 
-                <!-- Action Buttons -->
-                <div class="button-group">
-                    <button class="btn btn-secondary btn-lg-custom" id="btn-simulate" onclick="handleSimulate()">
-                        <i class="bi bi-play-circle me-2"></i>
-                        Rafraîchir la Simulation
-                    </button>
-                    <button class="btn btn-success btn-lg-custom" id="btn-validate" onclick="handleValidate()" 
-                            <?= empty($simulation['dispatch_results']) ? 'disabled' : '' ?>>
-                        <i class="bi bi-check-circle me-2"></i>
-                        Valider le Dispatch
-                        <span class="loading" id="loading-validate">
-                            <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
-                        </span>
-                    </button>
-                </div>
+                    <!-- ACTION BUTTONS -->
+                    <div class="sim-actions">
+                        <button class="btn btn-secondary btn-lg" id="btn-simulate" onclick="handleSimulate()" title="Rafraîchir la simulation">
+                            <i class="bi bi-arrow-repeat"></i>
+                            <span>Rafraîchir</span>
+                            <span class="loading" id="loading-simulate" style="display: none;">
+                                <span class="spinner spinner-sm"></span>
+                            </span>
+                        </button>
+                        <button class="btn btn-success btn-lg" id="btn-validate" onclick="handleValidate()"
+                                <?= empty($simulation['dispatch_results']) ? 'disabled' : '' ?>
+                                title="Valider et exécuter le dispatch">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Valider le Dispatch</span>
+                            <span class="loading" id="loading-validate" style="display: none;">
+                                <span class="spinner spinner-sm"></span>
+                            </span>
+                        </button>
+                    </div>
 
-                <div id="alert-container" class="mt-3"></div>
-            </div>
+                    <!-- Alert Container -->
+                    <div id="alert-container"></div>
+
+                <?php endif; ?>
+
+                <!-- FOOTER -->
+                <footer class="layout-footer" style="margin-top: auto;">
+                    <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
+                </footer>
+
+            </main>
         </div>
     </div>
 
-    <script src="<?php echo Flight::get('flight.base_url'); ?>/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="<?php echo Flight::get('flight.base_url'); ?>/js/app.js"></script>
+
+    <?php if (empty($is_list)): ?>
     <script>
         const BASE_URL = '<?= Flight::get("flight.base_url") ?>';
         const DON_ID = <?= (int)$don_id ?>;
 
+        /**
+         * Simulate dispatch
+         */
         async function handleSimulate() {
             const btn = document.getElementById('btn-simulate');
-            const loader = btn.querySelector('.loading');
-            
+            const loader = document.getElementById('loading-simulate');
+
             btn.disabled = true;
-            loader.classList.add('active');
+            loader.style.display = 'inline-block';
 
             try {
                 const response = await fetch(`${BASE_URL}/api/simulation/simulate`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({ don_id: DON_ID })
                 });
 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response error:', response.status, errorText);
+                    showNotification('Erreur serveur: ' + response.status, 'error');
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
-                    showAlert('success', 'Simulation rafraîchie avec succès');
+                    showNotification('Simulation rafraîchie avec succès', 'success');
                     updateSimulationDisplay(data);
-                    document.getElementById('btn-validate').disabled = 
+                    document.getElementById('btn-validate').disabled =
                         !data.dispatch_results || data.dispatch_results.length === 0;
                 } else {
-                    showAlert('danger', 'Erreur: ' + (data.error || 'Simulation échouée'));
+                    showNotification('Erreur: ' + (data.error || 'Simulation échouée'), 'error');
                 }
             } catch (error) {
-                showAlert('danger', 'Erreur réseau: ' + error.message);
+                console.error('Fetch error:', error);
+                showNotification('Erreur réseau: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
-                loader.classList.remove('active');
+                loader.style.display = 'none';
             }
         }
 
+        /**
+         * Validate and execute dispatch
+         */
         async function handleValidate() {
-            if (!confirm('Êtes-vous sûr de vouloir valider et dispatcher le don ? Cette action ne peut pas être annulée.')) {
+            if (!confirm('Êtes-vous sûr de vouloir valider et dispatcher le don ?\n\nCette action ne peut pas être annulée.')) {
                 return;
             }
 
             const btn = document.getElementById('btn-validate');
-            const loader = btn.querySelector('.loading');
-            
+            const loader = document.getElementById('loading-validate');
+
             btn.disabled = true;
-            loader.classList.add('active');
+            loader.style.display = 'inline-block';
 
             try {
                 const response = await fetch(`${BASE_URL}/api/simulation/validate`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                     },
                     body: JSON.stringify({ don_id: DON_ID })
                 });
 
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Response error:', response.status, errorText);
+                    showNotification('Erreur serveur: ' + response.status, 'error');
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.success) {
-                    showAlert('success', 
-                        `<i class="bi bi-check-circle me-2"></i>
-                        Dispatch validé! ${data.total_dispatched} unité(s) dispatché(es) vers ${data.dispatch_results.length} besoin(s).`
-                    );
-                    
-                    // Disable buttons and mark as completed
+                    const message = `Dispatch validé! ${data.total_dispatched} unité(s) dispatchée(s) vers ${data.dispatch_results.length} besoin(s).`;
+                    showNotification(message, 'success');
+
+                    // Disable buttons
                     document.getElementById('btn-simulate').disabled = true;
                     btn.disabled = true;
-                    
-                    // Show completion message
+
+                    // Redirect after 3 seconds
                     setTimeout(() => {
-                        const confirmMsg = confirm('Dispatch termin avec succès! Retourner à la page d\'accueil ?');
-                        if (confirmMsg) {
-                            window.location.href = BASE_URL + '/';
-                        }
-                    }, 2000);
+                        window.location.href = BASE_URL + '/simulation';
+                    }, 3000);
                 } else {
-                    showAlert('danger', 'Erreur de validation: ' + (data.error || 'Validation échouée'));
+                    showNotification('Erreur de validation: ' + (data.error || 'Validation échouée'), 'error');
                 }
             } catch (error) {
-                showAlert('danger', 'Erreur réseau: ' + error.message);
+                console.error('Fetch error:', error);
+                showNotification('Erreur réseau: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
-                loader.classList.remove('active');
+                loader.style.display = 'none';
             }
         }
 
-        function updateSimulationDisplay(data) {
-            if (data.dispatch_results && data.dispatch_results.length > 0) {
-                // Update statistics
-                document.getElementById('stat-satisfied').textContent = data.dispatch_results.length;
-                document.getElementById('stat-remaining').textContent = data.remaining_quantity;
+        /**
+         * Show notification toast
+         */
+        function showNotification(message, type = 'info') {
+            document.querySelectorAll('.toast-notification').forEach(el => el.remove());
 
-                // Build dispatch results HTML
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+
+            const bgColors = {
+                success: 'var(--success)',
+                error: 'var(--danger)',
+                info: 'var(--info)'
+            };
+
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-exclamation-circle-fill',
+                info: 'bi-info-circle-fill'
+            };
+
+            const titles = {
+                success: 'Succès',
+                error: 'Erreur',
+                info: 'Info'
+            };
+
+            toast.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 9999;
+                min-width: 320px; max-width: 450px;
+                padding: var(--spacing-4) var(--spacing-6);
+                border-radius: var(--radius-lg);
+                background: ${bgColors[type] || bgColors.info};
+                color: white;
+                box-shadow: var(--shadow-xl);
+                animation: slideInRight 0.3s ease;
+            `;
+
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-2); font-weight: 700;">
+                    <i class="bi ${icons[type] || icons.info}"></i>
+                    ${titles[type] || titles.info}
+                </div>
+                <p style="margin: 0; font-size: var(--font-size-sm); opacity: 0.95;">${message}</p>
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        /**
+         * Update simulation display after AJAX refresh
+         */
+        function updateSimulationDisplay(data) {
+            // Update stat cards
+            const needsCount = data.dispatch_results ? data.dispatch_results.length : 0;
+            document.getElementById('stat-needs').textContent = needsCount;
+            document.getElementById('stat-remaining').textContent = data.remaining_quantity || 0;
+
+            let satisfiedCount = 0;
+            if (data.dispatch_results) {
+                data.dispatch_results.forEach(d => {
+                    if (d.new_need_quantity === 0) satisfiedCount++;
+                });
+            }
+            document.getElementById('stat-satisfied').textContent = satisfiedCount;
+
+            const container = document.getElementById('simulation-container');
+
+            if (data.dispatch_results && data.dispatch_results.length > 0) {
                 let html = `
-                    <div class="alert alert-simulation active alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Résultats de la simulation:</strong> 
-                        La donation sera dispatcher sur ${data.dispatch_results.length} besoin(s).
+                    <div class="alert alert-info" style="margin-bottom: var(--spacing-6);">
+                        <i class="bi bi-info-circle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                        <div>
+                            <strong>Résultats de la simulation</strong>
+                            <p style="margin: var(--spacing-1) 0 0 0;">
+                                La donation sera dispatchée sur <strong>${data.dispatch_results.length} besoin(s)</strong>.
+                            </p>
+                        </div>
                     </div>
-                    <h6 class="fw-bold mb-3 mt-4">
-                        <i class="bi bi-arrow-left-right me-2"></i>
-                        Dispatch vers les besoins
-                    </h6>`;
+
+                    <div class="sim-section-title">
+                        <i class="bi bi-arrow-left-right"></i>
+                        <h3>Distribution des besoins</h3>
+                    </div>
+
+                    <div class="dispatch-list">`;
 
                 data.dispatch_results.forEach(dispatch => {
+                    const restBadge = dispatch.new_need_quantity === 0 ? 'badge-success' : 'badge-danger';
                     html += `
-                        <div class="need-item">
-                            <div class="row align-items-center">
-                                <div class="col-md-6">
-                                    <p class="mb-2">
-                                        <strong>Besoin #${dispatch.besoin_id}</strong>
-                                        <span class="text-muted float-end">Ville: ${dispatch.besoin_ville_nom || '-'}</span>
-                                    </p>
-                                    <p class="text-muted small mb-0">
-                                        ${dispatch.besoin_description || 'Sans description'}
-                                    </p>
+                        <div class="dispatch-item">
+                            <div class="dispatch-item-header">
+                                <span class="badge badge-primary">Besoin #${dispatch.besoin_id}</span>
+                                <span class="badge badge-gray">
+                                    <i class="bi bi-geo-alt"></i>&nbsp;${dispatch.besoin_ville_nom || '-'}
+                                </span>
+                            </div>
+                            <p class="dispatch-item-desc">${dispatch.besoin_description || 'Sans description'}</p>
+                            <div class="dispatch-flow">
+                                <div class="dispatch-flow-step">
+                                    <span class="sim-info-label">Besoin</span>
+                                    <span class="badge badge-warning" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                        ${dispatch.besoin_quantite_needed}
+                                    </span>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex justify-content-end gap-2 align-items-center flex-wrap">
-                                        <div>
-                                            <div class="small text-muted">Besoin initial</div>
-                                            <div class="badge bg-light text-dark">${dispatch.besoin_quantite_needed} unités</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <i class="bi bi-arrow-right text-success" style="font-size: 1.5rem;"></i>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Dispatché</div>
-                                            <div class="badge-dispatch">${dispatch.dispatched_quantity} unités</div>
-                                        </div>
-                                        <div>
-                                            <div class="small text-muted">Après dispatch</div>
-                                            <div class="badge bg-light text-dark">${dispatch.new_need_quantity} unités</div>
-                                        </div>
-                                    </div>
+                                <i class="bi bi-arrow-right dispatch-flow-arrow"></i>
+                                <div class="dispatch-flow-step">
+                                    <span class="sim-info-label">Dispatché</span>
+                                    <span class="badge badge-success" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                        ${dispatch.dispatched_quantity}
+                                    </span>
+                                </div>
+                                <i class="bi bi-arrow-right dispatch-flow-arrow"></i>
+                                <div class="dispatch-flow-step">
+                                    <span class="sim-info-label">Reste</span>
+                                    <span class="badge ${restBadge}" style="font-size: var(--font-size-sm); padding: var(--spacing-2) var(--spacing-3);">
+                                        ${dispatch.new_need_quantity}
+                                    </span>
                                 </div>
                             </div>
                         </div>`;
                 });
 
+                html += `</div>`;
+
                 if (data.remaining_quantity > 0) {
                     html += `
-                        <div class="alert alert-warning mt-3">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <strong>Quantité non utilisée:</strong> 
-                            ${data.remaining_quantity} unité(s) restante(s) après satisfaction de tous les besoins.
-                        </div>`;
+                    <div class="alert alert-warning" style="margin-top: var(--spacing-6);">
+                        <i class="bi bi-exclamation-triangle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                        <div>
+                            <strong>Quantité non utilisée</strong>
+                            <p style="margin: var(--spacing-1) 0 0 0;">
+                                ${data.remaining_quantity} unité(s) restante(s) après satisfaction de tous les besoins.
+                                Cette quantité peut être conservée pour d'autres distributions.
+                            </p>
+                        </div>
+                    </div>`;
                 }
 
-                document.getElementById('simulation-container').innerHTML = html;
+                container.innerHTML = html;
             } else {
-                document.getElementById('simulation-container').innerHTML = `
+                container.innerHTML = `
                     <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        <strong>Aucun besoin trouvé</strong> pour cette catégorie et cette ville.
+                        <i class="bi bi-exclamation-circle" style="font-size: var(--font-size-xl); flex-shrink: 0;"></i>
+                        <div>
+                            <strong>Aucun besoin trouvé</strong>
+                            <p style="margin: var(--spacing-1) 0 0 0;">
+                                Aucun besoin correspondant à cette catégorie et cette ville n'a été trouvé.
+                            </p>
+                        </div>
                     </div>`;
             }
         }
+    </script>
+    <?php endif; ?>
 
-        function showAlert(type, message) {
-            const container = document.getElementById('alert-container');
-            const alertId = 'alert-' + Date.now();
-            const alertHtml = `
-                <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>`;
-            
-            container.innerHTML = alertHtml;
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                const alert = document.getElementById(alertId);
-                if (alert) {
-                    alert.remove();
-                }
-            }, 5000);
-        }
+    <!-- Responsive sidebar toggle script -->
+    <script>
+        document.querySelector('.sidebar-toggle')?.addEventListener('click', function () {
+            document.querySelector('.sidebar').classList.toggle('show');
+        });
     </script>
 </body>
 

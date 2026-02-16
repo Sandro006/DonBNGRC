@@ -22,6 +22,10 @@ use app\models\Don;
 $router->group('', function (Router $router) use ($app) {
 
 	$router->get('/', function () use ($app) {
+    $app->render('welcome');
+});
+
+$router->get('/dashboard', function () use ($app) {
 		// Dashboard: collect summary data from services and apply optional filters
 		try {
 			$donService = new app\services\DonService();
@@ -160,6 +164,27 @@ $router->group('', function (Router $router) use ($app) {
 	});
 
 	// Add donation: show form
+	$router->get('/don/add', function () use ($app) {
+		try {
+			$categorieModel = new Categorie();
+			$donateurModel = new Donateur();
+			$categories = $categorieModel->getAll();
+			$donateurs = $donateurModel->getAll();
+			$req = $app->request();
+			$ville_id = !empty($req->query->ville_id) ? $req->query->ville_id : null;
+
+			$app->render('AddDon', [
+				'categories' => $categories,
+				'donateurs' => $donateurs,
+				'ville_id' => $ville_id,
+			]);
+		} catch (\Throwable $e) {
+			error_log('AddDon GET error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur interne');
+		}
+	});
+
+	// Add donation: show form (French alias)
 	$router->get('/don/ajouter', function () use ($app) {
 		try {
 			$categorieModel = new Categorie();
@@ -181,7 +206,7 @@ $router->group('', function (Router $router) use ($app) {
 	});
 
 	// Add donation: handle form submission
-	$router->post('/don/ajouter', function () use ($app) {
+	$router->post('/don/add', function () use ($app) {
 		$req = $app->request();
 		$data = [];
 		$data['ville_id'] = !empty($req->data->ville_id) ? $req->data->ville_id : null;
@@ -241,6 +266,61 @@ $router->group('', function (Router $router) use ($app) {
 		}
 	});
 
+	// Add donation: handle form submission (French alias)
+	$router->post('/don/ajouter', function () use ($app) {
+		$req = $app->request();
+		$data = [];
+		$data['ville_id'] = !empty($req->data->ville_id) ? $req->data->ville_id : null;
+		$data['categorie_id'] = !empty($req->data->categorie_id) ? $req->data->categorie_id : null;
+		$data['quantite'] = !empty($req->data->quantite) ? (int)$req->data->quantite : 0;
+		$dateInput = $req->data->date_don ?? null;
+		if (!empty($dateInput)) {
+			$dateInput = str_replace('T', ' ', $dateInput);
+			if (strlen($dateInput) === 16) {
+				$dateInput .= ':00';
+			}
+			$data['date_don'] = $dateInput;
+		} else {
+			$data['date_don'] = date('Y-m-d H:i:s');
+		}
+
+		$donateur_id = $req->data->donateur_id ?? null;
+		if (empty($data['ville_id']) || empty($data['categorie_id'])) {
+			$app->halt(400, 'Ville et catégorie sont requises');
+		}
+
+		try {
+			if (empty($donateur_id)) {
+				$donateurModel = new Donateur();
+				$donateurData = [
+					'nom' => $req->data->donateur_nom ?? 'Anonyme',
+					'telephone' => $req->data->donateur_telephone ?? null,
+					'email' => $req->data->donateur_email ?? null,
+				];
+				$donateur_id = $donateurModel->create($donateurData);
+			}
+
+			$data['donateur_id'] = $donateur_id;
+
+			$donModel = new Don();
+			$donModel->create($data);
+		} catch (\Throwable $e) {
+			error_log('AddDon POST error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur interne');
+		}
+
+		$redirectVille = $data['ville_id'];
+		if (empty($redirectVille) && !empty($req->data->ville_libre) && is_numeric($req->data->ville_libre)) {
+			$redirectVille = $req->data->ville_libre;
+		}
+		
+		if (!empty($redirectVille)) {
+			$app->redirect('/ville/' . $redirectVille);
+		} else {
+			$app->redirect('/');
+		}
+	});
+
 	// Delete donation
 	$router->delete('/don/@id:[0-9]+', function ($id) use ($app) {
 		try {
@@ -288,6 +368,7 @@ $router->group('', function (Router $router) use ($app) {
 	});
 
 	// Simulation: show simulation page for donation dispatch
+	$router->get('/simulation', [SimulationController::class, 'index']);
 	$router->get('/simulation/@id:[0-9]+', [SimulationController::class, 'show']);
 
 	$router->group('/api', function () use ($router) {

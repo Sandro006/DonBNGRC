@@ -5,6 +5,7 @@ namespace app\controllers;
 use flight\Engine;
 use app\services\SimulationService;
 use app\models\Don;
+use Flight;
 
 class SimulationController
 {
@@ -18,25 +19,44 @@ class SimulationController
     }
 
     /**
-     * Show the simulation page for a donation
+     * List all donations available for simulation
      */
-    public function show($don_id)
+    public function index()
     {
         try {
             $donModel = new Don();
-            $don = $donModel->getByIdWithDetails($don_id);
+            $dons = $donModel->getAllWithDetails();
+
+            $this->app->render('Simulation', [
+                'dons' => $dons,
+                'is_list' => true,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('SimulationController index error: ' . $e->getMessage());
+            $this->app->halt(500, 'Erreur interne');
+        }
+    }
+
+    /**
+     * Show the simulation page for a donation
+     */
+    public function show($id)
+    {
+        try {
+            $donModel = new Don();
+            $don = $donModel->getByIdWithDetails($id);
 
             if (empty($don)) {
                 $this->app->halt(404, 'Don introuvable');
             }
 
             // Get the simulation preview
-            $simulation = $this->simulationService->simulateDispatch($don_id);
+            $simulation = $this->simulationService->simulateDispatch($id);
 
             $this->app->render('Simulation', [
                 'don' => $don,
                 'simulation' => $simulation,
-                'don_id' => $don_id,
+                'don_id' => $id,
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController show error: ' . $e->getMessage());
@@ -50,20 +70,22 @@ class SimulationController
     public function apiSimulate()
     {
         try {
-            $req = $this->app->request();
-            $don_id = $req->data->don_id ?? null;
+            // Read JSON body
+            $rawBody = file_get_contents('php://input');
+            $data = json_decode($rawBody, true);
+            $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
+                Flight::json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $simulation = $this->simulationService->simulateDispatch($don_id);
 
-            $this->app->json($simulation, $simulation['success'] ? 200 : 400);
+            Flight::json($simulation, $simulation['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiSimulate error: ' . $e->getMessage());
-            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
+            Flight::json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -73,20 +95,22 @@ class SimulationController
     public function apiValidate()
     {
         try {
-            $req = $this->app->request();
-            $don_id = $req->data->don_id ?? null;
+            // Read JSON body
+            $rawBody = file_get_contents('php://input');
+            $data = json_decode($rawBody, true);
+            $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
+                Flight::json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $result = $this->simulationService->validateDispatch($don_id);
 
-            $this->app->json($result, $result['success'] ? 200 : 400);
+            Flight::json($result, $result['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiValidate error: ' . $e->getMessage());
-            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
+            Flight::json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 }
