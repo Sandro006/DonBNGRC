@@ -6,7 +6,12 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>BNGRC - National Office for Risk and Disaster Management</title>
+<<<<<<< Updated upstream
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
+=======
+    <link rel="stylesheet" href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+>>>>>>> Stashed changes
     <style>
         :root {
             --primary-color: #1152d4;
@@ -85,8 +90,9 @@
             background-color: #e9ecef;
         }
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .bi {
+            display: inline-block;
+            vertical-align: -0.125em;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -96,7 +102,7 @@
     <aside class="sidebar">
         <div class="p-4 d-flex align-items-center gap-3">
             <div class="bg-primary rounded p-2 text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                <span class="material-symbols-outlined">tsunami</span>
+                <i class="bi bi-water"></i>
             </div>
             <div>
                 <h1 class="h6 fw-bold mb-0 text-primary">BNGRC</h1>
@@ -104,15 +110,15 @@
             </div>
         </div>
         <nav class="nav flex-column px-3 mt-3 flex-grow-1 gap-1">
-            <a class="nav-link active" href="#"><span class="material-symbols-outlined">home</span>Home</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">map</span>Map</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">bar_chart</span>Data</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">description</span>Reports</a>
-            <a class="nav-link mt-auto" href="#"><span class="material-symbols-outlined">settings</span>Settings</a>
+            <a class="nav-link active" href="#"><i class="bi bi-house-fill"></i>Home</a>
+            <a class="nav-link" href="#"><i class="bi bi-map"></i>Map</a>
+            <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i>Data</a>
+            <a class="nav-link" href="#"><i class="bi bi-file-text"></i>Reports</a>
+            <a class="nav-link mt-auto" href="#"><i class="bi bi-gear"></i>Settings</a>
         </nav>
         <div class="p-3 border-top">
             <button class="btn btn-emergency w-100 d-flex align-items-center justify-content-center gap-2">
-                <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>Emergency Alert
+                <i class="bi bi-exclamation-triangle-fill"></i>Emergency Alert
             </button>
         </div>
     </aside>
@@ -121,19 +127,20 @@
             <div class="container-fluid">
                 <form class="d-flex col-md-4">
                     <div class="input-group bg-light rounded">
-                        <span class="input-group-text bg-transparent border-0"><span class="material-symbols-outlined text-muted">search</span></span>
+                        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
                         <input class="form-control border-0 bg-transparent" placeholder="Search data or regions..." type="text" />
                     </div>
                 </form>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex gap-2">
                         <button class="btn btn-link text-muted p-2 position-relative">
-                            <span class="material-symbols-outlined">notifications</span>
+                            <i class="bi bi-bell"></i>
                             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
-                        <button class="btn btn-link text-muted p-2"><span class="material-symbols-outlined">help</span></button>
+                        <button class="btn btn-link text-muted p-2"><i class="bi bi-question-circle"></i></button>
                     </div>
                     <div class="vr h-100 mx-2"></div>
+<<<<<<< Updated upstream
                     <div class="d-flex align-items-center gap-2">
                         <div class="text-end">
                             <div class="fw-bold small">Admin BNGRC</div>
@@ -141,6 +148,11 @@
                         </div>
                         <img class="rounded-circle border" height="36" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_iOZFABdinTQc0LkG0xWcb-BJdTC37Zs6nEVsmcgD2805PVqQZEWv14oMR6oaMGrvLWIxG7dY-aWP7DMQFXSf6-ZtoT-0fQZjUisUK673pNXhaVSoQH5CSnIwQs7IjLE8Kz7pOV81ujyvXjP7G3nyOBonieJ4SwtN7GEoM5kdQyLaWSxH7NXVrzDGf1NiOhSQrJ51L9UtptgXmkLRQh2RaEQ9EcF8jQ9eGesCBQ_pw5FM_85uOvCOnShXb9MTa_UaXEPB0goI2NkB" width="36" />
                     </div>
+=======
+                    <a href="<?php echo Flight::get('flight.base_url'); ?>/ajoutDon" class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 fw-bold" style="background-color: var(--primary-color); border: none;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span>
+                    </a>
+>>>>>>> Stashed changes
                 </div>
             </div>
         </header>
@@ -151,19 +163,28 @@
                     <p class="text-muted mb-0">Monday, 23 Oct • 10:45 AM local time</p>
                 </div>
                 <div class="d-flex gap-2">
+<<<<<<< Updated upstream
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
-                        <span class="material-symbols-outlined">add_circle</span>Record New Need
+                        <i class="bi bi-plus-circle"></i>Record New Need
                     </button>
                     <button class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-4 py-2 fw-bold">
-                        <span class="material-symbols-outlined">volunteer_activism</span>Log New Donation
+                        <i class="bi bi-hand-thumbs-up"></i>Log New Donation
                     </button>
+=======
+                    <a href="<?= htmlspecialchars(Flight::get('flight.base_url')) ?>don/ajouter" class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
+                        <i class="bi bi-plus-circle"></i>Record New Need
+                    </a>
+                    <a href="<?= htmlspecialchars(Flight::get('flight.base_url')) ?>don/ajouter" class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-4 py-2 fw-bold">
+                        <i class="bi bi-hand-thumbs-up"></i>Log New Donation
+                    </a>
+>>>>>>> Stashed changes
                 </div>
             </div>
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
                     <div class="kpi-card h-100">
                         <div class="d-flex justify-content-between mb-3">
-                            <div class="bg-light text-primary p-2 rounded"><span class="material-symbols-outlined">verified</span></div>
+                            <div class="bg-light text-primary p-2 rounded"><i class="bi bi-check-circle"></i></div>
                             <span class="text-success small fw-bold">+5%</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Global Aid Coverage</small>
@@ -176,7 +197,7 @@
                 <div class="col-md-3">
                     <div class="kpi-card h-100">
                         <div class="d-flex justify-content-between mb-3">
-                            <div class="bg-light text-warning p-2 rounded"><span class="material-symbols-outlined">location_on</span></div>
+                            <div class="bg-light text-warning p-2 rounded"><i class="bi bi-geo-alt"></i></div>
                             <span class="text-muted small fw-bold">LIVE</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Active Regions</small>
@@ -200,7 +221,7 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">analytics</span> Regional Needs Overview
+                        <i class="bi bi-graph-up text-primary"></i> Regional Needs Overview
                     </h5>
                     <div class="d-flex gap-3 small fw-bold text-muted">
                         <div class="d-flex align-items-center gap-1"><span class="bg-primary rounded-circle" style="width: 8px; height: 8px;"></span> Rice/Oil</div>
