@@ -10,3 +10,14 @@ CREATE TABLE bngrc_achat (
     FOREIGN KEY (ville_id) REFERENCES bngrc_ville(id),
     FOREIGN KEY (besoin_id) REFERENCES bngrc_besoin(id)
 );
+-- =========================
+-- TABLE CONFIGURATION FRAIS
+-- (Configuration for frais_percent)
+-- =========================
+CREATE TABLE bngrc_config_frais (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    frais_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
