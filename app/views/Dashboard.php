@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>BNGRC - National Office for Risk and Disaster Management</title>
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #1152d4;
+            --bg-light: #f6f6f8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 256px;
+            background: white;
+            border-right: 1px solid #dee2e6;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            color: #495057;
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .nav-link:hover {
+            background-color: #f8f9fa;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-emergency {
+            background-color: #dc3545;
+            color: white;
+            font-weight: 700;
+        }
+
+        .kpi-card {
+            border-radius: 0.75rem;
+            border: 1px solid #dee2e6;
+            background: white;
+            padding: 1.5rem;
+        }
+
+        .progress-multi {
+            display: flex;
+            height: 0.75rem;
+            border-radius: 999px;
+            overflow: hidden;
+            background-color: #e9ecef;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="p-4 d-flex align-items-center gap-3">
+            <div class="bg-primary rounded p-2 text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                <span class="material-symbols-outlined">tsunami</span>
+            </div>
+            <div>
+                <h1 class="h6 fw-bold mb-0 text-primary">BNGRC</h1>
+                <small class="text-muted d-block" style="font-size: 10px;">Management Office</small>
+            </div>
+        </div>
+        <nav class="nav flex-column px-3 mt-3 flex-grow-1 gap-1">
+            <a class="nav-link active" href="#"><span class="material-symbols-outlined">home</span>Home</a>
+            <a class="nav-link" href="#"><span class="material-symbols-outlined">map</span>Map</a>
+            <a class="nav-link" href="#"><span class="material-symbols-outlined">bar_chart</span>Data</a>
+            <a class="nav-link" href="#"><span class="material-symbols-outlined">description</span>Reports</a>
+            <a class="nav-link mt-auto" href="#"><span class="material-symbols-outlined">settings</span>Settings</a>
+        </nav>
+        <div class="p-3 border-top">
+            <button class="btn btn-emergency w-100 d-flex align-items-center justify-content-center gap-2">
+                <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>Emergency Alert
+            </button>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="navbar bg-white border-bottom px-4 py-2 sticky-top">
+            <div class="container-fluid">
+                <form class="d-flex col-md-4">
+                    <div class="input-group bg-light rounded">
+                        <span class="input-group-text bg-transparent border-0"><span class="material-symbols-outlined text-muted">search</span></span>
+                        <input class="form-control border-0 bg-transparent" placeholder="Search data or regions..." type="text" />
+                    </div>
+                </form>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-link text-muted p-2 position-relative">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </button>
+                        <button class="btn btn-link text-muted p-2"><span class="material-symbols-outlined">help</span></button>
+                    </div>
+                    <div class="vr h-100 mx-2"></div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="text-end">
+                            <div class="fw-bold small">Admin BNGRC</div>
+                            <div class="text-muted" style="font-size: 11px;">National Coordinator</div>
+                        </div>
+                        <img class="rounded-circle border" height="36" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_iOZFABdinTQc0LkG0xWcb-BJdTC37Zs6nEVsmcgD2805PVqQZEWv14oMR6oaMGrvLWIxG7dY-aWP7DMQFXSf6-ZtoT-0fQZjUisUK673pNXhaVSoQH5CSnIwQs7IjLE8Kz7pOV81ujyvXjP7G3nyOBonieJ4SwtN7GEoM5kdQyLaWSxH7NXVrzDGf1NiOhSQrJ51L9UtptgXmkLRQh2RaEQ9EcF8jQ9eGesCBQ_pw5FM_85uOvCOnShXb9MTa_UaXEPB0goI2NkB" width="36" />
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container-fluid p-4">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h2 class="fw-black mb-0">Welcome, Administrator</h2>
+                    <p class="text-muted mb-0">Monday, 23 Oct • 10:45 AM local time</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
+                        <span class="material-symbols-outlined">add_circle</span>Record New Need
+                    </button>
+                    <button class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-4 py-2 fw-bold">
+                        <span class="material-symbols-outlined">volunteer_activism</span>Log New Donation
+                    </button>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="kpi-card h-100">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="bg-light text-primary p-2 rounded"><span class="material-symbols-outlined">verified</span></div>
+                            <span class="text-success small fw-bold">+5%</span>
+                        </div>
+                        <small class="text-muted fw-bold text-uppercase">Global Aid Coverage</small>
+                        <h3 class="fw-black">78%</h3>
+                        <div class="progress mt-3" style="height: 6px;">
+                            <div class="progress-bar" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kpi-card h-100">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="bg-light text-warning p-2 rounded"><span class="material-symbols-outlined">location_on</span></div>
+                            <span class="text-muted small fw-bold">LIVE</span>
+                        </div>
+                        <small class="text-muted fw-bold text-uppercase">Active Regions</small>
+                        <h3 class="fw-black">12</h3>
+                        <small class="text-muted">Receiving emergency assistance</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 rounded-4 overflow-hidden h-100 position-relative text-white">
+                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to right, rgba(0,0,0,0.7), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwM_vgw6x8mcM9XFfGatLQxSa9-YFn6INqcxVPNaHNAECRj4lzfhjZs6Ee_uVbLLE3o4PqAWTw0TqR-90sftfSCTk4lCYg02Nn0PexhFmuUu29Z7OfytYFOSgJTYyuX3R0bErlW_Z6hbVg2XoEu33PjKKa19XQ0vgLgt80e-Bea5RitiotqTtvjUO_45HXuxncPu9qL1iVTJaGhkDgvt64yN6wKwxaLpUEx3S8uCtsFoTQIAt4ftvijFXngJGIPKEudVKQIBHRIJbt'); background-size: cover; background-position: center;"></div>
+                        <div class="card-body position-relative d-flex flex-column justify-content-between p-4">
+                            <div>
+                                <span class="badge bg-danger rounded-pill mb-2">LIVE INCIDENT MAP</span>
+                                <h4 class="fw-bold">Active Risk Zones</h4>
+                            </div>
+                            <a class="text-white text-decoration-none small fw-bold" href="#">View Full Map →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">analytics</span> Regional Needs Overview
+                    </h5>
+                    <div class="d-flex gap-3 small fw-bold text-muted">
+                        <div class="d-flex align-items-center gap-1"><span class="bg-primary rounded-circle" style="width: 8px; height: 8px;"></span> Rice/Oil</div>
+                        <div class="d-flex align-items-center gap-1"><span class="bg-secondary rounded-circle" style="width: 8px; height: 8px;"></span> Sheets/Nails</div>
+                        <div class="d-flex align-items-center gap-1"><span class="bg-success rounded-circle" style="width: 8px; height: 8px;"></span> Funds</div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3 small text-muted text-uppercase">Region / City</th>
+                                <th class="py-3 small text-muted text-uppercase w-50">Need Distribution</th>
+                                <th class="py-3 small text-muted text-uppercase">Status</th>
+                                <th class="py-3 small text-muted text-uppercase text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="ps-4 py-4">
+                                    <div class="fw-bold">Antananarivo</div>
+                                    <small class="text-muted">Analamanga Region</small>
+                                </td>
+                                <td>
+                                    <div class="progress-multi">
+                                        <div class="bg-primary" style="width: 45%;"></div>
+                                        <div class="bg-secondary" style="width: 35%;"></div>
+                                        <div class="bg-success" style="width: 20%;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2 small text-muted fw-bold">
+                                        <span>80% Nature</span><span>45% Material</span><span>20% Funds</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-warning-subtle text-warning border-0 text-uppercase" style="font-size: 10px;">Critical</span></td>
+                                <td class="text-end pe-4"><button class="btn btn-link text-decoration-none fw-bold text-primary">Details</button></td>
+                            </tr>
+                            <tr>
+                                <td class="ps-4 py-4">
+                                    <div class="fw-bold">Tamatave</div>
+                                    <small class="text-muted">Atsinanana Region</small>
+                                </td>
+                                <td>
+                                    <div class="progress-multi">
+                                        <div class="bg-primary" style="width: 20%;"></div>
+                                        <div class="bg-secondary" style="width: 65%;"></div>
+                                        <div class="bg-success" style="width: 15%;"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2 small text-muted fw-bold">
+                                        <span>40% Nature</span><span>70% Material</span><span>15% Funds</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-primary-subtle text-primary border-0 text-uppercase" style="font-size: 10px;">Stable</span></td>
+                                <td class="text-end pe-4"><button class="btn btn-link text-decoration-none fw-bold text-primary">Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-white text-center py-3">
+                    <button class="btn btn-link text-muted text-decoration-none fw-bold">View All 22 Assisted Regions</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
