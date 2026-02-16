@@ -3,3 +3,6 @@ INSERT INTO bngrc_achat (ville_id, besoin_id, montant, frais_percent, montant_to
 (1, 4, 200000.00, 15.00, 220000.00, '2026-02-16 11:30:00'),
 (2, 5, 50000.00, 20.00, 55000.00, '2026-02-16 14:00:00'),
 (2, 3, 150000.00, 10.00, 165000.00, '2026-02-17 09:00:00');
+-- Configuration des frais par défaut
+INSERT INTO bngrc_config_frais (frais_percent, description, created_at, updated_at) VALUES
+(0.00, 'Configuration initiale du pourcentage de frais', NOW(), NOW());
