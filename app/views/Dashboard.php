@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>BNGRC - National Office for Risk and Disaster Management</title>
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap-icons.css" rel="stylesheet" />
     <style>
         :root {
             --primary-color: #1152d4;
@@ -148,7 +149,7 @@
             <div class="d-flex justify-content-between align-items-end mb-4">
                 <div>
                     <h2 class="fw-black mb-0">Welcome, Administrator</h2>
-                    <p class="text-muted mb-0">Monday, 23 Oct • 10:45 AM local time</p>
+                    <p class="text-muted mb-0"><?= date('l, d M') ?> • <?= date('H:i') ?> local time</p>
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
@@ -204,12 +205,12 @@
                     <div class="kpi-card h-100">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="bg-light text-primary p-2 rounded"><span class="material-symbols-outlined">verified</span></div>
-                            <span class="text-success small fw-bold">+5%</span>
+                            <span class="<?= ($coverage_percent ?? 0) >= 50 ? 'text-success' : 'text-warning' ?> small fw-bold"><?= ($coverage_percent ?? 0) ?>%</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Global Aid Coverage</small>
-                        <h3 class="fw-black">78%</h3>
+                        <h3 class="fw-black"><?= htmlspecialchars($coverage_percent ?? 0) ?>%</h3>
                         <div class="progress mt-3" style="height: 6px;">
-                            <div class="progress-bar" style="width: 78%;"></div>
+                            <div class="progress-bar" style="width: <?= htmlspecialchars($coverage_percent ?? 0) ?>%;"></div>
                         </div>
                     </div>
                 </div>
@@ -220,7 +221,7 @@
                             <span class="text-muted small fw-bold">LIVE</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Active Regions</small>
-                        <h3 class="fw-black">12</h3>
+                        <h3 class="fw-black"><?= htmlspecialchars($active_regions_count ?? 0) ?></h3>
                         <small class="text-muted">Receiving emergency assistance</small>
                     </div>
                 </div>
@@ -259,47 +260,49 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php if (!empty($regional_stats)) {
+                                foreach ($regional_stats as $region) {
+                                    $total = (float)($region['total_amount'] ?? 1);
+                                    $nature_pct = $total > 0 ? round(((float)($region['nature_qty'] ?? 0) / max(1, (float)($region['total_quantity'] ?? 1))) * 100) : 0;
+                                    $materiel_pct = $total > 0 ? round(((float)($region['materiel_qty'] ?? 0) / max(1, (float)($region['total_quantity'] ?? 1))) * 100) : 0;
+                                    $fonds_pct = $total > 0 ? round(((float)($region['fonds_amount'] ?? 0) / $total) * 100) : 0;
+                                    $is_critical = !empty($region['is_critical']);
+                            ?>
                             <tr>
                                 <td class="ps-4 py-4">
-                                    <div class="fw-bold">Antananarivo</div>
-                                    <small class="text-muted">Analamanga Region</small>
+                                    <div class="fw-bold"><?= htmlspecialchars($region['ville_nom'] ?? '') ?></div>
+                                    <small class="text-muted"><?= htmlspecialchars($region['region_nom'] ?? '') ?> Region</small>
                                 </td>
                                 <td>
                                     <div class="progress-multi">
-                                        <div class="bg-primary" style="width: 45%;"></div>
-                                        <div class="bg-secondary" style="width: 35%;"></div>
-                                        <div class="bg-success" style="width: 20%;"></div>
+                                        <div class="bg-primary" style="width: <?= $nature_pct ?>%;"></div>
+                                        <div class="bg-secondary" style="width: <?= $materiel_pct ?>%;"></div>
+                                        <div class="bg-success" style="width: <?= $fonds_pct ?>%;"></div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-2 small text-muted fw-bold">
-                                        <span>80% Nature</span><span>45% Material</span><span>20% Funds</span>
+                                        <span><?= $nature_pct ?>% Nature</span><span><?= $materiel_pct ?>% Material</span><span><?= $fonds_pct ?>% Funds</span>
                                     </div>
-                                </td>
-                                <td><span class="badge bg-warning-subtle text-warning border-0 text-uppercase" style="font-size: 10px;">Critical</span></td>
-                                <td class="text-end pe-4"><button class="btn btn-link text-decoration-none fw-bold text-primary">Details</button></td>
-                            </tr>
-                            <tr>
-                                <td class="ps-4 py-4">
-                                    <div class="fw-bold">Tamatave</div>
-                                    <small class="text-muted">Atsinanana Region</small>
                                 </td>
                                 <td>
-                                    <div class="progress-multi">
-                                        <div class="bg-primary" style="width: 20%;"></div>
-                                        <div class="bg-secondary" style="width: 65%;"></div>
-                                        <div class="bg-success" style="width: 15%;"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-between mt-2 small text-muted fw-bold">
-                                        <span>40% Nature</span><span>70% Material</span><span>15% Funds</span>
-                                    </div>
+                                    <?php if ($is_critical) { ?>
+                                        <span class="badge bg-warning-subtle text-warning border-0 text-uppercase" style="font-size: 10px;">Critical</span>
+                                    <?php } else { ?>
+                                        <span class="badge bg-primary-subtle text-primary border-0 text-uppercase" style="font-size: 10px;">Stable</span>
+                                    <?php } ?>
                                 </td>
-                                <td><span class="badge bg-primary-subtle text-primary border-0 text-uppercase" style="font-size: 10px;">Stable</span></td>
                                 <td class="text-end pe-4"><button class="btn btn-link text-decoration-none fw-bold text-primary">Details</button></td>
                             </tr>
+                            <?php }
+                            } else { ?>
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">Aucune donnée régionale disponible</td>
+                            </tr>
+                            <?php } ?>
                         </tbody>
                     </table>
                 </div>
                 <div class="card-footer bg-white text-center py-3">
-                    <button class="btn btn-link text-muted text-decoration-none fw-bold">View All 22 Assisted Regions</button>
+                    <button class="btn btn-link text-muted text-decoration-none fw-bold">View All <?= htmlspecialchars($active_regions_count ?? 0) ?> Assisted Regions</button>
                 </div>
             </div>
 

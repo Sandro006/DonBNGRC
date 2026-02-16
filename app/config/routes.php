@@ -25,6 +25,18 @@ $router->group('', function (Router $router) use ($app) {
 			$besoin_stats = $besoinService->getStatistics();
 			$cities = $villeService->getAll();
 
+			// Regional statistics for overview table
+			$regional_stats = $besoinService->getStatisticsByRegion();
+			$active_regions_count = $besoinService->getActiveRegionsCount();
+			$category_stats = $besoinService->getStatisticsByCategory();
+
+			// Calculate global coverage percentage (donations vs needs)
+			$total_dons_qty = (int)($don_stats['total_quantity'] ?? 0);
+			$total_besoins_qty = (int)($besoin_stats['total_quantity'] ?? 0);
+			$coverage_percent = $total_besoins_qty > 0 
+				? min(100, round(($total_dons_qty / $total_besoins_qty) * 100)) 
+				: 0;
+
 			// categories via model
 			$categorieModel = new Categorie();
 			$categories = $categorieModel->getAllWithUsageCount();
@@ -87,6 +99,10 @@ $router->group('', function (Router $router) use ($app) {
 				'categories' => $categories,
 				'dons' => $recent_dons,
 				'besoins' => $recent_besoins,
+				'regional_stats' => $regional_stats,
+				'active_regions_count' => $active_regions_count,
+				'coverage_percent' => $coverage_percent,
+				'category_stats' => $category_stats,
 			]);
 		} catch (\Throwable $e) {
 			$app->render('Dashboard', ['message' => 'Dashboard indisponible: erreur interne']);
