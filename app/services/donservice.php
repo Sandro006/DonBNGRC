@@ -49,4 +49,9 @@ class DonService
     {
         return $this->model->count();
     }
+
+    public function delete($id)
+    {
+        return $this->model->delete($id);
+    }
 }

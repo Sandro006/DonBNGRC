@@ -33,6 +33,7 @@
                                     <th>Donateur</th>
                                     <th>Catégorie</th>
                                     <th>Quantité</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,11 +44,18 @@
                                             <td><?= htmlspecialchars($d['donateur_nom'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($d['quantite'] ?? '') ?></td>
+                                            <td>
+                                                <form method="POST" action="<?= Flight::get('flight.base_url') ?>/don/supprimer/<?= htmlspecialchars($d['id'] ?? '') ?>" style="display:inline;">
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce don ?');">
+                                                        Supprimer
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     <?php }
                                 } else { ?>
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted">Aucun don pour cette ville.</td>
+                                        <td colspan="5" class="text-center text-muted">Aucun don pour cette ville.</td>
                                     </tr>
                                 <?php } ?>
                             </tbody>

@@ -240,6 +240,52 @@ $router->group('', function (Router $router) use ($app) {
 		}
 	});
 
+	// Delete donation
+	$router->delete('/don/@id:[0-9]+', function ($id) use ($app) {
+		try {
+			// Get the donation to find the city
+			$donModel = new Don();
+			$don = $donModel->getById($id);
+			
+			if (empty($don)) {
+				$app->halt(404, 'Don introuvable');
+			}
+
+			$ville_id = $don['ville_id'];
+			$donService = new DonService();
+			$donService->delete($id);
+			
+			// Redirect back to city details
+			$app->redirect('/ville/' . $ville_id);
+		} catch (\Throwable $e) {
+			error_log('Delete donation error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur lors de la suppression du don');
+		}
+	});
+
+	// Delete donation (POST version for form compatibility)
+	$router->post('/don/supprimer/@id:[0-9]+', function ($id) use ($app) {
+		try {
+			// Get the donation to find the city
+			$donModel = new Don();
+			$don = $donModel->getById($id);
+			
+			if (empty($don)) {
+				$app->halt(404, 'Don introuvable');
+			}
+
+			$ville_id = $don['ville_id'];
+			$donService = new DonService();
+			$donService->delete($id);
+			
+			// Redirect back to city details
+			$app->redirect('/ville/' . $ville_id);
+		} catch (\Throwable $e) {
+			error_log('Delete donation error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur lors de la suppression du don');
+		}
+	});
+
 	$router->group('/api', function () use ($router) {
 		$router->get('/users', [ApiExampleController::class, 'getUsers']);
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
