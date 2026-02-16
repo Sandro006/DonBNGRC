@@ -90,7 +90,7 @@ if (Debugger::$showBar === true && php_sapi_name() !== 'cli') {
 // Build DSN from config and register the DB service so models can use Flight::db()
 $dsn = 'mysql:host=' . ($config['database']['host'] ?? 'localhost') . ';dbname=' . ($config['database']['dbname'] ?? '') . ';charset=utf8mb4';
 $pdoClass = Debugger::$showBar === true ? PdoQueryCapture::class : PdoWrapper::class;
-$app->register('db', $pdoClass, [ $dsn, $config['database']['user'] ?? null, $config['database']['password'] ?? null ]);
+$app->register('db', $pdoClass, [$dsn, $config['database']['user'] ?? null, $config['database']['password'] ?? null]);
 
 /**********************************************
  *         Third-Party Integrations           *
