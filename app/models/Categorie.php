@@ -1,0 +1,30 @@
+<?php
+
+namespace app\models;
+
+class Categorie extends BaseModel
+{
+    protected $table = 'categorie';
+    protected $primaryKey = 'id';
+
+    /**
+     * Get all categories with their usage count
+     */
+    public function getAllWithUsageCount()
+    {
+        $query = "SELECT c.*, 
+                  (SELECT COUNT(*) FROM besoin WHERE categorie_id = c.id) as besoins_count,
+                  (SELECT COUNT(*) FROM don WHERE categorie_id = c.id) as dons_count
+                  FROM {$this->table} c 
+                  ORDER BY c.libelle ASC";
+        return $this->db->fetchAll($query);
+    }
+
+    /**
+     * Get category by libelle (name)
+     */
+    public function getByLibelle($libelle)
+    {
+        return $this->getOneBy(['libelle' => $libelle]);
+    }
+}
