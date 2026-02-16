@@ -109,7 +109,7 @@
         </div>
         <nav class="nav flex-column px-3 mt-3 flex-grow-1 gap-1">
             <a class="nav-link active" href="#"><span class="material-symbols-outlined">home</span>Home</a>
-            <a class="nav-link" href="<?php echo Flight::get('flight.base_url'); ?>/map"><span class="material-symbols-outlined">map</span>Map</a>
+            <a class="nav-link" href="#"><span class="material-symbols-outlined">map</span>Map</a>
             <a class="nav-link" href="#"><span class="material-symbols-outlined">bar_chart</span>Data</a>
             <a class="nav-link" href="#"><span class="material-symbols-outlined">description</span>Reports</a>
             <a class="nav-link mt-auto" href="#"><span class="material-symbols-outlined">settings</span>Settings</a>
