@@ -8,6 +8,7 @@
     <title>BNGRC - National Office for Risk and Disaster Management</title>
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
     <style>
         :root {
             --primary-color: #1152d4;
@@ -85,10 +86,6 @@
             overflow: hidden;
             background-color: #e9ecef;
         }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -97,7 +94,7 @@
     <aside class="sidebar">
         <div class="p-4 d-flex align-items-center gap-3">
             <div class="bg-primary rounded p-2 text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                <span class="material-symbols-outlined">tsunami</span>
+                <i class="bi bi-water fs-5"></i>
             </div>
             <div>
                 <h1 class="h6 fw-bold mb-0 text-primary">BNGRC</h1>
@@ -105,15 +102,15 @@
             </div>
         </div>
         <nav class="nav flex-column px-3 mt-3 flex-grow-1 gap-1">
-            <a class="nav-link active" href="#"><span class="material-symbols-outlined">home</span>Home</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">map</span>Map</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">bar_chart</span>Data</a>
-            <a class="nav-link" href="#"><span class="material-symbols-outlined">description</span>Reports</a>
-            <a class="nav-link mt-auto" href="#"><span class="material-symbols-outlined">settings</span>Settings</a>
+            <a class="nav-link active" href="#"><i class="bi bi-house-fill"></i> Home</a>
+            <a class="nav-link" href="#"><i class="bi bi-map"></i> Map</a>
+            <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Data</a>
+            <a class="nav-link" href="#"><i class="bi bi-file-text"></i> Reports</a>
+            <a class="nav-link mt-auto" href="#"><i class="bi bi-gear"></i> Settings</a>
         </nav>
         <div class="p-3 border-top">
             <button class="btn btn-emergency w-100 d-flex align-items-center justify-content-center gap-2">
-                <span class="material-symbols-outlined" style="font-size: 18px;">emergency</span>Emergency Alert
+                <i class="bi bi-exclamation-triangle-fill"></i> Emergency Alert
             </button>
         </div>
     </aside>
@@ -122,17 +119,17 @@
             <div class="container-fluid">
                 <form class="d-flex col-md-4">
                     <div class="input-group bg-light rounded">
-                        <span class="input-group-text bg-transparent border-0"><span class="material-symbols-outlined text-muted">search</span></span>
+                        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search text-muted"></i></span>
                         <input class="form-control border-0 bg-transparent" placeholder="Search data or regions..." type="text" />
                     </div>
                 </form>
                 <div class="d-flex align-items-center gap-3">
                     <div class="d-flex gap-2">
                         <button class="btn btn-link text-muted p-2 position-relative">
-                            <span class="material-symbols-outlined">notifications</span>
+                            <i class="bi bi-bell fs-5"></i>
                             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
                         </button>
-                        <button class="btn btn-link text-muted p-2"><span class="material-symbols-outlined">help</span></button>
+                        <button class="btn btn-link text-muted p-2"><i class="bi bi-question-circle fs-5"></i></button>
                     </div>
                     <div class="vr h-100 mx-2"></div>
                     <div class="d-flex align-items-center gap-2">
@@ -153,10 +150,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
-                        <span class="material-symbols-outlined">add_circle</span>Record New Need
+                        <i class="bi bi-plus-circle"></i> Record New Need
                     </button>
                     <button class="btn btn-outline-secondary bg-white text-dark d-flex align-items-center gap-2 px-4 py-2 fw-bold">
-                        <span class="material-symbols-outlined">volunteer_activism</span>Log New Donation
+                        <i class="bi bi-heart"></i> Log New Donation
                     </button>
                 </div>
             </div>
@@ -204,7 +201,7 @@
                 <div class="col-md-3">
                     <div class="kpi-card h-100">
                         <div class="d-flex justify-content-between mb-3">
-                            <div class="bg-light text-primary p-2 rounded"><span class="material-symbols-outlined">verified</span></div>
+                            <div class="bg-light text-primary p-2 rounded"><i class="bi bi-patch-check fs-5"></i></div>
                             <span class="<?= ($coverage_percent ?? 0) >= 50 ? 'text-success' : 'text-warning' ?> small fw-bold"><?= ($coverage_percent ?? 0) ?>%</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Global Aid Coverage</small>
@@ -217,7 +214,7 @@
                 <div class="col-md-3">
                     <div class="kpi-card h-100">
                         <div class="d-flex justify-content-between mb-3">
-                            <div class="bg-light text-warning p-2 rounded"><span class="material-symbols-outlined">location_on</span></div>
+                            <div class="bg-light text-warning p-2 rounded"><i class="bi bi-geo-alt fs-5"></i></div>
                             <span class="text-muted small fw-bold">LIVE</span>
                         </div>
                         <small class="text-muted fw-bold text-uppercase">Active Regions</small>
@@ -241,7 +238,7 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">analytics</span> Regional Needs Overview
+                        <i class="bi bi-graph-up text-primary"></i> Regional Needs Overview
                     </h5>
                     <div class="d-flex gap-3 small fw-bold text-muted">
                         <div class="d-flex align-items-center gap-1"><span class="bg-primary rounded-circle" style="width: 8px; height: 8px;"></span> Rice/Oil</div>
