@@ -222,18 +222,6 @@
                         <small class="text-muted">Receiving emergency assistance</small>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card border-0 rounded-4 overflow-hidden h-100 position-relative text-white">
-                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to right, rgba(0,0,0,0.7), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwM_vgw6x8mcM9XFfGatLQxSa9-YFn6INqcxVPNaHNAECRj4lzfhjZs6Ee_uVbLLE3o4PqAWTw0TqR-90sftfSCTk4lCYg02Nn0PexhFmuUu29Z7OfytYFOSgJTYyuX3R0bErlW_Z6hbVg2XoEu33PjKKa19XQ0vgLgt80e-Bea5RitiotqTtvjUO_45HXuxncPu9qL1iVTJaGhkDgvt64yN6wKwxaLpUEx3S8uCtsFoTQIAt4ftvijFXngJGIPKEudVKQIBHRIJbt'); background-size: cover; background-position: center;"></div>
-                        <div class="card-body position-relative d-flex flex-column justify-content-between p-4">
-                            <div>
-                                <span class="badge bg-danger rounded-pill mb-2">LIVE INCIDENT MAP</span>
-                                <h4 class="fw-bold">Active Risk Zones</h4>
-                            </div>
-                            <a class="text-white text-decoration-none small fw-bold" href="#">View Full Map →</a>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">
