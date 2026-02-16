@@ -7,8 +7,6 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>BNGRC - National Office for Risk and Disaster Management</title>
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
     <style>
         :root {
             --primary-color: #1152d4;
@@ -87,7 +85,6 @@
             background-color: #e9ecef;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -103,10 +100,10 @@
         </div>
         <nav class="nav flex-column px-3 mt-3 flex-grow-1 gap-1">
             <a class="nav-link active" href="#"><i class="bi bi-house-fill"></i> Home</a>
-            <a class="nav-link" href="#"><i class="bi bi-map"></i> Map</a>
+            <!-- <a class="nav-link" href="#"><i class="bi bi-map"></i> Map</a>
             <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Data</a>
             <a class="nav-link" href="#"><i class="bi bi-file-text"></i> Reports</a>
-            <a class="nav-link mt-auto" href="#"><i class="bi bi-gear"></i> Settings</a>
+            <a class="nav-link mt-auto" href="#"><i class="bi bi-gear"></i> Settings</a> -->
         </nav>
         <div class="p-3 border-top">
             <button class="btn btn-emergency w-100 d-flex align-items-center justify-content-center gap-2">
@@ -145,9 +142,14 @@
         <div class="container-fluid p-4">
             <div class="d-flex justify-content-between align-items-end mb-4">
                 <div>
-                    <h2 class="fw-black mb-0">Welcome, Administrator</h2>
+                    <h2 class="fw-black mb-0">Bienvenue, Administrateur</h2>
                     <p class="text-muted mb-0"><?= date('l, d M') ?> • <?= date('H:i') ?> local time</p>
                 </div>
+                <?php if (!empty($message) && strpos($message, 'indisponible') !== false) { ?>
+                <div class="alert alert-danger w-100 mt-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($message) ?>
+                </div>
+                <?php } ?>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
                         <i class="bi bi-plus-circle"></i> Record New Need
@@ -222,7 +224,7 @@
                         <small class="text-muted">Receiving emergency assistance</small>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="card border-0 rounded-4 overflow-hidden h-100 position-relative text-white">
                         <div class="position-absolute w-100 h-100" style="background: linear-gradient(to right, rgba(0,0,0,0.7), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwM_vgw6x8mcM9XFfGatLQxSa9-YFn6INqcxVPNaHNAECRj4lzfhjZs6Ee_uVbLLE3o4PqAWTw0TqR-90sftfSCTk4lCYg02Nn0PexhFmuUu29Z7OfytYFOSgJTYyuX3R0bErlW_Z6hbVg2XoEu33PjKKa19XQ0vgLgt80e-Bea5RitiotqTtvjUO_45HXuxncPu9qL1iVTJaGhkDgvt64yN6wKwxaLpUEx3S8uCtsFoTQIAt4ftvijFXngJGIPKEudVKQIBHRIJbt'); background-size: cover; background-position: center;"></div>
                         <div class="card-body position-relative d-flex flex-column justify-content-between p-4">
@@ -233,7 +235,7 @@
                             <a class="text-white text-decoration-none small fw-bold" href="#">View Full Map →</a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="card-header bg-white p-4 d-flex justify-content-between align-items-center">

@@ -4,7 +4,7 @@ namespace app\models;
 
 class Donateur extends BaseModel
 {
-    protected $table = 'donateur';
+    protected $table = 'bngrc_donateur';
     protected $primaryKey = 'id';
 
     /**
@@ -14,7 +14,7 @@ class Donateur extends BaseModel
     {
         $query = "SELECT d.*, COUNT(dn.id) as dons_count, SUM(dn.quantite) as total_quantite
                   FROM {$this->table} d 
-                  LEFT JOIN don dn ON d.id = dn.donateur_id 
+                  LEFT JOIN bngrc_don dn ON d.id = dn.donateur_id 
                   GROUP BY d.id 
                   ORDER BY d.nom ASC";
         return $this->db->fetchAll($query);
@@ -28,9 +28,9 @@ class Donateur extends BaseModel
         $donor = $this->getById($id);
         if ($donor) {
             $query = "SELECT d.*, v.nom as ville_nom, c.libelle as categorie_nom
-                      FROM don d
-                      INNER JOIN ville v ON d.ville_id = v.id
-                      INNER JOIN categorie c ON d.categorie_id = c.id
+                      FROM bngrc_don d
+                      INNER JOIN bngrc_ville v ON d.ville_id = v.id
+                      INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
                       WHERE d.donateur_id = :donateur_id
                       ORDER BY d.date_don DESC";
             $donor['donations'] = $this->db->fetchAll($query, [':donateur_id' => $id]);

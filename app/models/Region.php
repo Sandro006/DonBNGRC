@@ -4,7 +4,7 @@ namespace app\models;
 
 class Region extends BaseModel
 {
-    protected $table = 'region';
+    protected $table = 'bngrc_region';
     protected $primaryKey = 'id';
 
     /**
@@ -14,7 +14,7 @@ class Region extends BaseModel
     {
         $query = "SELECT r.*, COUNT(v.id) as cities_count 
                   FROM {$this->table} r 
-                  LEFT JOIN ville v ON r.id = v.region_id 
+                  LEFT JOIN bngrc_ville v ON r.id = v.region_id 
                   GROUP BY r.id 
                   ORDER BY r.nom ASC";
         return $this->db->fetchAll($query);
@@ -27,7 +27,7 @@ class Region extends BaseModel
     {
         $region = $this->getById($id);
         if ($region) {
-            $query = "SELECT * FROM ville WHERE region_id = :region_id ORDER BY nom ASC";
+            $query = "SELECT * FROM bngrc_ville WHERE region_id = :region_id ORDER BY nom ASC";
             $region['villes'] = $this->db->fetchAll($query, [':region_id' => $id]);
         }
         return $region;

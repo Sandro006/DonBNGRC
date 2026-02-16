@@ -1,6 +1,6 @@
 USE bngrc;
 
-CREATE TABLE dispatch (
+CREATE TABLE bngrc_dispatch (
     id INT AUTO_INCREMENT PRIMARY KEY,
     don_id INT NOT NULL,
     besoin_id INT NOT NULL,
@@ -9,11 +9,11 @@ CREATE TABLE dispatch (
 
     CONSTRAINT fk_dispatch_don
         FOREIGN KEY (don_id)
-        REFERENCES don(id)
+        REFERENCES bngrc_don(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_dispatch_besoin
         FOREIGN KEY (besoin_id)
-        REFERENCES besoin(id)
+        REFERENCES bngrc_besoin(id)
         ON DELETE CASCADE
 );
