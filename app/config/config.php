@@ -49,7 +49,7 @@ define('PROJECT_ROOT', __DIR__ . '/../..');
 $app->path(PROJECT_ROOT);
 
 // Core config variables
-$app->set('flight.base_url', '/Sarobidy/DonBNGRC/public/',);           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
+$app->set('flight.base_url', '/ETU004168/4168_4349_4123/public',);           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
 $app->set('flight.case_sensitive', false);    // Set true for case sensitive routes. Default: false
 $app->set('flight.log_errors', true);         // Log errors to file. Recommended: true in production
 $app->set('flight.handle_errors', false);     // Let Tracy handle errors if false. Set true to use Flight's error handler
@@ -74,10 +74,10 @@ return [
 	 **************************************/
 	'database' => [
 		// MySQL Example:
-		'host'     => 'localhost',      // Database host (e.g., 'localhost', 'db.example.com')
-		'dbname'   => 'bngrc',   // Database name (e.g., 'flightphp')
-		'user'     => 'root',  // Database user (e.g., 'root')
-		'password' => '',  // Database password (never commit real passwords)
+		'host'     => '172.16.7.131',      // Database host (e.g., 'localhost', 'db.example.com')
+		'dbname'   => 'db_s2_ETU004168',   // Database name (e.g., 'flightphp')
+		'user'     => 'ETU004168',  // Database user (e.g., 'root')
+		'password' => 'wylJNwr4',  // Database password (never commit real passwords)
 
 		// SQLite Example:
 		// 'file_path' => __DIR__ . $ds . '..' . $ds . 'database.sqlite', // Path to SQLite file

@@ -3,13 +3,13 @@
 -- =========================
 
 -- ===== INSERTION DES RÉGIONS =====
-INSERT INTO region (nom) VALUES
+INSERT INTO bngrc_region (nom) VALUES
 ('Analamanga'),
 ('Vakinakaratra'),
 ('Antsinana');
 
 -- ===== INSERTION DES VILLES =====
-INSERT INTO ville (region_id, nom, nombre_sinistres) VALUES
+INSERT INTO bngrc_ville (region_id, nom, nombre_sinistres) VALUES
 (1, 'Antananarivo', 5),
 (1, 'Itasy', 2),
 (2, 'Antsirabe', 8),
@@ -18,19 +18,19 @@ INSERT INTO ville (region_id, nom, nombre_sinistres) VALUES
 (3, 'Brikavilla', 4);
 
 -- ===== INSERTION DES CATÉGORIES =====
-INSERT INTO categorie (libelle) VALUES
+INSERT INTO bngrc_categorie (libelle) VALUES
 ('Nature'),
 ('Materiaux'),
 ('Argent');
 
 -- ===== INSERTION DES STATUTS =====
-INSERT INTO status (libelle) VALUES
+INSERT INTO bngrc_status (libelle) VALUES
 ('valider'),
 ('En cours de traitement'),
 ('Annulé');
 
 -- ===== INSERTION DES DONNATEURS =====
-INSERT INTO donateur (nom, telephone, email) VALUES
+INSERT INTO bngrc_donateur (nom, telephone, email) VALUES
 ('Jean Dupont', '06 12 34 56 78', 'jean.dupont@email.com'),
 ('Marie Martin', '06 23 45 67 89', 'marie.martin@email.com'),
 ('Association Solidarité France', '01 23 45 67 89', 'contact@solidarite-france.fr'),
@@ -43,7 +43,7 @@ INSERT INTO donateur (nom, telephone, email) VALUES
 ('Céline Moreau', '06 78 90 12 34', 'celine.moreau@email.com');
 
 -- ===== INSERTION DES BESOINS =====
-INSERT INTO besoin (ville_id, categorie_id, quantite, prix_unitaire, status_id) VALUES
+INSERT INTO bngrc_besoin (ville_id, categorie_id, quantite, prix_unitaire, status_id) VALUES
 (1, 1, 500, 2.50, 2),
 (1, 2, 200, 15.00, 1),
 (3, 1, 1000, 2.00, 3),
@@ -61,7 +61,7 @@ INSERT INTO besoin (ville_id, categorie_id, quantite, prix_unitaire, status_id) 
 (2, 3, 1500, 0.75, 3);
 
 -- ===== INSERTION DES DONS =====
-INSERT INTO don (ville_id, categorie_id, donateur_id, date_don, quantite) VALUES
+INSERT INTO bngrc_don (ville_id, categorie_id, donateur_id, date_don, quantite) VALUES
 (1, 1, 1, NOW(), 100),
 (1, 2, 2, NOW() - INTERVAL 5 DAY, 50),
 (3, 1, 3, NOW() - INTERVAL 10 DAY, 300),

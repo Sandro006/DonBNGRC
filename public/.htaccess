@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /Sarobidy/DonBNGRC/public/
+RewriteBase /4168_4349_4123/public/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

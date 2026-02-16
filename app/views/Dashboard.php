@@ -7,8 +7,6 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>BNGRC - National Office for Risk and Disaster Management</title>
     <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="<?php echo Flight::get('flight.base_url'); ?>/css/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
     <style>
         :root {
             --primary-color: #1152d4;
@@ -87,7 +85,6 @@
             background-color: #e9ecef;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -148,6 +145,11 @@
                     <h2 class="fw-black mb-0">Bienvenue, Administrateur</h2>
                     <p class="text-muted mb-0"><?= date('l, d M') ?> • <?= date('H:i') ?> local time</p>
                 </div>
+                <?php if (!empty($message) && strpos($message, 'indisponible') !== false) { ?>
+                <div class="alert alert-danger w-100 mt-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($message) ?>
+                </div>
+                <?php } ?>
                 <div class="d-flex gap-2">
                     <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2">
                         <i class="bi bi-plus-circle"></i> Record New Need

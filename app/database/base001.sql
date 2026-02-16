@@ -4,7 +4,7 @@ USE bngrc;
 -- =========================
 -- TABLE REGION
 -- =========================
-CREATE TABLE region (
+CREATE TABLE bngrc_region (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL UNIQUE
 );
@@ -12,7 +12,7 @@ CREATE TABLE region (
 -- =========================
 -- TABLE VILLE
 -- =========================
-CREATE TABLE ville (
+CREATE TABLE bngrc_ville (
     id INT AUTO_INCREMENT PRIMARY KEY,
     region_id INT NOT NULL,
     nom VARCHAR(100) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE ville (
 
     CONSTRAINT fk_ville_region
         FOREIGN KEY (region_id)
-        REFERENCES region(id)
+        REFERENCES bngrc_region(id)
         ON DELETE CASCADE
 );
 
@@ -28,7 +28,7 @@ CREATE TABLE ville (
 -- TABLE CATEGORIE
 -- (nature, materiaux, argent)
 -- =========================
-CREATE TABLE categorie (
+CREATE TABLE bngrc_categorie (
     id INT AUTO_INCREMENT PRIMARY KEY,
     libelle VARCHAR(100) NOT NULL UNIQUE
 );
@@ -36,7 +36,7 @@ CREATE TABLE categorie (
 -- =========================
 -- TABLE STATUS
 -- =========================
-CREATE TABLE status (
+CREATE TABLE bngrc_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
     libelle VARCHAR(50) NOT NULL UNIQUE
 );
@@ -44,7 +44,7 @@ CREATE TABLE status (
 -- =========================
 -- TABLE DONNATEUR
 -- =========================
-CREATE TABLE donateur (
+CREATE TABLE bngrc_donateur (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
     telephone VARCHAR(20),
@@ -54,7 +54,7 @@ CREATE TABLE donateur (
 -- =========================
 -- TABLE BESOIN
 -- =========================
-CREATE TABLE besoin (
+CREATE TABLE bngrc_besoin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ville_id INT NOT NULL,
     categorie_id INT NOT NULL,
@@ -64,22 +64,22 @@ CREATE TABLE besoin (
 
     CONSTRAINT fk_besoin_ville
         FOREIGN KEY (ville_id)
-        REFERENCES ville(id)
+        REFERENCES bngrc_ville(id)
         ON DELETE CASCADE,
 
     CONSTRAINT fk_besoin_categorie
         FOREIGN KEY (categorie_id)
-        REFERENCES categorie(id),
+        REFERENCES bngrc_categorie(id),
 
     CONSTRAINT fk_besoin_status
         FOREIGN KEY (status_id)
-        REFERENCES status(id)
+        REFERENCES bngrc_status(id)
 );
 
 -- =========================
 -- TABLE DON
 -- =========================
-CREATE TABLE don (
+CREATE TABLE bngrc_don (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ville_id INT NOT NULL,
     categorie_id INT NOT NULL,
@@ -89,14 +89,14 @@ CREATE TABLE don (
 
     CONSTRAINT fk_don_ville
         FOREIGN KEY (ville_id)
-        REFERENCES ville(id),
+        REFERENCES bngrc_ville(id),
 
     CONSTRAINT fk_don_categorie
         FOREIGN KEY (categorie_id)
-        REFERENCES categorie(id),
+        REFERENCES bngrc_categorie(id),
 
     CONSTRAINT fk_don_donateur
         FOREIGN KEY (donateur_id)
-        REFERENCES donateur(id)
+        REFERENCES bngrc_donateur(id)
 );
 
