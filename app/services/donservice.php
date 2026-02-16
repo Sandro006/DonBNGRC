@@ -35,6 +35,11 @@ class DonService
         return $this->model->getStatisticsByCategory();
     }
 
+    public function getByCity($ville_id)
+    {
+        return $this->model->getByCity($ville_id);
+    }
+
     public function getStatisticsByCity()
     {
         return $this->model->getStatisticsByCity();

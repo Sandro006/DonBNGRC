@@ -289,7 +289,14 @@
                                         <span class="badge bg-primary-subtle text-primary border-0 text-uppercase" style="font-size: 10px;">Stable</span>
                                     <?php } ?>
                                 </td>
-                                <td class="text-end pe-4"><button class="btn btn-link text-decoration-none fw-bold text-primary">Details</button></td>
+                                <td class="text-end pe-4">
+                                    <?php $vid = $region['ville_id'] ?? null; ?>
+                                    <?php if (!empty($vid) && is_numeric($vid)) { ?>
+                                        <a class="btn btn-link text-decoration-none fw-bold text-primary" href="<?= Flight::get('flight.base_url') ?>/ville/<?= htmlspecialchars($vid) ?>">Détails</a>
+                                    <?php } else { ?>
+                                        <span class="text-muted small">—</span>
+                                    <?php } ?>
+                                </td>
                             </tr>
                             <?php }
                             } else { ?>

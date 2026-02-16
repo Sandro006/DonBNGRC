@@ -6,7 +6,10 @@ use flight\Engine;
 use flight\net\Router;
 use app\models\Categorie;
 use app\services\DonService;
-use app\services\besoinservice;
+use app\services\BesoinService;
+use app\services\VilleService;
+use app\models\Donateur;
+use app\models\Don;
 
 
 /** 
@@ -127,6 +130,114 @@ $router->group('', function (Router $router) use ($app) {
 
 	$router->get('/hello-world/@name', function ($name) {
 		echo '<h1>Hello world! Oh hey ' . $name . '!</h1>';
+	});
+
+	// City details: donations & needs for a specific city
+	$router->get('/ville/@id:[0-9]+', function ($id) use ($app) {
+		try {
+			$donService = new DonService();
+			$besoinService = new BesoinService();
+			$villeService = new VilleService();
+
+			$ville = $villeService->getById($id);
+			if (empty($ville)) {
+				$app->halt(404, 'Ville introuvable');
+			}
+
+			$dons = $donService->getByCity($id);
+			$besoins = $besoinService->getByCity($id);
+
+			$app->render('CityDetails', [
+				'ville' => $ville,
+				'dons' => $dons,
+				'besoins' => $besoins,
+			]);
+		} catch (\Throwable $e) {
+			error_log('City details error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur interne');
+		}
+	});
+
+	// Add donation: show form
+	$router->get('/don/ajouter', function () use ($app) {
+		try {
+			$categorieModel = new Categorie();
+			$donateurModel = new Donateur();
+			$categories = $categorieModel->getAll();
+			$donateurs = $donateurModel->getAll();
+			$req = $app->request();
+			$ville_id = !empty($req->query->ville_id) ? $req->query->ville_id : null;
+
+			$app->render('AddDon', [
+				'categories' => $categories,
+				'donateurs' => $donateurs,
+				'ville_id' => $ville_id,
+			]);
+		} catch (\Throwable $e) {
+			error_log('AddDon GET error: ' . $e->getMessage());
+			$app->halt(500, 'Erreur interne');
+		}
+	});
+
+	// Add donation: handle form submission
+	$router->post('/don/ajouter', function () use ($app) {
+		$req = $app->request();
+		$data = [];
+		$data['ville_id'] = !empty($req->data->ville_id) ? $req->data->ville_id : null;
+		$data['categorie_id'] = !empty($req->data->categorie_id) ? $req->data->categorie_id : null;
+		$data['quantite'] = !empty($req->data->quantite) ? (int)$req->data->quantite : 0;
+		// Normalize datetime-local (YYYY-MM-DDTHH:MM) to SQL DATETIME
+		$dateInput = $req->data->date_don ?? null;
+		if (!empty($dateInput)) {
+			$dateInput = str_replace('T', ' ', $dateInput);
+			if (strlen($dateInput) === 16) { // no seconds
+				$dateInput .= ':00';
+			}
+			$data['date_don'] = $dateInput;
+		} else {
+			$data['date_don'] = date('Y-m-d H:i:s');
+		}
+
+		$donateur_id = $req->data->donateur_id ?? null;
+		// Basic validation: require ville and categorie
+		if (empty($data['ville_id']) || empty($data['categorie_id'])) {
+			error_log('AddDon POST validation failed: ville_id or categorie_id missing');
+			$app->halt(400, 'Ville et catégorie sont requises');
+		}
+
+		try {
+			// If donor not selected, create new donor from provided fields
+			if (empty($donateur_id)) {
+				$donateurModel = new Donateur();
+				$donateurData = [
+					'nom' => $req->data->donateur_nom ?? 'Anonyme',
+					'telephone' => $req->data->donateur_telephone ?? null,
+					'email' => $req->data->donateur_email ?? null,
+				];
+				$donateur_id = $donateurModel->create($donateurData);
+			}
+
+			$data['donateur_id'] = $donateur_id;
+
+			$donModel = new Don();
+			$donModel->create($data);
+		} catch (\Throwable $e) {
+			error_log('AddDon POST error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+			$app->halt(500, 'Erreur interne lors de l\'enregistrement');
+		}
+
+		// Always redirect to city details when possible.
+		$redirectVille = $data['ville_id'];
+		// If ville_id not provided but the form had a libre field (optional), use it when numeric
+		if (empty($redirectVille) && !empty($req->data->ville_libre) && is_numeric($req->data->ville_libre)) {
+			$redirectVille = $req->data->ville_libre;
+		}
+		
+		if (!empty($redirectVille)) {
+			$app->redirect('/ville/' . $redirectVille);
+		} else {
+			$app->redirect('/');
+		}
 	});
 
 	$router->group('/api', function () use ($router) {

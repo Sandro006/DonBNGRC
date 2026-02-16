@@ -43,6 +43,11 @@ class BesoinService
         return $this->model->getStatisticsByCategory();
     }
 
+    public function getByCity($ville_id)
+    {
+        return $this->model->getByCity($ville_id);
+    }
+
     public function count()
     {
         return $this->model->count();

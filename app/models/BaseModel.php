@@ -110,7 +110,7 @@ class BaseModel
 
         $this->db->runQuery($query, $params);
         
-        return $this->db->getLastInsertId();
+        return $this->db->lastInsertId();
     }
 
     /**
