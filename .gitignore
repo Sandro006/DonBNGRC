@@ -1,1 +1,4 @@
 .runway-creds.json
+.htaccess
+public/.htaccess
+app/config/config.php
