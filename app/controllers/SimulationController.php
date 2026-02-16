@@ -2,19 +2,16 @@
 
 namespace app\controllers;
 
-use flight\Engine;
 use app\services\SimulationService;
 use app\models\Don;
 use Flight;
 
 class SimulationController
 {
-    protected Engine $app;
     protected SimulationService $simulationService;
 
-    public function __construct($app)
+    public function __construct()
     {
-        $this->app = $app;
         $this->simulationService = new SimulationService();
     }
 
@@ -27,13 +24,13 @@ class SimulationController
             $donModel = new Don();
             $dons = $donModel->getAllWithDetails();
 
-            $this->app->render('Simulation', [
+            Flight::render('Simulation', [
                 'dons' => $dons,
                 'is_list' => true,
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController index error: ' . $e->getMessage());
-            $this->app->halt(500, 'Erreur interne');
+            Flight::halt(500, 'Erreur interne');
         }
     }
 
@@ -47,20 +44,20 @@ class SimulationController
             $don = $donModel->getByIdWithDetails($id);
 
             if (empty($don)) {
-                $this->app->halt(404, 'Don introuvable');
+                Flight::halt(404, 'Don introuvable');
             }
 
             // Get the simulation preview
             $simulation = $this->simulationService->simulateDispatch($id);
 
-            $this->app->render('Simulation', [
+            Flight::render('Simulation', [
                 'don' => $don,
                 'simulation' => $simulation,
                 'don_id' => $id,
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController show error: ' . $e->getMessage());
-            $this->app->halt(500, 'Erreur interne');
+            Flight::halt(500, 'Erreur interne');
         }
     }
 
@@ -76,16 +73,16 @@ class SimulationController
             $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                Flight::json(['success' => false, 'error' => 'don_id requis'], 400);
+                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $simulation = $this->simulationService->simulateDispatch($don_id);
 
-            Flight::json($simulation, $simulation['success'] ? 200 : 400);
+            Flight::app()->json($simulation, $simulation['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiSimulate error: ' . $e->getMessage());
-            Flight::json(['success' => false, 'error' => $e->getMessage()], 500);
+            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -101,16 +98,16 @@ class SimulationController
             $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                Flight::json(['success' => false, 'error' => 'don_id requis'], 400);
+                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $result = $this->simulationService->validateDispatch($don_id);
 
-            Flight::json($result, $result['success'] ? 200 : 400);
+            Flight::app()->json($result, $result['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiValidate error: ' . $e->getMessage());
-            Flight::json(['success' => false, 'error' => $e->getMessage()], 500);
+            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 }
