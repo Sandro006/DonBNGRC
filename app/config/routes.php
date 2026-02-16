@@ -4,6 +4,7 @@ use app\controllers\ApiExampleController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
+use app\models\Categorie;
 
 /** 
  * @var Router $router 
@@ -14,7 +15,7 @@ use flight\net\Router;
 $router->group('', function (Router $router) use ($app) {
 
 	$router->get('/', function () use ($app) {
-		// Dashboard: collect summary data from services
+		// Dashboard: collect summary data from services and apply optional filters
 		try {
 			$donService = new \app\services\DonService();
 			$villeService = new \app\services\VilleService();
@@ -23,20 +24,72 @@ $router->group('', function (Router $router) use ($app) {
 			$don_stats = $donService->getStatistics();
 			$besoin_stats = $besoinService->getStatistics();
 			$cities = $villeService->getAll();
-			$recent_dons = $donService->getRecent(10);
-			$recent_besoins = $besoinService->getAllWithDetails();
 
-			$app->render('welcome', [
+			// categories via model
+			$categorieModel = new Categorie();
+			$categories = $categorieModel->getAllWithUsageCount();
+
+			// get all data then filter in PHP based on query params
+			$all_dons = $donService->getAllWithDetails();
+			$all_besoins = $besoinService->getAllWithDetails();
+
+			$req = $app->request();
+			$qs = $req->query;
+			$start = !empty($qs['start_date']) ? $qs['start_date'] : null;
+			$end = !empty($qs['end_date']) ? $qs['end_date'] : null;
+			$ville_id = !empty($qs['ville_id']) ? $qs['ville_id'] : null;
+			$categorie_id = !empty($qs['categorie_id']) ? $qs['categorie_id'] : null;
+
+			$filterDons = array_filter($all_dons, function ($d) use ($start, $end, $ville_id, $categorie_id) {
+				if ($start && $end) {
+					$ts = !empty($d['date_don']) ? strtotime($d['date_don']) : null;
+					if (!$ts) return false;
+					$s = strtotime($start);
+					$e = strtotime($end) + 24 * 3600 - 1;
+					if ($ts < $s || $ts > $e) return false;
+				}
+				if ($ville_id) {
+					if (empty($d['ville_id']) || (string)$d['ville_id'] !== (string)$ville_id) return false;
+				}
+				if ($categorie_id) {
+					if (empty($d['categorie_id']) || (string)$d['categorie_id'] !== (string)$categorie_id) return false;
+				}
+				return true;
+			});
+
+			$filterBesoins = array_filter($all_besoins, function ($b) use ($start, $end, $ville_id, $categorie_id) {
+				if ($start && $end) {
+					$ts = !empty($b['created_at']) ? strtotime($b['created_at']) : (!empty($b['date']) ? strtotime($b['date']) : null);
+					if ($ts) {
+						$s = strtotime($start);
+						$e = strtotime($end) + 24 * 3600 - 1;
+						if ($ts < $s || $ts > $e) return false;
+					}
+				}
+				if ($ville_id) {
+					if (empty($b['ville_id']) || (string)$b['ville_id'] !== (string)$ville_id) return false;
+				}
+				if ($categorie_id) {
+					if (empty($b['categorie_id']) || (string)$b['categorie_id'] !== (string)$categorie_id) return false;
+				}
+				return true;
+			});
+
+			// slice recent for display
+			$recent_dons = array_slice(array_values($filterDons), 0, 20);
+			$recent_besoins = array_slice(array_values($filterBesoins), 0, 20);
+
+			$app->render('Dashboard', [
 				'message' => 'Tableau de bord',
 				'don_stats' => $don_stats,
 				'besoin_stats' => $besoin_stats,
 				'cities' => $cities,
-				'recent_dons' => $recent_dons,
-				'recent_besoins' => $recent_besoins,
+				'categories' => $categories,
+				'dons' => $recent_dons,
+				'besoins' => $recent_besoins,
 			]);
 		} catch (\Throwable $e) {
-			// Fallback to a simple message if services/db are not available
-			$app->render('welcome', ['message' => 'You are gonna do great things! (dashboard unavailable)']);
+			$app->render('Dashboard', ['message' => 'Dashboard indisponible: erreur interne']);
 		}
 	});
 
