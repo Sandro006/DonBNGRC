@@ -5,10 +5,6 @@ use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
 use app\models\Categorie;
-use app\models\Donateur;
-use app\services\VilleService;
-use app\services\BesoinService;
-use app\services\DonService;
 
 /** 
  * @var Router $router 
@@ -18,31 +14,28 @@ use app\services\DonService;
 // This wraps all routes in the group with the SecurityHeadersMiddleware
 $router->group('', function (Router $router) use ($app) {
 
-<<<<<<< Updated upstream
 	$router->get('/', function () use ($app) {
-		// Dashboard: collect summary data from services
+		// Dashboard: collect summary data from services and apply optional filters
 		try {
 			$donService = new \app\services\DonService();
 			$villeService = new \app\services\VilleService();
 			$besoinService = new \app\services\BesoinService();
-=======
-	$router->get('/', function() use ($app) {
-		// Dashboard: collect summary data from services and apply optional filters
-		try {
-			$donService = new DonService();
-			$villeService = new VilleService();
-			$besoinService = new BesoinService();
->>>>>>> Stashed changes
 
 			$don_stats = $donService->getStatistics();
 			$besoin_stats = $besoinService->getStatistics();
 			$cities = $villeService->getAll();
-<<<<<<< Updated upstream
-			$recent_dons = $donService->getRecent(10);
-			$recent_besoins = $besoinService->getAllWithDetails();
 
-			$app->render('welcome', [
-=======
+			// Regional statistics for overview table
+			$regional_stats = $besoinService->getStatisticsByRegion();
+			$active_regions_count = $besoinService->getActiveRegionsCount();
+			$category_stats = $besoinService->getStatisticsByCategory();
+
+			// Calculate global coverage percentage (donations vs needs)
+			$total_dons_qty = (int)($don_stats['total_quantity'] ?? 0);
+			$total_besoins_qty = (int)($besoin_stats['total_quantity'] ?? 0);
+			$coverage_percent = $total_besoins_qty > 0 
+				? min(100, round(($total_dons_qty / $total_besoins_qty) * 100)) 
+				: 0;
 
 			// categories via model
 			$categorieModel = new Categorie();
@@ -59,12 +52,12 @@ $router->group('', function (Router $router) use ($app) {
 			$ville_id = !empty($qs['ville_id']) ? $qs['ville_id'] : null;
 			$categorie_id = !empty($qs['categorie_id']) ? $qs['categorie_id'] : null;
 
-			$filterDons = array_filter($all_dons, function($d) use ($start, $end, $ville_id, $categorie_id) {
+			$filterDons = array_filter($all_dons, function ($d) use ($start, $end, $ville_id, $categorie_id) {
 				if ($start && $end) {
 					$ts = !empty($d['date_don']) ? strtotime($d['date_don']) : null;
 					if (!$ts) return false;
 					$s = strtotime($start);
-					$e = strtotime($end) + 24*3600 - 1;
+					$e = strtotime($end) + 24 * 3600 - 1;
 					if ($ts < $s || $ts > $e) return false;
 				}
 				if ($ville_id) {
@@ -76,12 +69,12 @@ $router->group('', function (Router $router) use ($app) {
 				return true;
 			});
 
-			$filterBesoins = array_filter($all_besoins, function($b) use ($start, $end, $ville_id, $categorie_id) {
+			$filterBesoins = array_filter($all_besoins, function ($b) use ($start, $end, $ville_id, $categorie_id) {
 				if ($start && $end) {
-					$ts = !empty($b['created_at']) ? strtotime($b['created_at']) : ( !empty($b['date']) ? strtotime($b['date']) : null );
+					$ts = !empty($b['created_at']) ? strtotime($b['created_at']) : (!empty($b['date']) ? strtotime($b['date']) : null);
 					if ($ts) {
 						$s = strtotime($start);
-						$e = strtotime($end) + 24*3600 - 1;
+						$e = strtotime($end) + 24 * 3600 - 1;
 						if ($ts < $s || $ts > $e) return false;
 					}
 				}
@@ -99,69 +92,20 @@ $router->group('', function (Router $router) use ($app) {
 			$recent_besoins = array_slice(array_values($filterBesoins), 0, 20);
 
 			$app->render('Dashboard', [
->>>>>>> Stashed changes
 				'message' => 'Tableau de bord',
 				'don_stats' => $don_stats,
 				'besoin_stats' => $besoin_stats,
 				'cities' => $cities,
-<<<<<<< Updated upstream
-				'recent_dons' => $recent_dons,
-				'recent_besoins' => $recent_besoins,
-			]);
-		} catch (\Throwable $e) {
-			// Fallback to a simple message if services/db are not available
-			$app->render('welcome', ['message' => 'You are gonna do great things! (dashboard unavailable)']);
-=======
 				'categories' => $categories,
 				'dons' => $recent_dons,
 				'besoins' => $recent_besoins,
+				'regional_stats' => $regional_stats,
+				'active_regions_count' => $active_regions_count,
+				'coverage_percent' => $coverage_percent,
+				'category_stats' => $category_stats,
 			]);
 		} catch (\Throwable $e) {
 			$app->render('Dashboard', ['message' => 'Dashboard indisponible: erreur interne']);
-		}
-	});
-
-	// Route pour afficher le formulaire d'ajout de don
-	$router->get('/don/ajouter', function() use ($app) {
-		try {
-			$villeService = new VilleService();
-			$categorieModel = new Categorie();
-			$donnateurModel = new Donateur();
-
-			$cities = $villeService->getAll();
-			$categories = $categorieModel->getAllWithUsageCount();
-			$donateurs = $donnateurModel->getAll();
-
-			$app->render('ajoutDon', [
-				'cities' => $cities,
-				'categories' => $categories,
-				'donateurs' => $donateurs,
-			]);
-		} catch (\Throwable $e) {
-			$app->halt(500, 'Erreur lors du chargement du formulaire');
-		}
-	});
-
-	// Route pour traiter l'ajout de don
-	$router->post('/don/store', function() use ($app) {
-		try {
-			$donModel = new \app\models\Don();
-			$data = $app->request()->data;
-
-			$donModel->create([
-				'donateur_id' => $data->donateur_id,
-				'ville_id' => $data->ville_id,
-				'categorie_id' => $data->categorie_id,
-				'quantite' => $data->quantite,
-				'date_don' => $data->date_don,
-				'description' => $data->description ?? '',
-			]);
-
-			// Redirection vers le dashboard avec message de succès
-			$app->redirect('/DonBNGRC/public/');
-		} catch (\Throwable $e) {
-			$app->halt(500, 'Erreur lors de l\'ajout du don: ' . $e->getMessage());
->>>>>>> Stashed changes
 		}
 	});
 

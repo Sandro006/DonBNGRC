@@ -37,7 +37,6 @@
         <tr>
             <th>ID</th>
             <th>Date</th>
-            <th>Donateur</th>
             <th>Ville</th>
             <th>Quantité</th>
             <th>Catégorie</th>
@@ -46,7 +45,6 @@
             <tr>
                 <td><?= htmlspecialchars($d['id'] ?? '') ?></td>
                 <td><?= htmlspecialchars($d['date_don'] ?? '') ?></td>
-                <td><?= htmlspecialchars($d['donateur_nom'] ?? '') ?></td>
                 <td><?= htmlspecialchars($d['ville_nom'] ?? '') ?></td>
                 <td><?= htmlspecialchars($d['quantite'] ?? '') ?></td>
                 <td><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></td>
