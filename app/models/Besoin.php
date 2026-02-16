@@ -121,4 +121,60 @@ class Besoin extends BaseModel
                   FROM {$this->table}";
         return $this->db->fetchRow($query);
     }
+
+    /**
+     * Get needs statistics by region with category breakdown
+     */
+    public function getStatisticsByRegion()
+    {
+        $query = "SELECT 
+                  r.id as region_id, r.nom as region_nom,
+                  v.id as ville_id, v.nom as ville_nom,
+                  COUNT(b.id) as besoins_count,
+                  SUM(b.quantite) as total_quantity,
+                  SUM(b.quantite * b.prix_unitaire) as total_amount,
+                  SUM(CASE WHEN c.libelle LIKE '%nature%' OR c.libelle LIKE '%riz%' OR c.libelle LIKE '%huile%' THEN b.quantite ELSE 0 END) as nature_qty,
+                  SUM(CASE WHEN c.libelle LIKE '%materiau%' OR c.libelle LIKE '%tole%' OR c.libelle LIKE '%clou%' THEN b.quantite ELSE 0 END) as materiel_qty,
+                  SUM(CASE WHEN c.libelle LIKE '%argent%' OR c.libelle LIKE '%fond%' THEN b.quantite * b.prix_unitaire ELSE 0 END) as fonds_amount,
+                  MAX(CASE WHEN s.libelle LIKE '%urgent%' OR s.libelle LIKE '%critique%' THEN 1 ELSE 0 END) as is_critical
+                  FROM region r
+                  INNER JOIN ville v ON r.id = v.region_id
+                  LEFT JOIN {$this->table} b ON v.id = b.ville_id
+                  LEFT JOIN categorie c ON b.categorie_id = c.id
+                  LEFT JOIN status s ON b.status_id = s.id
+                  GROUP BY r.id, r.nom, v.id, v.nom
+                  HAVING besoins_count > 0
+                  ORDER BY total_amount DESC";
+        return $this->db->fetchAll($query);
+    }
+
+    /**
+     * Get count of active regions (regions with needs)
+     */
+    public function getActiveRegionsCount()
+    {
+        $query = "SELECT COUNT(DISTINCT r.id) as count
+                  FROM region r
+                  INNER JOIN ville v ON r.id = v.region_id
+                  INNER JOIN {$this->table} b ON v.id = b.ville_id";
+        $result = $this->db->fetchRow($query);
+        return (int)($result['count'] ?? 0);
+    }
+
+    /**
+     * Get statistics by category
+     */
+    public function getStatisticsByCategory()
+    {
+        $query = "SELECT 
+                  c.id, c.libelle,
+                  COUNT(b.id) as besoins_count,
+                  SUM(b.quantite) as total_quantity,
+                  SUM(b.quantite * b.prix_unitaire) as total_amount
+                  FROM categorie c
+                  LEFT JOIN {$this->table} b ON c.id = b.categorie_id
+                  GROUP BY c.id, c.libelle
+                  ORDER BY total_amount DESC";
+        return $this->db->fetchAll($query);
+    }
 }

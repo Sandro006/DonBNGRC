@@ -28,6 +28,21 @@ class BesoinService
         return $this->model->getStatistics();
     }
 
+    public function getStatisticsByRegion()
+    {
+        return $this->model->getStatisticsByRegion();
+    }
+
+    public function getActiveRegionsCount()
+    {
+        return $this->model->getActiveRegionsCount();
+    }
+
+    public function getStatisticsByCategory()
+    {
+        return $this->model->getStatisticsByCategory();
+    }
+
     public function count()
     {
         return $this->model->count();
