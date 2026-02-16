@@ -4,7 +4,7 @@ namespace app\models;
 
 class Don extends BaseModel
 {
-    protected $table = 'bngrc_don';
+    protected $table = 'don';
     protected $primaryKey = 'id';
 
     /**
@@ -17,10 +17,10 @@ class Don extends BaseModel
                   c.libelle as categorie_nom,
                   dn.nom as donateur_nom, dn.email as donateur_email, dn.telephone as donateur_telephone
                   FROM {$this->table} d
-                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                  INNER JOIN bngrc_region r ON v.region_id = r.id
-                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
-                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  INNER JOIN ville v ON d.ville_id = v.id
+                  INNER JOIN region r ON v.region_id = r.id
+                  INNER JOIN categorie c ON d.categorie_id = c.id
+                  INNER JOIN donateur dn ON d.donateur_id = dn.id
                   ORDER BY d.date_don DESC, d.id DESC";
         return $this->db->fetchAll($query);
     }
@@ -35,10 +35,10 @@ class Don extends BaseModel
                   c.libelle as categorie_nom,
                   dn.nom as donateur_nom, dn.email as donateur_email, dn.telephone as donateur_telephone
                   FROM {$this->table} d
-                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                  INNER JOIN bngrc_region r ON v.region_id = r.id
-                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
-                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  INNER JOIN ville v ON d.ville_id = v.id
+                  INNER JOIN region r ON v.region_id = r.id
+                  INNER JOIN categorie c ON d.categorie_id = c.id
+                  INNER JOIN donateur dn ON d.donateur_id = dn.id
                   WHERE d.id = :id";
         return $this->db->fetchRow($query, [':id' => $id]);
     }
@@ -52,8 +52,8 @@ class Don extends BaseModel
                   c.libelle as categorie_nom,
                   dn.nom as donateur_nom
                   FROM {$this->table} d
-                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
-                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  INNER JOIN categorie c ON d.categorie_id = c.id
+                  INNER JOIN donateur dn ON d.donateur_id = dn.id
                   WHERE d.ville_id = :ville_id
                   ORDER BY d.date_don DESC";
         return $this->db->fetchAll($query, [':ville_id' => $ville_id]);
@@ -68,8 +68,8 @@ class Don extends BaseModel
                   v.nom as ville_nom,
                   c.libelle as categorie_nom
                   FROM {$this->table} d
-                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
+                  INNER JOIN ville v ON d.ville_id = v.id
+                  INNER JOIN categorie c ON d.categorie_id = c.id
                   WHERE d.donateur_id = :donateur_id
                   ORDER BY d.date_don DESC";
         return $this->db->fetchAll($query, [':donateur_id' => $donateur_id]);
@@ -84,8 +84,8 @@ class Don extends BaseModel
                   v.nom as ville_nom,
                   dn.nom as donateur_nom
                   FROM {$this->table} d
-                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  INNER JOIN ville v ON d.ville_id = v.id
+                  INNER JOIN donateur dn ON d.donateur_id = dn.id
                   WHERE d.categorie_id = :categorie_id
                   ORDER BY d.date_don DESC";
         return $this->db->fetchAll($query, [':categorie_id' => $categorie_id]);
@@ -101,9 +101,9 @@ class Don extends BaseModel
                   c.libelle as categorie_nom,
                   dn.nom as donateur_nom
                   FROM {$this->table} d
-                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
-                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  INNER JOIN ville v ON d.ville_id = v.id
+                  INNER JOIN categorie c ON d.categorie_id = c.id
+                  INNER JOIN donateur dn ON d.donateur_id = dn.id
                   WHERE DATE(d.date_don) BETWEEN :start_date AND :end_date
                   ORDER BY d.date_don DESC";
         return $this->db->fetchAll($query, [
@@ -144,7 +144,7 @@ class Don extends BaseModel
                   c.id, c.libelle,
                   COUNT(d.id) as dons_count,
                   SUM(d.quantite) as total_quantity
-                  FROM bngrc_categorie c
+                  FROM categorie c
                   LEFT JOIN {$this->table} d ON c.id = d.categorie_id
                   GROUP BY c.id, c.libelle
                   ORDER BY total_quantity DESC";
@@ -160,8 +160,8 @@ class Don extends BaseModel
                   v.id, v.nom, r.nom as region_nom,
                   COUNT(d.id) as dons_count,
                   SUM(d.quantite) as total_quantity
-                  FROM bngrc_ville v
-                  INNER JOIN bngrc_region r ON v.region_id = r.id
+                  FROM ville v
+                  INNER JOIN region r ON v.region_id = r.id
                   LEFT JOIN {$this->table} d ON v.id = d.ville_id
                   GROUP BY v.id, v.nom, r.nom
                   ORDER BY total_quantity DESC";

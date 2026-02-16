@@ -5,9 +5,6 @@ use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
 use app\models\Categorie;
-use app\services\DonService;
-use app\services\besoinservice;
-
 
 /** 
  * @var Router $router 
@@ -20,9 +17,9 @@ $router->group('', function (Router $router) use ($app) {
 	$router->get('/', function () use ($app) {
 		// Dashboard: collect summary data from services and apply optional filters
 		try {
-			$donService = new app\services\DonService();
-			$villeService = new app\services\VilleService();
-			$besoinService = new app\services\BesoinService();
+			$donService = new \app\services\DonService();
+			$villeService = new \app\services\VilleService();
+			$besoinService = new \app\services\BesoinService();
 
 			$don_stats = $donService->getStatistics();
 			$besoin_stats = $besoinService->getStatistics();
@@ -108,20 +105,7 @@ $router->group('', function (Router $router) use ($app) {
 				'category_stats' => $category_stats,
 			]);
 		} catch (\Throwable $e) {
-			error_log('Dashboard error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-			$app->render('Dashboard', [
-				'message' => 'Dashboard indisponible: ' . $e->getMessage(),
-				'don_stats' => [],
-				'besoin_stats' => [],
-				'cities' => [],
-				'categories' => [],
-				'dons' => [],
-				'besoins' => [],
-				'regional_stats' => [],
-				'active_regions_count' => 0,
-				'coverage_percent' => 0,
-				'category_stats' => [],
-			]);
+			$app->render('Dashboard', ['message' => 'Dashboard indisponible: erreur interne']);
 		}
 	});
 
