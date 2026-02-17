@@ -52,7 +52,6 @@ $router->group('', function (Router $router) {
 	$router->get('/don-global/simulation', [DonGlobalController::class, 'simulation']);
 	$router->post('/don-global/simulation', [DonGlobalController::class, 'simulation']);
 	$router->post('/don-global/execute-distribution', [DonGlobalController::class, 'executeDistribution']);
-	$router->post('/don-global/reset-distribution', [DonGlobalController::class, 'resetDistribution']);
 	$router->post('/don-global/distribution-manuelle', [DonGlobalController::class, 'manualDistribution']);
 
 	// Besoins routes - Gestion des besoins identifiés
