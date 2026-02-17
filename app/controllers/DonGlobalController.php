@@ -154,7 +154,7 @@ class DonGlobalController
                 } else {
                     // Redirect to don-global index with success message
                     $this->app->redirect(
-                        Flight::get('flight.base_url') . '/don-global?success=1&id=' . $donGlobalId
+                        '/don-global?success=1&id=' . $donGlobalId
                     );
                 }
             } else {
@@ -247,7 +247,7 @@ class DonGlobalController
                 
                 // Redirect with success message
                 $this->app->redirect(
-                    Flight::get('flight.base_url') . '/don-global/simulation?' . 
+                    '/don-global/simulation?' . 
                     http_build_query([
                         'methode' => $methode, 
                         'executed' => '1',
@@ -308,6 +308,104 @@ class DonGlobalController
             $this->app->json([
                 'success' => false,
                 'message' => "Erreur lors de la distribution: " . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Reset all distributions (delete executed distributions)
+     */
+    public function resetDistribution()
+    {
+        try {
+            // Parse JSON input from request body
+            $rawInput = file_get_contents('php://input');
+            $data = json_decode($rawInput, true) ?? [];
+            
+            // Get all recent distributions
+            $distributions = $this->distributionModel->getAllWithDetails();
+            
+            if (empty($distributions)) {
+                $this->app->json([
+                    'success' => true,
+                    'message' => 'Aucune distribution à réinitialiser',
+                    'result' => [
+                        'nombre_distributions_supprimees' => 0
+                    ]
+                ]);
+                return;
+            }
+            
+            // Delete all distributions
+            $nombreSupprimees = 0;
+            $donsMisAJour = [];
+            $besoinsMisAJour = [];
+            
+            foreach ($distributions as $distribution) {
+                try {
+                    // Get details before deleting
+                    $distributionDetails = $this->distributionModel->getById($distribution['id']);
+                    
+                    if ($distributionDetails) {
+                        // Record which donations and needs were affected
+                        $donsMisAJour[$distributionDetails['don_global_id']] = true;
+                        $besoinsMisAJour[$distributionDetails['besoin_id']] = true;
+                        
+                        // Delete the distribution
+                        $result = $this->distributionModel->delete($distribution['id']);
+                        if ($result) {
+                            $nombreSupprimees++;
+                        }
+                    }
+                } catch (\Exception $e) {
+                    error_log('Erreur lors de la suppression de la distribution ' . $distribution['id'] . ': ' . $e->getMessage());
+                }
+            }
+            
+            // Ensure all affected donations and needs are reset to proper status
+            foreach (array_keys($donsMisAJour) as $don_id) {
+                try {
+                    $donGlobalModel = new DonGlobal();
+                    $remainingQuantity = $donGlobalModel->getRemainingQuantity($don_id);
+                    
+                    if ($remainingQuantity && $remainingQuantity['quantite_distribuee'] == 0) {
+                        $donGlobalModel->updateDistributionStatus($don_id, 'disponible');
+                    }
+                } catch (\Exception $e) {
+                    error_log('Erreur lors de la mise à jour du don ' . $don_id . ': ' . $e->getMessage());
+                }
+            }
+            
+            foreach (array_keys($besoinsMisAJour) as $besoin_id) {
+                try {
+                    $besoinModel = new \app\models\Besoin();
+                    
+                    // Check if any distributions remain for this need
+                    $query = "SELECT COALESCE(SUM(quantite_distribuee), 0) as quantite_recue 
+                              FROM bngrc_distribution 
+                              WHERE besoin_id = :besoin_id";
+                    $result = $this->app->db()->fetchRow($query, [':besoin_id' => $besoin_id]);
+                    
+                    if ($result && $result['quantite_recue'] == 0) {
+                        $besoinModel->update($besoin_id, ['status_id' => 1]);
+                    }
+                } catch (\Exception $e) {
+                    error_log('Erreur lors de la mise à jour du besoin ' . $besoin_id . ': ' . $e->getMessage());
+                }
+            }
+            
+            $this->app->json([
+                'success' => true,
+                'message' => "Réinitialisation effectuée avec succès",
+                'result' => [
+                    'nombre_distributions_supprimees' => $nombreSupprimees
+                ]
+            ]);
+        } catch (\Exception $e) {
+            $this->app->response()->status(500);
+            $this->app->json([
+                'success' => false,
+                'message' => "Erreur lors de la réinitialisation: " . $e->getMessage()
             ]);
         }
     }

@@ -9,15 +9,16 @@ use app\models\Achat;
 use app\models\Besoin;
 use app\models\Ville;
 use app\models\Categorie;
-use Flight;
 
 class AchatController
 {
+    private $app;
     protected $achatService;
     protected $besoinService;
 
-    public function __construct()
+    public function __construct(Engine $app)
     {
+        $this->app = $app;
         $this->achatService = new AchatService();
         $this->besoinService = new BesoinService();
     }
@@ -36,7 +37,7 @@ class AchatController
             $villes = $villeModel->getAll();
             $categories = $categorieModel->getAll();
 
-            Flight::render('layout/Achat', [
+            $this->app->render('layout/Achat', [
                 'achats' => $achats,
                 'stats' => $stats,
                 'villes' => $villes,
@@ -44,7 +45,7 @@ class AchatController
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController index error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement des achats');
+            $this->app->halt(500, 'Erreur lors du chargement des achats');
         }
     }
 
@@ -56,15 +57,15 @@ class AchatController
         try {
             $achat = $this->achatService->getById($id);
             if (empty($achat)) {
-                Flight::halt(404, 'Achat introuvable');
+                $this->app->halt(404, 'Achat introuvable');
             }
 
-            Flight::render('AchatDetails', [
+            $this->app->render('AchatDetails', [
                 'achat' => $achat,
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController show error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement de l\'achat');
+            $this->app->halt(500, 'Erreur lors du chargement de l\'achat');
         }
     }
 
@@ -82,7 +83,7 @@ class AchatController
             $besoins = $besoinModel->getAllWithDetails();
             $dons = $donGlobalModel->getAllWithDetails();
 
-            Flight::render('CreateAchat', [
+            $this->app->render('CreateAchat', [
                 'villes' => $villes,
                 'besoins' => $besoins,
                 'dons' => $dons,
@@ -90,7 +91,7 @@ class AchatController
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController create GET error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur interne');
+            $this->app->halt(500, 'Erreur interne');
         }
     }
 
@@ -99,7 +100,7 @@ class AchatController
      */
     public function store()
     {
-        $req = Flight::request();
+        $req = $this->app->request();
 
         try {
             $ville_id = (int)($req->data->ville_id ?? 0);
@@ -109,7 +110,7 @@ class AchatController
 
             // Validation
             if (empty($ville_id) || empty($besoin_id) || $montant <= 0) {
-                Flight::halt(400, 'Données invalides');
+                $this->app->halt(400, 'Données invalides');
             }
 
             // Get donation details if provided
@@ -125,7 +126,7 @@ class AchatController
             $calcResult = $this->achatService->calculateWithFees($montant, $availableMoney);
 
             if (!$calcResult['success']) {
-                Flight::halt(400, $calcResult['error']);
+                $this->app->halt(400, $calcResult['error']);
             }
 
             // Create purchase
@@ -137,14 +138,14 @@ class AchatController
             );
 
             if (!$result['success']) {
-                Flight::halt(500, $result['error']);
+                $this->app->halt(500, $result['error']);
             }
 
             // Store success message in session or redirect with success
-            Flight::redirect('/achat/' . $result['id']);
+            $this->app->redirect('/achat/' . $result['id']);
         } catch (\Throwable $e) {
             error_log('AchatController store error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors de la création de l\'achat');
+            $this->app->halt(500, 'Erreur lors de la création de l\'achat');
         }
     }
 
@@ -156,14 +157,14 @@ class AchatController
         try {
             $achat = $this->achatService->getById($id);
             if (empty($achat)) {
-                Flight::halt(404, 'Achat introuvable');
+                $this->app->halt(404, 'Achat introuvable');
             }
 
             $this->achatService->delete($id);
-            Flight::redirect('/achat');
+            $this->app->redirect('/achat');
         } catch (\Throwable $e) {
             error_log('AchatController delete error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors de la suppression');
+            $this->app->halt(500, 'Erreur lors de la suppression');
         }
     }
 
@@ -173,16 +174,16 @@ class AchatController
     public function apiCalculate()
     {
         try {
-            $req = Flight::request();
+            $req = $this->app->request();
             $montant = (float)($req->data->montant ?? 0);
             $available = (float)($req->data->available ?? 0);
 
             $result = $this->achatService->calculateWithFees($montant, $available);
 
-            Flight::json($result);
+            $this->app->json($result);
         } catch (\Throwable $e) {
             error_log('AchatController apiCalculate error: ' . $e->getMessage());
-            Flight::halt(500, ['error' => 'Erreur lors du calcul']);
+            $this->app->halt(500, ['error' => 'Erreur lors du calcul']);
         }
     }
 
@@ -199,14 +200,14 @@ class AchatController
                 'restants' => $this->besoinService->getTotalRestants(),
             ];
 
-            Flight::json([
+            $this->app->json([
                 'success' => true,
                 'achats' => $stats,
                 'besoins' => $besoinStats,
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController apiStats error: ' . $e->getMessage());
-            Flight::halt(500, ['error' => 'Erreur lors de la récupération des statistiques']);
+            $this->app->halt(500, ['error' => 'Erreur lors de la récupération des statistiques']);
         }
     }
 
@@ -220,7 +221,7 @@ class AchatController
             $satisfaits = $this->besoinService->getTotalSatisfaits();
             $restants = $this->besoinService->getTotalRestants();
 
-            Flight::json([
+            $this->app->json([
                 'success' => true,
                 'total' => $total,
                 'satisfaits' => $satisfaits,
@@ -231,7 +232,7 @@ class AchatController
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController apiNeedsStats error: ' . $e->getMessage());
-            Flight::halt(500, ['error' => 'Erreur lors de la récupération des statistiques']);
+            $this->app->halt(500, ['error' => 'Erreur lors de la récupération des statistiques']);
         }
     }
 
@@ -243,13 +244,13 @@ class AchatController
         try {
             $achats = $this->achatService->getByCity($ville_id);
 
-            Flight::json([
+            $this->app->json([
                 'success' => true,
                 'achats' => $achats,
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController apiGetByCity error: ' . $e->getMessage());
-            Flight::halt(500, ['error' => 'Erreur lors de la récupération des achats']);
+            $this->app->halt(500, ['error' => 'Erreur lors de la récupération des achats']);
         }
     }
 
@@ -261,16 +262,16 @@ class AchatController
         try {
             $achat = $this->achatService->getById($id);
             if (empty($achat)) {
-                Flight::halt(404, 'Achat introuvable');
+                $this->app->halt(404, 'Achat introuvable');
             }
 
-            Flight::render('layout/ConfigFraisPourcentage', [
+            $this->app->render('layout/ConfigFraisPourcentage', [
                 'achat' => $achat,
                 'feePercent' => $this->achatService->getFeePercent(),
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController configFraisPourcentage error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement de la configuration');
+            $this->app->halt(500, 'Erreur lors du chargement de la configuration');
         }
     }
 
@@ -279,20 +280,20 @@ class AchatController
      */
     public function updateFraisPourcentage($id)
     {
-        $req = Flight::request();
+        $req = $this->app->request();
 
         try {
             $frais_percent = (float)($req->data->frais_percent ?? 0);
 
             // Validation
             if ($frais_percent < 0 || $frais_percent > 100) {
-                Flight::halt(400, 'Le pourcentage de frais doit être entre 0 et 100');
+                $this->app->halt(400, 'Le pourcentage de frais doit être entre 0 et 100');
             }
 
             // Get current achat
             $achat = $this->achatService->getById($id);
             if (empty($achat)) {
-                Flight::halt(404, 'Achat introuvable');
+                $this->app->halt(404, 'Achat introuvable');
             }
 
             // Calculate new total with fees
@@ -308,10 +309,10 @@ class AchatController
             $achatModel->update($id, $updateData);
 
             // Redirect to list with success
-            Flight::redirect('/achat');
+            $this->app->redirect('/achat');
         } catch (\Throwable $e) {
             error_log('AchatController updateFraisPourcentage error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors de la mise à jour');
+            $this->app->halt(500, 'Erreur lors de la mise à jour');
         }
     }
 }
