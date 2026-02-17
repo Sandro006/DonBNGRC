@@ -2,6 +2,7 @@
 
 use app\controllers\ApiExampleController;
 use app\controllers\SimulationController;
+use app\controllers\AchatController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -22,10 +23,10 @@ use app\models\Don;
 $router->group('', function (Router $router) use ($app) {
 
 	$router->get('/', function () use ($app) {
-    $app->render('welcome');
-});
+		$app->render('welcome');
+	});
 
-$router->get('/dashboard', function () use ($app) {
+	$router->get('/dashboard', function () use ($app) {
 		// Dashboard: collect summary data from services and apply optional filters
 		try {
 			$donService = new app\services\DonService();
@@ -44,8 +45,8 @@ $router->get('/dashboard', function () use ($app) {
 			// Calculate global coverage percentage (donations vs needs)
 			$total_dons_qty = (int)($don_stats['total_quantity'] ?? 0);
 			$total_besoins_qty = (int)($besoin_stats['total_quantity'] ?? 0);
-			$coverage_percent = $total_besoins_qty > 0 
-				? min(100, round(($total_dons_qty / $total_besoins_qty) * 100)) 
+			$coverage_percent = $total_besoins_qty > 0
+				? min(100, round(($total_dons_qty / $total_besoins_qty) * 100))
 				: 0;
 
 			// categories via model
@@ -258,7 +259,7 @@ $router->get('/dashboard', function () use ($app) {
 		if (empty($redirectVille) && !empty($req->data->ville_libre) && is_numeric($req->data->ville_libre)) {
 			$redirectVille = $req->data->ville_libre;
 		}
-		
+
 		if (!empty($redirectVille)) {
 			$app->redirect('/ville/' . $redirectVille);
 		} else {
@@ -313,7 +314,7 @@ $router->get('/dashboard', function () use ($app) {
 		if (empty($redirectVille) && !empty($req->data->ville_libre) && is_numeric($req->data->ville_libre)) {
 			$redirectVille = $req->data->ville_libre;
 		}
-		
+
 		if (!empty($redirectVille)) {
 			$app->redirect('/ville/' . $redirectVille);
 		} else {
@@ -327,7 +328,7 @@ $router->get('/dashboard', function () use ($app) {
 			// Get the donation to find the city
 			$donModel = new Don();
 			$don = $donModel->getById($id);
-			
+
 			if (empty($don)) {
 				$app->halt(404, 'Don introuvable');
 			}
@@ -335,7 +336,7 @@ $router->get('/dashboard', function () use ($app) {
 			$ville_id = $don['ville_id'];
 			$donService = new DonService();
 			$donService->delete($id);
-			
+
 			// Redirect back to city details
 			$app->redirect('/ville/' . $ville_id);
 		} catch (\Throwable $e) {
@@ -350,7 +351,7 @@ $router->get('/dashboard', function () use ($app) {
 			// Get the donation to find the city
 			$donModel = new Don();
 			$don = $donModel->getById($id);
-			
+
 			if (empty($don)) {
 				$app->halt(404, 'Don introuvable');
 			}
@@ -358,7 +359,7 @@ $router->get('/dashboard', function () use ($app) {
 			$ville_id = $don['ville_id'];
 			$donService = new DonService();
 			$donService->delete($id);
-			
+
 			// Redirect back to city details
 			$app->redirect('/ville/' . $ville_id);
 		} catch (\Throwable $e) {
@@ -371,6 +372,17 @@ $router->get('/dashboard', function () use ($app) {
 	$router->get('/simulation', [SimulationController::class, 'index']);
 	$router->get('/simulation/@id:[0-9]+', [SimulationController::class, 'show']);
 
+	// Achat: purchase management
+	$router->get('/achat', [AchatController::class, 'index']);
+	$router->get('/achat/add', [AchatController::class, 'create']);
+	$router->get('/achat/ajouter', [AchatController::class, 'create']);
+	$router->get('/achat/@id:[0-9]+', [AchatController::class, 'show']);
+	$router->post('/achat', [AchatController::class, 'store']);
+	$router->post('/achat/add', [AchatController::class, 'store']);
+	$router->post('/achat/ajouter', [AchatController::class, 'store']);
+	$router->delete('/achat/@id:[0-9]+', [AchatController::class, 'delete']);
+	$router->post('/achat/supprimer/@id:[0-9]+', [AchatController::class, 'delete']);
+
 	$router->group('/api', function () use ($router) {
 		$router->get('/users', [ApiExampleController::class, 'getUsers']);
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
@@ -379,5 +391,11 @@ $router->get('/dashboard', function () use ($app) {
 		// Simulation API endpoints
 		$router->post('/simulation/simulate', [SimulationController::class, 'apiSimulate']);
 		$router->post('/simulation/validate', [SimulationController::class, 'apiValidate']);
+
+		// Achat API endpoints
+		$router->post('/achat/calculate', [AchatController::class, 'apiCalculate']);
+		$router->get('/achat/stats', [AchatController::class, 'apiStats']);
+		$router->get('/achat/needs-stats', [AchatController::class, 'apiNeedsStats']);
+		$router->get('/achat/city/@id:[0-9]+', [AchatController::class, 'apiGetByCity']);
 	});
 }, [SecurityHeadersMiddleware::class]);
