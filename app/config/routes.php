@@ -7,6 +7,7 @@ use app\controllers\HomeController;
 use app\controllers\DashboardController;
 use app\controllers\CityController;
 use app\controllers\DonGlobalController;
+use app\controllers\BesoinController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -43,6 +44,14 @@ $router->group('', function (Router $router) {
 	$router->post('/don-global/simulation', [DonGlobalController::class, 'simulation']);
 	$router->post('/don-global/execute-distribution', [DonGlobalController::class, 'executeDistribution']);
 	$router->post('/don-global/distribution-manuelle', [DonGlobalController::class, 'manualDistribution']);
+
+	// Besoins routes - Gestion des besoins identifiés
+	$router->get('/besoin', [BesoinController::class, 'index']);
+	$router->get('/besoin/create', [BesoinController::class, 'create']);
+	$router->get('/besoin/nouveau', [BesoinController::class, 'create']); // French alias
+	$router->post('/besoin/store', [BesoinController::class, 'store']);
+	$router->post('/besoin/ajouter', [BesoinController::class, 'store']); // French alias
+	$router->get('/besoin/@id:[0-9]+', [BesoinController::class, 'show']);
 
 	// Simulation: show simulation page for global donation distribution
 	$router->get('/simulation', [SimulationController::class, 'index']);

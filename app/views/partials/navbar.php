@@ -25,7 +25,10 @@
                 <a href="<?= Flight::get('flight.base_url') ?>/don-global/methodes"><i class="bi bi-diagram-2"></i> Méthodes Distribution</a>
             </li>
             <li class="header-nav-item">
-                <a href="<?= Flight::get('flight.base_url') ?>/simulation"><i class="bi bi-diagram-3"></i> Simulation</a>
+                <a href="<?= Flight::get('flight.base_url') ?>/besoin"><i class="bi bi-list-check"></i> Liste Besoins</a>
+            </li>
+            <li class="header-nav-item">
+                <a href="<?= Flight::get('flight.base_url') ?>/besoin/create"><i class="bi bi-exclamation-triangle"></i> Nouveau Besoin</a>
             </li>
             <li class="header-nav-item">
                 <a href="<?= Flight::get('flight.base_url') ?>/achat"><i class="bi bi-cart3"></i> Achats</a>

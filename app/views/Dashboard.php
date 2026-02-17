@@ -41,9 +41,9 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link">
-                        <i class="bi bi-diagram-3"></i>
-                        <span>Simulation</span>
+                    <a href="<?= Flight::get('flight.base_url') ?>/besoin/create" class="sidebar-menu-link">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <span>Nouveau Besoin</span>
                     </a>
                 </li>
             </ul>
