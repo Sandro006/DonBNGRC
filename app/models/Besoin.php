@@ -16,13 +16,14 @@ class Besoin extends BaseModel
                   v.nom as ville_nom, v.region_id, r.nom as region_nom,
                   c.libelle as categorie_nom,
                   s.libelle as status_nom,
-                  (b.quantite * b.prix_unitaire) as montant_total
+                  (b.quantite * b.prix_unitaire) as montant_total,
+                  DATEDIFF(NOW(), b.date_besoin) as jours_attente
                   FROM {$this->table} b
                   INNER JOIN bngrc_ville v ON b.ville_id = v.id
                   INNER JOIN bngrc_region r ON v.region_id = r.id
                   INNER JOIN bngrc_categorie c ON b.categorie_id = c.id
                   INNER JOIN bngrc_status s ON b.status_id = s.id
-                  ORDER BY b.id DESC";
+                  ORDER BY b.date_besoin ASC, b.id ASC";
         return $this->db->fetchAll($query);
     }
 
@@ -263,5 +264,156 @@ class Besoin extends BaseModel
         }
 
         return parent::count($conditions);
+    }
+
+    /**
+     * Get needs ordered by priority (oldest date_besoin first)
+     */
+    public function getByPriority($limit = null)
+    {
+        $query = "SELECT b.*, 
+                  v.nom as ville_nom, v.region_id, r.nom as region_nom,
+                  c.libelle as categorie_nom,
+                  s.libelle as status_nom,
+                  (b.quantite * b.prix_unitaire) as montant_total,
+                  DATEDIFF(NOW(), b.date_besoin) as jours_attente
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_ville v ON b.ville_id = v.id
+                  INNER JOIN bngrc_region r ON v.region_id = r.id
+                  INNER JOIN bngrc_categorie c ON b.categorie_id = c.id
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  WHERE s.libelle NOT IN ('satisfait', 'completed')
+                  ORDER BY b.date_besoin ASC, b.id ASC";
+        
+        if ($limit) {
+            $query .= " LIMIT :limit";
+            return $this->db->fetchAll($query, [':limit' => $limit]);
+        }
+        
+        return $this->db->fetchAll($query);
+    }
+
+    /**
+     * Get needs by category ordered by priority
+     */
+    public function getByCategoryPriority($categorie_id, $limit = null)
+    {
+        $query = "SELECT b.*, 
+                  v.nom as ville_nom, v.region_id, r.nom as region_nom,
+                  c.libelle as categorie_nom,
+                  s.libelle as status_nom,
+                  (b.quantite * b.prix_unitaire) as montant_total,
+                  DATEDIFF(NOW(), b.date_besoin) as jours_attente,
+                  COALESCE(SUM(d.quantite_distribuee), 0) as quantite_recue,
+                  (b.quantite - COALESCE(SUM(d.quantite_distribuee), 0)) as quantite_manquante
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_ville v ON b.ville_id = v.id
+                  INNER JOIN bngrc_region r ON v.region_id = r.id
+                  INNER JOIN bngrc_categorie c ON b.categorie_id = c.id
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  LEFT JOIN bngrc_distribution d ON b.id = d.besoin_id
+                  WHERE b.categorie_id = :categorie_id
+                  AND s.libelle NOT IN ('satisfait', 'completed')
+                  GROUP BY b.id, b.ville_id, v.nom, v.region_id, r.nom, b.categorie_id, c.libelle, 
+                           s.libelle, b.quantite, b.prix_unitaire, b.date_besoin
+                  HAVING quantite_manquante > 0
+                  ORDER BY b.date_besoin ASC, b.id ASC";
+        
+        if ($limit) {
+            $query .= " LIMIT :limit";
+            return $this->db->fetchAll($query, [':categorie_id' => $categorie_id, ':limit' => $limit]);
+        }
+        
+        return $this->db->fetchAll($query, [':categorie_id' => $categorie_id]);
+    }
+
+    /**
+     * Get needs with distribution information for simulation
+     */
+    public function getNeedsForSimulation()
+    {
+        $query = "SELECT 
+                    b.id as besoin_id,
+                    b.ville_id,
+                    v.nom as ville_nom,
+                    r.nom as region_nom,
+                    b.categorie_id,
+                    c.libelle as categorie_nom,
+                    b.quantite as quantite_demandee,
+                    b.prix_unitaire,
+                    b.date_besoin,
+                    s.libelle as status_nom,
+                    COALESCE(SUM(d.quantite_distribuee), 0) as quantite_recue,
+                    (b.quantite - COALESCE(SUM(d.quantite_distribuee), 0)) as quantite_manquante,
+                    DATEDIFF(NOW(), b.date_besoin) as jours_attente,
+                    (b.quantite * b.prix_unitaire) as montant_total
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_ville v ON b.ville_id = v.id
+                  INNER JOIN bngrc_region r ON v.region_id = r.id
+                  INNER JOIN bngrc_categorie c ON b.categorie_id = c.id
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  LEFT JOIN bngrc_distribution d ON b.id = d.besoin_id
+                  GROUP BY b.id, b.ville_id, v.nom, r.nom, b.categorie_id, c.libelle, 
+                           b.quantite, b.prix_unitaire, b.date_besoin, s.libelle
+                  HAVING quantite_manquante > 0
+                  AND s.libelle NOT IN ('satisfait', 'completed')
+                  ORDER BY b.date_besoin ASC, b.id ASC";
+        return $this->db->fetchAll($query);
+    }
+
+    /**
+     * Add a new need with date_besoin
+     */
+    public function addBesoin($data)
+    {
+        // Validation des champs requis
+        $requiredFields = ['ville_id', 'categorie_id', 'quantite', 'prix_unitaire'];
+        foreach ($requiredFields as $field) {
+            if (empty($data[$field])) {
+                throw new \Exception("Le champ {$field} est requis");
+            }
+        }
+
+        // Validation de la quantité et prix
+        if (!is_numeric($data['quantite']) || $data['quantite'] <= 0) {
+            throw new \Exception("La quantité doit être un nombre positif");
+        }
+        if (!is_numeric($data['prix_unitaire']) || $data['prix_unitaire'] <= 0) {
+            throw new \Exception("Le prix unitaire doit être un nombre positif");
+        }
+
+        $insertData = [
+            'ville_id' => $data['ville_id'],
+            'categorie_id' => $data['categorie_id'],
+            'quantite' => $data['quantite'],
+            'prix_unitaire' => $data['prix_unitaire'],
+            'status_id' => $data['status_id'] ?? 1
+        ];
+
+        // Ajouter la date_besoin si fournie, sinon utiliser la valeur par défaut de la DB
+        if (!empty($data['date_besoin'])) {
+            $insertData['date_besoin'] = $data['date_besoin'];
+        }
+
+        return $this->create($insertData);
+    }
+
+    /**
+     * Get priority statistics
+     */
+    public function getPriorityStats()
+    {
+        $query = "SELECT 
+                    COUNT(b.id) as total_besoins,
+                    SUM(CASE WHEN DATEDIFF(NOW(), b.date_besoin) > 30 THEN 1 ELSE 0 END) as urgent_30_jours,
+                    SUM(CASE WHEN DATEDIFF(NOW(), b.date_besoin) > 15 THEN 1 ELSE 0 END) as urgent_15_jours,
+                    SUM(CASE WHEN DATEDIFF(NOW(), b.date_besoin) > 7 THEN 1 ELSE 0 END) as urgent_7_jours,
+                    AVG(DATEDIFF(NOW(), b.date_besoin)) as moyenne_attente_jours,
+                    MIN(b.date_besoin) as besoin_le_plus_ancien,
+                    MAX(b.date_besoin) as besoin_le_plus_recent
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  WHERE s.libelle NOT IN ('satisfait', 'completed')";
+        return $this->db->fetchRow($query);
     }
 }

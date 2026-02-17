@@ -7,6 +7,7 @@ use app\controllers\HomeController;
 use app\controllers\DashboardController;
 use app\controllers\CityController;
 use app\controllers\DonController;
+use app\controllers\DonGlobalController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
 use flight\net\Router;
@@ -47,6 +48,21 @@ $router->group('', function (Router $router) {
 	// Delete donation (POST version for form compatibility)
 	$router->post('/don/supprimer/@id:[0-9]+', [DonController::class, 'delete']);
 
+	// Dons Globaux routes
+	$router->get('/don-global', [DonGlobalController::class, 'index']);
+	$router->get('/don-global/create', [DonGlobalController::class, 'create']);
+	$router->get('/don-global/nouveau', [DonGlobalController::class, 'create']); // French alias
+	$router->post('/don-global/store', [DonGlobalController::class, 'store']);
+	$router->post('/don-global/ajouter', [DonGlobalController::class, 'store']); // French alias
+	$router->get('/don-global/@id:[0-9]+', [DonGlobalController::class, 'show']);
+	
+	// Méthodes et Simulation de Distribution
+	$router->get('/don-global/methodes', [DonGlobalController::class, 'methodes']);
+	$router->get('/don-global/simulation', [DonGlobalController::class, 'simulation']);
+	$router->post('/don-global/simulation', [DonGlobalController::class, 'simulation']);
+	$router->post('/don-global/execute-distribution', [DonGlobalController::class, 'executeDistribution']);
+	$router->post('/don-global/distribution-manuelle', [DonGlobalController::class, 'manualDistribution']);
+
 	// Simulation: show simulation page for donation dispatch
 	$router->get('/simulation', [SimulationController::class, 'index']);
 	$router->get('/simulation/@id:[0-9]+', [SimulationController::class, 'show']);
@@ -67,7 +83,6 @@ $router->group('', function (Router $router) {
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
 		$router->post('/users/@id:[0-9]', [ApiExampleController::class, 'updateUser']);
 
-
 		// Simulation API endpoints
 		$router->post('/simulation/simulate', [SimulationController::class, 'apiSimulate']);
 		$router->post('/simulation/validate', [SimulationController::class, 'apiValidate']);
@@ -81,5 +96,12 @@ $router->group('', function (Router $router) {
 		// Don Frais API endpoints (requires DonFraisController implementation)
 		// $router->get('/don/@id:[0-9]+/frais', [app\controllers\DonFraisController::class, 'getDonFrais']);
 		// $router->post('/don/@id:[0-9]+/frais', [app\controllers\DonFraisController::class, 'updateDonFrais']);
+
+		// API endpoints pour les dons globaux
+		$router->get('/don-global/categorie/@id:[0-9]+', [DonGlobalController::class, 'getAvailableByCategory']);
+		$router->get('/don-global/suggestions/@categorie_id:[0-9]+', [DonGlobalController::class, 'getSuggestionsDistribution']);
+		$router->get('/don-global/statistics', [DonGlobalController::class, 'getStatistics']);
+		$router->put('/don-global/@id:[0-9]+/status', [DonGlobalController::class, 'updateStatus']);
+		$router->post('/don-global/@id:[0-9]+/status', [DonGlobalController::class, 'updateStatus']); // POST alias for forms
 	});
 }, [SecurityHeadersMiddleware::class]);

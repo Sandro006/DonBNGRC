@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un Don - BNGRC</title>
+    <title>Nouveau Don Global - BNGRC</title>
     <link href="<?= Flight::get('flight.base_url') ?>/css/design-system.css" rel="stylesheet" />
     <link href="<?= Flight::get('flight.base_url') ?>/css/components.css" rel="stylesheet" />
     <link href="<?= Flight::get('flight.base_url') ?>/css/layout.css" rel="stylesheet" />
@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link active">
+                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
                         <i class="bi bi-gift"></i>
                         <span>Ajouter don</span>
                     </a>
@@ -51,12 +51,6 @@
                         <span>Méthodes Distribution</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/Simulation" class="sidebar-menu-link">
-                        <i class="bi bi-diagram-3"></i>
-                        <span>Simulation</span>
-                    </a>
-                </li>
             </ul>
         </aside>
 
@@ -68,7 +62,7 @@
                     <button class="sidebar-toggle">
                         <i class="bi bi-list"></i>
                     </button>
-                    <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700;">📊 BNGRC - Gestion des risques</h1>
+                    <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700;">🌍 BNGRC - Nouveau Don Global</h1>
                     <div class="header-actions" style="margin-left: auto;">
                         <div class="header-user">
                             <div class="header-user-avatar">AD</div>
@@ -84,90 +78,42 @@
                 <div class="breadcrumb-nav">
                     <ol>
                         <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
-                        <li>Ajouter un don</li>
+                        <li><a href="<?= Flight::get('flight.base_url') ?>/don-global">Dons Globaux</a></li>
+                        <li>Nouveau Don</li>
                     </ol>
                 </div>
 
                 <!-- PAGE HEADER -->
                 <div class="page-header">
                     <div class="page-title">
-                        <h1><i class="bi bi-gift-fill"></i> Ajouter un Don</h1>
-                        <p>Remplissez les informations du don pour l'enregistrer dans le système</p>
+                        <h1><i class="bi bi-globe"></i> Nouveau Don Global</h1>
+                        <p>Un don global sera distribué automatiquement selon les méthodes de distribution configurées</p>
                     </div>
                     <div class="page-actions">
-                        <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="btn btn-info">
-                            <i class="bi bi-globe"></i>
-                            Dons Globaux
-                        </a>
-                        <a href="<?= Flight::get('flight.base_url') ?>" class="btn btn-secondary">
+                        <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i>
                             Retour
                         </a>
                     </div>
                 </div>
 
-                <!-- TYPE DE DON SELECTOR -->
-                <div class="card" style="max-width: 850px; margin: 0 auto 2rem auto;">
-                    <div class="card-body">
-                        <h5 class="mb-3"><i class="bi bi-funnel"></i> Type de Don</h5>
-                        <div class="form-group">
-                            <div class="btn-group" role="group" style="display: flex; gap: 1rem;">
-                                <input type="radio" class="btn-check" name="don_type" id="don_ville" value="ville" checked>
-                                <label class="btn btn-outline-primary" for="don_ville">
-                                    <i class="bi bi-geo-alt"></i> Don pour une ville spécifique
-                                </label>
-                                
-                                <input type="radio" class="btn-check" name="don_type" id="don_global" value="global">
-                                <label class="btn btn-outline-success" for="don_global">
-                                    <i class="bi bi-globe"></i> Don global (toutes villes)
-                                </label>
-                            </div>
-                            <small class="form-text text-muted mt-2">
-                                <strong>Don ville:</strong> Destiné à une ville précise | 
-                                <strong>Don global:</strong> Sera distribué automatiquement selon les besoins les plus urgents
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- FORM CARD -->
-                <div class="card" style="max-width: 850px; margin: 0 auto;">
-                    <form method="post" action="" id="donForm">
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <form method="post" action="<?= Flight::get('flight.base_url') ?>/don-global/store" id="donGlobalForm">
                         <!-- SECTION 1: INFORMATIONS DU DON -->
-                        <div class="card-header bg-primary">
+                        <div class="card-header bg-success">
                             <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
-                                <i class="bi bi-box-seam"></i>
-                                Informations du Don
+                                <i class="bi bi-globe"></i>
+                                Informations du Don Global
                             </h5>
                         </div>
 
                         <div class="card-body">
-                            <div class="form-group" id="ville-selector">
-                                <label class="form-label required">Ville</label>
-                                <select name="ville_id" class="form-select" required>
-                                    <option value="">-- Sélectionnez une ville --</option>
-                                    <?php 
-                                    $currentRegion = '';
-                                    foreach ($villes as $v) { 
-                                        $region = $v['region_nom'] ?? 'Autre';
-                                        if ($region !== $currentRegion) {
-                                            if ($currentRegion !== '') echo '</optgroup>';
-                                            echo '<optgroup label="' . htmlspecialchars($region) . '">';
-                                            $currentRegion = $region;
-                                        }
-                                    ?>
-                                        <option value="<?= htmlspecialchars($v['id']) ?>" <?= isset($ville_id) && $ville_id == $v['id'] ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($v['nom']) ?>
-                                        </option>
-                                    <?php } ?>
-                                    <?php if ($currentRegion !== '') echo '</optgroup>'; ?>
-                                </select>
-                                <span class="form-helper">Sélectionnez la ville concernée par le don</span>
-                            </div>
-                            
-                            <div class="alert alert-info" id="global-info" style="display: none; margin-top: 1rem;">
+                            <div class="alert alert-info">
                                 <i class="bi bi-info-circle"></i>
-                                <strong>Don Global:</strong> Ce don sera automatiquement distribué aux villes ayant les besoins les plus urgents (selon la date de besoin).
+                                <strong>Don Global:</strong> Ce don ne sera pas affecté à une ville spécifique. 
+                                Il sera distribué automatiquement aux villes ayant les besoins les plus prioritaires 
+                                selon la méthode de distribution choisie.
                             </div>
 
                             <div class="form-group">
@@ -195,7 +141,7 @@
                         </div>
 
                         <!-- SECTION 2: INFORMATIONS DU DONATEUR -->
-                        <div class="card-header bg-primary" style="margin-top: var(--spacing-6);">
+                        <div class="card-header bg-success" style="margin-top: var(--spacing-6);">
                             <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
                                 <i class="bi bi-person-check"></i>
                                 Informations du Donateur
@@ -217,7 +163,7 @@
                                 <span class="form-helper">Ou remplissez les informations ci-dessous pour créer un nouveau donateur</span>
                             </div>
 
-                            <div style="background: linear-gradient(135deg, var(--primary-50) 0%, rgba(89, 104, 255, 0.05) 100%); padding: var(--spacing-4); border-radius: var(--radius-lg); margin: var(--spacing-4) 0; border-left: 4px solid var(--primary);">
+                            <div style="background: linear-gradient(135deg, var(--success-50) 0%, rgba(34, 197, 94, 0.05) 100%); padding: var(--spacing-4); border-radius: var(--radius-lg); margin: var(--spacing-4) 0; border-left: 4px solid var(--success);">
                                 <p class="text-muted" style="margin: 0; font-size: var(--font-size-sm); color: var(--text-secondary);">
                                     <i class="bi bi-info-circle"></i>
                                     <strong>Note:</strong> Ces informations ne seront utilisées que si vous n'avez pas sélectionné de donateur existant
@@ -244,16 +190,53 @@
 
                         <!-- ACTIONS -->
                         <div class="card-footer" style="display: flex; gap: var(--spacing-3); justify-content: flex-end;">
-                            <a href="<?= Flight::get('flight.base_url') ?>" class="btn btn-secondary">
+                            <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="btn btn-secondary">
                                 <i class="bi bi-x-circle"></i>
                                 Annuler
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i>
-                                Enregistrer le don
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-globe"></i>
+                                Enregistrer le Don Global
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <!-- INFORMATION SUR LA DISTRIBUTION -->
+                <div class="card mt-4" style="max-width: 800px; margin: 0 auto;">
+                    <div class="card-header">
+                        <h6><i class="bi bi-question-circle"></i> Comment sera distribué ce don ?</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🎯 Distribution Intelligente</h6>
+                                <p><small>Le don sera automatiquement attribué aux villes avec les besoins les plus prioritaires dans cette catégorie.</small></p>
+                                
+                                <h6>⚙️ Méthodes Disponibles</h6>
+                                <ul>
+                                    <li><small><strong>Par Date:</strong> Plus ancien besoin en premier</small></li>
+                                    <li><small><strong>Par Urgence:</strong> Plus de jours d'attente</small></li>
+                                    <li><small><strong>Par Région:</strong> Zones prioritaires</small></li>
+                                    <li><small><strong>Équilibrée:</strong> Répartition homogène</small></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>📊 Traçabilité Complète</h6>
+                                <p><small>Toutes les distributions sont enregistrées avec les détails complets pour assurer une totale transparence.</small></p>
+                                
+                                <h6>🔄 Flexible</h6>
+                                <p><small>Vous pourrez toujours consulter et modifier les méthodes de distribution dans les paramètres.</small></p>
+                                
+                                <div class="mt-3">
+                                    <a href="<?= Flight::get('flight.base_url') ?>/don-global/methodes" class="btn btn-info btn-sm">
+                                        <i class="bi bi-gear"></i>
+                                        Configurer les Méthodes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -271,36 +254,10 @@
             document.querySelector('.sidebar').classList.toggle('show');
         });
 
-        // Gestion du type de don
-        document.querySelectorAll('input[name="don_type"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const villeSelector = document.getElementById('ville-selector');
-                const globalInfo = document.getElementById('global-info');
-                const form = document.getElementById('donForm');
-                const villeSelect = document.querySelector('select[name="ville_id"]');
-                
-                if (this.value === 'global') {
-                    // Don global : masquer la sélection de ville
-                    villeSelector.style.display = 'none';
-                    globalInfo.style.display = 'block';
-                    villeSelect.removeAttribute('required');
-                    form.action = '<?= Flight::get('flight.base_url') ?>/don-global/store';
-                } else {
-                    // Don ville : afficher la sélection de ville
-                    villeSelector.style.display = 'block';
-                    globalInfo.style.display = 'none';
-                    villeSelect.setAttribute('required', 'required');
-                    form.action = '<?= Flight::get('flight.base_url') ?>/don/ajouter';
-                }
-            });
-        });
-
         // Simple form validation
-        document.getElementById('donForm')?.addEventListener('submit', function(e) {
-            const donType = document.querySelector('input[name="don_type"]:checked').value;
+        document.getElementById('donGlobalForm')?.addEventListener('submit', function(e) {
             const categorie = document.querySelector('select[name="categorie_id"]').value;
             const quantite = document.querySelector('input[name="quantite"]').value;
-            const villeId = document.querySelector('select[name="ville_id"]').value;
             
             if (!categorie) {
                 e.preventDefault();
@@ -311,12 +268,6 @@
             if (!quantite || quantite < 1) {
                 e.preventDefault();
                 alert('Veuillez entrer une quantité valide');
-                return false;
-            }
-            
-            if (donType === 'ville' && !villeId) {
-                e.preventDefault();
-                alert('Veuillez sélectionner une ville');
                 return false;
             }
             
