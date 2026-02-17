@@ -2,18 +2,20 @@
 
 namespace app\controllers;
 
+use flight\Engine;
 use app\models\Besoin;
 use app\models\Categorie;
 use app\models\Ville;
 use app\services\BesoinService;
-use Flight;
 
 class BesoinController
 {
+    private $app;
     protected BesoinService $besoinService;
 
-    public function __construct()
+    public function __construct(Engine $app)
     {
+        $this->app = $app;
         $this->besoinService = new BesoinService();
     }
 
@@ -30,14 +32,14 @@ class BesoinController
             $categories = $categorieModel->getAll();
             $villes = $villeModel->getAllWithRegion();
 
-            Flight::render('BesoinCreate', [
+            $this->app->render('BesoinCreate', [
                 'categories' => $categories,
                 'villes' => $villes,
                 'title' => 'Nouveau Besoin'
             ]);
         } catch (\Throwable $e) {
             error_log('BesoinController create error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement du formulaire');
+            $this->app->halt(500, 'Erreur lors du chargement du formulaire');
         }
     }
 
@@ -47,23 +49,23 @@ class BesoinController
     public function store()
     {
         try {
-            $data = Flight::request()->data;
+            $data = $this->app->request()->data;
 
             // Validate required fields
             $required_fields = ['ville_id', 'categorie_id', 'description', 'quantite'];
             foreach ($required_fields as $field) {
                 if (empty($data->$field)) {
-                    Flight::halt(400, "Le champ $field est requis");
+                    $this->app->halt(400, "Le champ $field est requis");
                 }
             }
 
             // Validate numeric fields
             if (!is_numeric($data->quantite) || $data->quantite <= 0) {
-                Flight::halt(400, 'La quantité doit être un nombre positif');
+                $this->app->halt(400, 'La quantité doit être un nombre positif');
             }
 
             if (!empty($data->prix_unitaire) && (!is_numeric($data->prix_unitaire) || $data->prix_unitaire < 0)) {
-                Flight::halt(400, 'Le prix unitaire doit être un nombre positif');
+                $this->app->halt(400, 'Le prix unitaire doit être un nombre positif');
             }
 
 
@@ -87,16 +89,14 @@ class BesoinController
 
             if ($result) {
                 // Redirect to the needs list or dashboard with success message
-                $baseUrl = Flight::get('flight.base_url');
-                header('Location: ' . $baseUrl . '/besoin?message=success');
-                exit;
+                $this->app->redirect('/besoin?message=success');
             } else {
-                Flight::halt(500, 'Erreur lors de l\'enregistrement du besoin');
+                $this->app->halt(500, 'Erreur lors de l\'enregistrement du besoin');
             }
 
         } catch (\Throwable $e) {
             error_log('BesoinController store error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors de la création du besoin');
+            $this->app->halt(500, 'Erreur lors de la création du besoin');
         }
     }
 
@@ -108,13 +108,13 @@ class BesoinController
         try {
             $besoins = $this->besoinService->getAllWithDetails();
 
-            Flight::render('BesoinIndex', [
+            $this->app->render('BesoinIndex', [
                 'besoins' => $besoins,
                 'title' => 'Liste des Besoins'
             ]);
         } catch (\Throwable $e) {
             error_log('BesoinController index error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement des besoins');
+            $this->app->halt(500, 'Erreur lors du chargement des besoins');
         }
     }
 
@@ -128,16 +128,16 @@ class BesoinController
             $besoin = $besoinModel->getByIdWithDetails($id);
 
             if (empty($besoin)) {
-                Flight::halt(404, 'Besoin introuvable');
+                $this->app->halt(404, 'Besoin introuvable');
             }
 
-            Flight::render('BesoinShow', [
+            $this->app->render('BesoinShow', [
                 'besoin' => $besoin,
                 'title' => 'Détails du Besoin'
             ]);
         } catch (\Throwable $e) {
             error_log('BesoinController show error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur lors du chargement du besoin');
+            $this->app->halt(500, 'Erreur lors du chargement du besoin');
         }
     }
 }

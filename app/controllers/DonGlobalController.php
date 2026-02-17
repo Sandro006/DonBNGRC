@@ -154,7 +154,7 @@ class DonGlobalController
                 } else {
                     // Redirect to don-global index with success message
                     $this->app->redirect(
-                        Flight::get('flight.base_url') . '/don-global?success=1&id=' . $donGlobalId
+                        '/don-global?success=1&id=' . $donGlobalId
                     );
                 }
             } else {
@@ -247,7 +247,7 @@ class DonGlobalController
                 
                 // Redirect with success message
                 $this->app->redirect(
-                    Flight::get('flight.base_url') . '/don-global/simulation?' . 
+                    '/don-global/simulation?' . 
                     http_build_query([
                         'methode' => $methode, 
                         'executed' => '1',
