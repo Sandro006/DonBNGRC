@@ -36,9 +36,9 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
+                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Dons Globaux</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
@@ -92,24 +92,14 @@
                         </p>
                     </div>
                     <div class="page-actions">
-                        <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter?ville_id=<?= htmlspecialchars($ville['id'] ?? '') ?>" class="btn btn-primary">
-                            <i class="bi bi-plus-circle"></i> Ajouter Don
+                        <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="btn btn-primary">
+                            <i class="bi bi-box-seam"></i> Voir Dons Globaux
                         </a>
                     </div>
                 </div>
 
                 <!-- Statistics Cards -->
                 <div class="stats-row" style="margin-bottom: var(--spacing-8);">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: var(--primary-100); color: var(--primary);">
-                            <i class="bi bi-gift"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-label">Total Dons</span>
-                            <span class="stat-value"><?= count($dons ?? []) ?></span>
-                        </div>
-                    </div>
-
                     <div class="stat-card">
                         <div class="stat-icon" style="background-color: var(--success-100); color: var(--success);">
                             <i class="bi bi-hand-thumbs-up"></i>
@@ -119,81 +109,20 @@
                             <span class="stat-value"><?= count($besoins ?? []) ?></span>
                         </div>
                     </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: var(--info-100); color: var(--info);">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-label">Dons Globaux</span>
+                            <span class="stat-value">Gérer par région</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Main Content -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: var(--spacing-8);">
-                    <!-- Donations Section -->
-                    <div>
-                        <div class="sim-section-title">
-                            <i class="bi bi-gift"></i>
-                            <h3>Dons pour <?= htmlspecialchars($ville['nom'] ?? '') ?></h3>
-                        </div>
-
-                        <div class="card">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Donateur</th>
-                                            <th>Catégorie</th>
-                                            <th>Quantité</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (!empty($dons)): ?>
-                                            <?php foreach ($dons as $d): ?>
-                                                <tr>
-                                                    <td>
-                                                        <span style="font-size: var(--font-size-sm);">
-                                                            <?= date('d/m/Y', strtotime($d['date_don'] ?? 'now')) ?>
-                                                        </span>
-                                                    </td>
-                                                    <td><?= htmlspecialchars($d['donateur_nom'] ?? '') ?></td>
-                                                    <td>
-                                                        <span class="badge badge-primary">
-                                                            <?= htmlspecialchars($d['categorie_nom'] ?? '') ?>
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <strong><?= htmlspecialchars($d['quantite'] ?? '') ?></strong>
-                                                    </td>
-                                                    <td>
-                                                        <div style="display: flex; gap: var(--spacing-2);">
-                                                            <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" 
-                                                               class="btn btn-sm btn-secondary" title="Simuler la distribution">
-                                                                <i class="bi bi-arrow-repeat"></i>
-                                                            </a>
-                                                            <form method="POST" action="<?= Flight::get('flight.base_url') ?>/don/supprimer/<?= htmlspecialchars($d['id'] ?? '') ?>" 
-                                                                  style="display: inline;">
-                                                                <button type="submit" class="btn btn-sm btn-danger" 
-                                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce don ?');"
-                                                                        title="Supprimer ce don">
-                                                                    <i class="bi bi-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="5" style="text-align: center; padding: var(--spacing-6) 0;">
-                                                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-2);">
-                                                        <i class="bi bi-inbox" style="font-size: 1.875rem; color: var(--text-tertiary);"></i>
-                                                        <p style="color: var(--text-secondary);">Aucun don pour cette ville</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
+                <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-8);">
                     <!-- Needs Section -->
                     <div>
                         <div class="sim-section-title">
@@ -247,6 +176,21 @@
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                        <!-- Information about Global Donations -->
+                        <div class="card" style="margin-top: var(--spacing-6);">
+                            <div class="card-body">
+                                <h5 style="color: var(--info); display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <i class="bi bi-info-circle"></i>
+                                    Information sur les Dons
+                                </h5>
+                                <p style="color: var(--text-secondary); margin: var(--spacing-3) 0 0 0;">
+                                    Les dons sont désormais gérés de manière globale au niveau régional pour optimiser la distribution. 
+                                    Consultez la section <a href="<?= Flight::get('flight.base_url') ?>/don-global" style="color: var(--primary);">Dons Globaux</a> 
+                                    pour voir tous les dons disponibles.
+                                </p>
                             </div>
                         </div>
                     </div>

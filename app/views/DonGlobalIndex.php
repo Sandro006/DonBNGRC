@@ -121,8 +121,10 @@
                                         <tr>
                                             <th><i class="bi bi-hash"></i> ID</th>
                                             <th><i class="bi bi-person"></i> Donateur</th>
+                                            <th><i class="bi bi-briefcase"></i> Type</th>
                                             <th><i class="bi bi-tag"></i> Catégorie</th>
                                             <th><i class="bi bi-box"></i> Quantité</th>
+                                            <th><i class="bi bi-currency-exchange"></i> Val. Unit.</th>
                                             <th><i class="bi bi-calendar"></i> Date Don</th>
                                             <th><i class="bi bi-speedometer"></i> Statut</th>
                                             <th><i class="bi bi-gear"></i> Actions</th>
@@ -143,6 +145,13 @@
                                                 'reserve' => 'dash-circle',
                                                 default => 'question-circle'
                                             };
+                                            $typeClass = match($don['type_donateur'] ?? 'individu') {
+                                                'entreprise' => 'primary',
+                                                'gouvernement' => 'success',
+                                                'individu' => 'info',
+                                                'ong' => 'warning',
+                                                default => 'secondary'
+                                            };
                                             ?>
                                             <tr>
                                                 <td>
@@ -157,7 +166,24 @@
                                                                 <?= htmlspecialchars($don['donateur_telephone']) ?>
                                                             </small>
                                                         <?php endif; ?>
+                                                        <?php if (!empty($don['notes'])): ?>
+                                                            <br><small class="text-muted" title="<?= htmlspecialchars($don['notes']) ?>">
+                                                                <i class="bi bi-sticky"></i>
+                                                                <?= htmlspecialchars(substr($don['notes'], 0, 20)) ?>...
+                                                            </small>
+                                                        <?php endif; ?>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-<?= $typeClass ?>">
+                                                        <i class="bi bi-<?= match($don['type_donateur'] ?? 'individu') {
+                                                            'entreprise' => 'building',
+                                                            'gouvernement' => 'bank',
+                                                            'ong' => 'heart',
+                                                            default => 'person'
+                                                        } ?>"></i>
+                                                        <?= htmlspecialchars(ucfirst($don['type_donateur'] ?? 'Individu')) ?>
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-info">
@@ -166,6 +192,12 @@
                                                 </td>
                                                 <td>
                                                     <strong><?= number_format($don['quantite']) ?></strong>
+                                                </td>
+                                                <td>
+                                                    <?= !empty($don['valeur_unitaire']) 
+                                                        ? '<strong>' . number_format($don['valeur_unitaire'], 0, ',', ' ') . '</strong><br><small class="text-muted">Ar</small>' 
+                                                        : '<span class="text-muted">-</span>' 
+                                                    ?>
                                                 </td>
                                                 <td>
                                                     <?= date('d/m/Y H:i', strtotime($don['date_don'])) ?>
@@ -186,11 +218,10 @@
                                                             <i class="bi bi-eye"></i>
                                                         </a>
                                                         <?php if ($don['status_distribution'] === 'disponible'): ?>
-                                                            <button class="btn btn-outline-success" 
-                                                                    onclick="suggestDistribution(<?= $don['categorie_id'] ?>)" 
-                                                                    title="Suggestions de distribution">
+                                                            <a href="<?= Flight::get('flight.base_url') ?>/simulation/distribute/<?= $don['id'] ?>" 
+                                                               class="btn btn-outline-success" title="Distribuer intelligemment">
                                                                 <i class="bi bi-lightbulb"></i>
-                                                            </button>
+                                                            </a>
                                                         <?php endif; ?>
                                                     </div>
                                                 </td>

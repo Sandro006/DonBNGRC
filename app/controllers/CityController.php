@@ -2,26 +2,23 @@
 
 namespace app\controllers;
 
-use app\services\DonService;
 use app\services\BesoinService;
 use app\services\VilleService;
 use Flight;
 
 class CityController
 {
-    protected $donService;
     protected $besoinService;
     protected $villeService;
 
     public function __construct()
     {
-        $this->donService = new DonService();
         $this->besoinService = new BesoinService();
         $this->villeService = new VilleService();
     }
 
     /**
-     * Display city details with donations and needs
+     * Display city details with needs only (no more city-specific donations)
      */
     public function show($id)
     {
@@ -31,12 +28,10 @@ class CityController
                 Flight::halt(404, 'Ville introuvable');
             }
 
-            $dons = $this->donService->getByCity($id);
             $besoins = $this->besoinService->getByCity($id);
 
             Flight::render('CityDetails', [
                 'ville' => $ville,
-                'dons' => $dons,
                 'besoins' => $besoins,
             ]);
         } catch (\Throwable $e) {

@@ -8,31 +8,30 @@ class Donateur extends BaseModel
     protected $primaryKey = 'id';
 
     /**
-     * Get all donors with their donation count
+     * Get all donors with their donation count (from global donations)
      */
     public function getAllWithDonationCount()
     {
-        $query = "SELECT d.*, COUNT(dn.id) as dons_count, SUM(dn.quantite) as total_quantite
+        $query = "SELECT d.*, COUNT(dg.id) as dons_count, SUM(dg.quantite) as total_quantite
                   FROM {$this->table} d 
-                  LEFT JOIN bngrc_don dn ON d.id = dn.donateur_id 
+                  LEFT JOIN bngrc_don_global dg ON d.id = dg.donateur_id 
                   GROUP BY d.id 
                   ORDER BY d.nom ASC";
         return $this->db->fetchAll($query);
     }
 
     /**
-     * Get donor with all their donations
+     * Get donor with all their global donations
      */
     public function getWithDonations($id)
     {
         $donor = $this->getById($id);
         if ($donor) {
-            $query = "SELECT d.*, v.nom as ville_nom, c.libelle as categorie_nom
-                      FROM bngrc_don d
-                      INNER JOIN bngrc_ville v ON d.ville_id = v.id
-                      INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
-                      WHERE d.donateur_id = :donateur_id
-                      ORDER BY d.date_don DESC";
+            $query = "SELECT dg.*, c.libelle as categorie_nom, dg.status_distribution
+                      FROM bngrc_don_global dg
+                      INNER JOIN bngrc_categorie c ON dg.categorie_id = c.id
+                      WHERE dg.donateur_id = :donateur_id
+                      ORDER BY dg.date_don DESC";
             $donor['donations'] = $this->db->fetchAll($query, [':donateur_id' => $id]);
         }
         return $donor;

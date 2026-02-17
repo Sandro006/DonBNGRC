@@ -181,6 +181,38 @@ class BaseModel
     {
         return $this->db->fetchRow($query, $params);
     }
+
+    /**
+     * Begin database transaction
+     */
+    public function beginTransaction()
+    {
+        return $this->db->pdo->beginTransaction();
+    }
+
+    /**
+     * Commit database transaction
+     */
+    public function commitTransaction()
+    {
+        return $this->db->pdo->commit();
+    }
+
+    /**
+     * Rollback database transaction
+     */
+    public function rollbackTransaction()
+    {
+        return $this->db->pdo->rollback();
+    }
+
+    /**
+     * Check if in transaction
+     */
+    public function inTransaction()
+    {
+        return $this->db->pdo->inTransaction();
+    }
 }
 
 //fin

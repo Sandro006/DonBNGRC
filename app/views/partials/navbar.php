@@ -16,7 +16,7 @@
                 <a href="<?= Flight::get('flight.base_url') ?>/dashboard"><i class="bi bi-speedometer2"></i> Tableau de bord</a>
             </li>
             <li class="header-nav-item">
-                <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter"><i class="bi bi-gift"></i> Faire un don</a>
+                <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau"><i class="bi bi-gift"></i> Créer Don Global</a>
             </li>
             <li class="header-nav-item">
                 <a href="<?= Flight::get('flight.base_url') ?>/don-global"><i class="bi bi-box-seam"></i> Dons Globaux</a>

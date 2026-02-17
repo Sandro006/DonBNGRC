@@ -35,9 +35,9 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
+                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Dons Globaux</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">

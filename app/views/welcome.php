@@ -273,8 +273,8 @@
             <h1 class="hero-title">Bureau National de Gestion des Risques et Catastrophes</h1>
             <p class="hero-subtitle">Ensemble, aidons les communautés touchées par les catastrophes naturelles à Madagascar</p>
             <div class="hero-buttons">
-                <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn hero-btn hero-btn-primary">
-                    <i class="bi bi-gift"></i> Faire un don
+                <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau" class="btn hero-btn hero-btn-primary">
+                    <i class="bi bi-gift"></i> Créer Don Global
                 </a>
                 <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="btn hero-btn hero-btn-secondary">
                     <i class="bi bi-bar-chart"></i> Voir le tableau de bord
@@ -350,7 +350,7 @@
         <div class="footer-links">
             <a href="<?= Flight::get('flight.base_url') ?>">Accueil</a>
             <a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a>
-            <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter">Faire un don</a>
+            <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau">Créer Don Global</a>
         </div>
         <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
     </footer>

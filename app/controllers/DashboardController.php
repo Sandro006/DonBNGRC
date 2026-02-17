@@ -2,23 +2,26 @@
 
 namespace app\controllers;
 
-use app\services\DonService;
 use app\services\BesoinService;
 use app\services\VilleService;
+use app\services\SmartDistributionService;
 use app\models\Categorie;
+use app\models\DonGlobal;
 use Flight;
 
 class DashboardController
 {
-    protected $donService;
+    protected $donGlobalModel;
     protected $besoinService;
     protected $villeService;
+    protected $smartDistributionService;
 
     public function __construct()
     {
-        $this->donService = new DonService();
+        $this->donGlobalModel = new DonGlobal();
         $this->besoinService = new BesoinService();
         $this->villeService = new VilleService();
+        $this->smartDistributionService = new SmartDistributionService();
     }
 
     /**
@@ -27,30 +30,13 @@ class DashboardController
     public function index()
     {
         try {
-            // Get all statistics
-            $don_stats = $this->donService->getStatistics();
-            $besoin_stats = $this->besoinService->getStatistics();
+            // Use the smart distribution service for comprehensive stats
+            $dashboardStats = $this->smartDistributionService->getDashboardStats();
+            
+            // Get cities and categories for filters
             $cities = $this->villeService->getAll();
-
-            // Regional statistics for overview table
-            $regional_stats = $this->besoinService->getStatisticsByRegion();
-            $active_regions_count = $this->besoinService->getActiveRegionsCount();
-            $category_stats = $this->besoinService->getStatisticsByCategory();
-
-            // Calculate global coverage percentage (donations vs needs)
-            $total_dons_qty = (int)($don_stats['total_quantity'] ?? 0);
-            $total_besoins_qty = (int)($besoin_stats['total_quantity'] ?? 0);
-            $coverage_percent = $total_besoins_qty > 0
-                ? min(100, round(($total_dons_qty / $total_besoins_qty) * 100))
-                : 0;
-
-            // Get categories via model
             $categorieModel = new Categorie();
             $categories = $categorieModel->getAllWithUsageCount();
-
-            // Get all data then filter in PHP based on query params
-            $all_dons = $this->donService->getAllWithDetails();
-            $all_besoins = $this->besoinService->getAllWithDetails();
 
             // Get filter parameters
             $req = Flight::request();
@@ -60,17 +46,18 @@ class DashboardController
             $ville_id = !empty($qs['ville_id']) ? $qs['ville_id'] : null;
             $categorie_id = !empty($qs['categorie_id']) ? $qs['categorie_id'] : null;
 
-            // Filter donations
-            $filterDons = array_filter($all_dons, function ($d) use ($start, $end, $ville_id, $categorie_id) {
+            // Get filtered data
+            $all_dons = $this->donGlobalModel->getAllWithDetails();
+            $all_besoins = $this->besoinService->getAllWithDetails();
+
+            // Filter global donations (no ville_id for global donations)
+            $filterDons = array_filter($all_dons, function ($d) use ($start, $end, $categorie_id) {
                 if ($start && $end) {
                     $ts = !empty($d['date_don']) ? strtotime($d['date_don']) : null;
                     if (!$ts) return false;
                     $s = strtotime($start);
                     $e = strtotime($end) + 24 * 3600 - 1;
                     if ($ts < $s || $ts > $e) return false;
-                }
-                if ($ville_id) {
-                    if (empty($d['ville_id']) || (string)$d['ville_id'] !== (string)$ville_id) return false;
                 }
                 if ($categorie_id) {
                     if (empty($d['categorie_id']) || (string)$d['categorie_id'] !== (string)$categorie_id) return false;
@@ -97,22 +84,34 @@ class DashboardController
                 return true;
             });
 
+            // Get regional statistics for overview table
+            $regional_stats = $this->besoinService->getStatisticsByRegion();
+            $active_regions_count = $this->besoinService->getActiveRegionsCount();
+
             // Get recent records for display
             $recent_dons = array_slice(array_values($filterDons), 0, 20);
             $recent_besoins = array_slice(array_values($filterBesoins), 0, 20);
 
+            // Get priority recommendations
+            $priority_recommendations = $this->smartDistributionService->getPriorityRecommendations(10);
+
             Flight::render('Dashboard', [
-                'message' => 'Tableau de bord',
-                'don_stats' => $don_stats,
-                'besoin_stats' => $besoin_stats,
+                'message' => 'Tableau de bord intelligent',
+                'don_stats' => $dashboardStats['don_stats'],
+                'besoin_stats' => $dashboardStats['besoin_stats'],
                 'cities' => $cities,
                 'categories' => $categories,
                 'dons' => $recent_dons,
                 'besoins' => $recent_besoins,
                 'regional_stats' => $regional_stats,
                 'active_regions_count' => $active_regions_count,
-                'coverage_percent' => $coverage_percent,
-                'category_stats' => $category_stats,
+                'coverage_percent' => $dashboardStats['coverage_percent'],
+                'urgent_needs_count' => $dashboardStats['urgent_needs_count'],
+                'urgent_needs' => $dashboardStats['urgent_needs'],
+                'expiring_donations' => $dashboardStats['expiring_donations'],
+                'donations_by_donor_type' => $dashboardStats['donations_by_donor_type'],
+                'priority_recommendations' => $priority_recommendations,
+                'category_stats' => $this->besoinService->getStatisticsByCategory(),
             ]);
         } catch (\Throwable $e) {
             error_log('Dashboard error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
@@ -127,6 +126,11 @@ class DashboardController
                 'regional_stats' => [],
                 'active_regions_count' => 0,
                 'coverage_percent' => 0,
+                'urgent_needs_count' => 0,
+                'urgent_needs' => [],
+                'expiring_donations' => [],
+                'donations_by_donor_type' => [],
+                'priority_recommendations' => [],
                 'category_stats' => [],
             ]);
         }

@@ -6,7 +6,6 @@ use app\controllers\AchatController;
 use app\controllers\HomeController;
 use app\controllers\DashboardController;
 use app\controllers\CityController;
-use app\controllers\DonController;
 use app\controllers\DonGlobalController;
 use app\middlewares\SecurityHeadersMiddleware;
 use flight\Engine;
@@ -30,24 +29,6 @@ $router->group('', function (Router $router) {
 	// City details: donations & needs for a specific city
 	$router->get('/ville/@id:[0-9]+', [CityController::class, 'show']);
 
-	// Add donation: show form
-	$router->get('/don/add', [DonController::class, 'create']);
-
-	// Add donation: show form (French alias)
-	$router->get('/don/ajouter', [DonController::class, 'create']);
-
-	// Add donation: handle form submission
-	$router->post('/don/add', [DonController::class, 'store']);
-
-	// Add donation: handle form submission (French alias)
-	$router->post('/don/ajouter', [DonController::class, 'store']);
-
-	// Delete donation
-	$router->delete('/don/@id:[0-9]+', [DonController::class, 'delete']);
-
-	// Delete donation (POST version for form compatibility)
-	$router->post('/don/supprimer/@id:[0-9]+', [DonController::class, 'delete']);
-
 	// Dons Globaux routes
 	$router->get('/don-global', [DonGlobalController::class, 'index']);
 	$router->get('/don-global/create', [DonGlobalController::class, 'create']);
@@ -63,9 +44,11 @@ $router->group('', function (Router $router) {
 	$router->post('/don-global/execute-distribution', [DonGlobalController::class, 'executeDistribution']);
 	$router->post('/don-global/distribution-manuelle', [DonGlobalController::class, 'manualDistribution']);
 
-	// Simulation: show simulation page for donation dispatch
+	// Simulation: show simulation page for global donation distribution
 	$router->get('/simulation', [SimulationController::class, 'index']);
 	$router->get('/simulation/@id:[0-9]+', [SimulationController::class, 'show']);
+	$router->get('/simulation/smart/@id:[0-9]+', [SimulationController::class, 'smartSuggestions']);
+	$router->get('/simulation/distribute/@id:[0-9]+', [SimulationController::class, 'smartSuggestions']); // Alias for smart distribution
 
 	// Achat: purchase management
 	$router->get('/achat', [AchatController::class, 'index']);
@@ -83,9 +66,11 @@ $router->group('', function (Router $router) {
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
 		$router->post('/users/@id:[0-9]', [ApiExampleController::class, 'updateUser']);
 
-		// Simulation API endpoints
+		// Simulation API endpoints for global distribution
 		$router->post('/simulation/simulate', [SimulationController::class, 'apiSimulate']);
+		$router->post('/simulation/suggestions', [SimulationController::class, 'apiSuggestions']);
 		$router->post('/simulation/validate', [SimulationController::class, 'apiValidate']);
+		$router->post('/simulation/smart-distribute', [SimulationController::class, 'apiSmartDistribute']);
 
 		// Achat API endpoints
 		$router->post('/achat/calculate', [AchatController::class, 'apiCalculate']);

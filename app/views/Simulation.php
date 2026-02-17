@@ -181,9 +181,9 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
+                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Dons Globaux</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
@@ -279,8 +279,8 @@
                                     <div class="empty-state-title">Aucun don disponible</div>
                                     <p class="empty-state-description">Aucun don disponible pour la simulation</p>
                                     <div class="empty-state-action">
-                                        <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn btn-primary">
-                                            <i class="bi bi-plus"></i> Ajouter un don
+                                        <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau" class="btn btn-primary">
+                                            <i class="bi bi-plus"></i> Créer Don Global
                                         </a>
                                     </div>
                                 </div>

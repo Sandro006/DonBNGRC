@@ -8,6 +8,7 @@ use app\models\Distribution;
 use app\models\Donateur;
 use app\models\Categorie;
 use app\services\SimulationDistributionService;
+use app\services\SmartDistributionService;
 
 class DonGlobalController
 {
@@ -15,6 +16,7 @@ class DonGlobalController
     private $donGlobalModel;
     private $distributionModel;
     private $simulationService;
+    private $smartDistributionService;
 
     public function __construct(Engine $app)
     {
@@ -22,6 +24,7 @@ class DonGlobalController
         $this->donGlobalModel = new DonGlobal();
         $this->distributionModel = new Distribution();
         $this->simulationService = new SimulationDistributionService();
+        $this->smartDistributionService = new SmartDistributionService();
     }
 
     /**
@@ -91,6 +94,8 @@ class DonGlobalController
                 $data['categorie_id'] = $req->data->categorie_id ?? null;
                 $data['quantite'] = $req->data->quantite ?? null;
                 $data['date_don'] = $req->data->date_don ?? null;
+                $data['valeur_unitaire'] = $req->data->valeur_unitaire ?? null;
+                $data['notes'] = $req->data->notes ?? null;
                 
                 // Handle donateur like in DonController
                 $donateur_id = $req->data->donateur_id ?? null;
@@ -102,6 +107,8 @@ class DonGlobalController
                         'nom' => $req->data->donateur_nom ?? 'Anonyme',
                         'telephone' => $req->data->donateur_telephone ?? null,
                         'email' => $req->data->donateur_email ?? null,
+                        'type_donateur' => $req->data->type_donateur ?? 'particulier',
+                        'adresse' => $req->data->donateur_adresse ?? null,
                     ];
                     $donateur_id = $donateurModel->create($donateurData);
                 }

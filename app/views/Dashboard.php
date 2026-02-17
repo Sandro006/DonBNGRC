@@ -35,9 +35,9 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
+                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Dons Globaux</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
@@ -88,7 +88,7 @@
                                 <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>" />
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Ville</label>
+                                <label class="form-label">Ville <small>(besoins uniquement)</small></label>
                                 <select name="ville_id" class="form-select">
                                     <option value="">Toutes les villes</option>
                                     <?php if (!empty($cities)) {
@@ -155,6 +155,17 @@
 
                     <div class="stat-card">
                         <div class="stat-content">
+                            <span class="stat-label">Besoins Urgents</span>
+                            <span class="stat-value"><?= htmlspecialchars($urgent_needs_count ?? 0) ?></span>
+                            <span class="stat-change">Requierent attention</span>
+                        </div>
+                        <div class="stat-icon danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
                             <span class="stat-label">Total Dons</span>
                             <span class="stat-value"><?= count($dons ?? []) ?></span>
                             <span class="stat-change">Enregistrés</span>
@@ -170,12 +181,12 @@
                             <span class="stat-value"><?= count($besoins ?? []) ?></span>
                             <span class="stat-change">Identifiés</span>
                         </div>
-                        <div class="stat-icon danger">
-                            <i class="bi bi-exclamation-circle"></i>
+                        <div class="stat-icon info">
+                            <i class="bi bi-list-check"></i>
                         </div>
                     </div>
                 </div>
-
+            
                 <!-- REGIONAL OVERVIEW -->
                 <div class="section">
                     <div class="section-header">
@@ -257,10 +268,36 @@
                 <div class="section mt-8">
                     <div class="section-header">
                         <h2 class="section-title">Dons récents</h2>
-                        <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn btn-sm btn-primary">
-                            <i class="bi bi-plus"></i> Ajouter
+                        <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus"></i> Créer Don Global
                         </a>
                     </div>
+
+                    <!-- EXPIRING DONATIONS ALERT -->
+                    <?php if (!empty($expiring_donations) && count($expiring_donations) > 0): ?>
+                    <div class="card border-danger mb-4">
+                        <div class="card-header bg-danger bg-opacity-10">
+                            <h6 style="margin: 0; color: var(--color-danger);">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Dons périmant bientôt (<?= count($expiring_donations) ?> éléments)
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                <?php foreach (array_slice($expiring_donations, 0, 5) as $exp): ?>
+                                <span class="badge badge-danger">
+                                    <?= htmlspecialchars($exp['donateur_nom'] ?? '') ?> - 
+                                    <?= htmlspecialchars($exp['categorie_nom'] ?? '') ?>
+                                    (<?= date('d/m/Y', strtotime($exp['date_expiration'] ?? 'now')) ?>)
+                                </span>
+                                <?php endforeach; ?>
+                                <?php if (count($expiring_donations) > 5): ?>
+                                <span class="badge badge-outline">+<?= count($expiring_donations) - 5 ?> autres...</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                     <div class="card">
                         <div class="card-body p-0">
@@ -270,9 +307,10 @@
                                         <tr>
                                             <th>Date</th>
                                             <th>Donateur</th>
+                                            <th>Type</th>
                                             <th>Catégorie</th>
                                             <th>Quantité</th>
-                                            <th>Ville</th>
+                                            <th>Valeur Unit.</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -282,17 +320,28 @@
                                         <tr>
                                             <td><?= date('d/m/Y', strtotime($d['date_don'] ?? 'now')) ?></td>
                                             <td><?= htmlspecialchars($d['donateur_nom'] ?? '') ?></td>
-                                            <td><span class="badge badge-primary"><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></span></td>
-                                            <td><strong><?= htmlspecialchars($d['quantite'] ?? '') ?></strong></td>
-                                            <td><?= htmlspecialchars($d['ville_nom'] ?? '') ?></td>
                                             <td>
-                                                <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" class="btn btn-sm btn-secondary"><i class="bi bi-arrow-right"></i></a>
+                                                <span class="badge <?= 
+                                                    ($d['type_donateur'] ?? '') === 'entreprise' ? 'badge-primary' : 
+                                                    (($d['type_donateur'] ?? '') === 'gouvernement' ? 'badge-success' : 'badge-info') 
+                                                ?>">
+                                                    <?= htmlspecialchars($d['type_donateur'] ?? 'Individu') ?>
+                                                </span>
+                                            </td>
+                                            <td><span class="badge badge-secondary"><?= htmlspecialchars($d['categorie_nom'] ?? '') ?></span></td>
+                                            <td><strong><?= htmlspecialchars($d['quantite'] ?? '') ?></strong></td>
+                                            <td><?= !empty($d['valeur_unitaire']) ? number_format($d['valeur_unitaire'], 0, ',', ' ') . ' Ar' : '-' ?></td>
+                                            <td>
+                                                <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" 
+                                                   class="btn btn-sm btn-secondary" title="Distribuer">
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                         <?php }
                                         } else { ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-6 text-gray-500">
+                                            <td colspan="7" class="text-center py-6 text-gray-500">
                                                 <i class="bi bi-inbox text-3xl block mb-2"></i>
                                                 Aucun don enregistré
                                             </td>
@@ -311,6 +360,31 @@
                         <h2 class="section-title">Besoins récents</h2>
                     </div>
 
+                    <!-- DONOR TYPE STATISTICS -->
+                    <?php if (!empty($donations_by_donor_type) && count($donations_by_donor_type) > 0): ?>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 style="margin: 0;">
+                                <i class="bi bi-pie-chart"></i>
+                                Distribution par type de donateur
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-4">
+                                <?php foreach ($donations_by_donor_type as $type): ?>
+                                <div class="text-center">
+                                    <div class="fw-bold text-lg"><?= htmlspecialchars($type['total_quantity'] ?? 0) ?></div>
+                                    <div class="text-sm text-muted"><?= htmlspecialchars(ucfirst($type['type_donateur'] ?? 'Inconnu')) ?></div>
+                                    <div class="text-xs">
+                                        <?= !empty($type['total_value']) ? number_format($type['total_value'], 0, ',', ' ') . ' Ar' : '' ?>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
                     <div class="card">
                         <div class="card-body p-0">
                             <div style="overflow-x: auto;">
@@ -319,6 +393,7 @@
                                         <tr>
                                             <th>Catégorie</th>
                                             <th>Quantité</th>
+                                            <th>Priorité</th>
                                             <th>Ville</th>
                                             <th>Région</th>
                                             <th>Statut</th>
@@ -334,10 +409,22 @@
                                                     'critical' => 'badge-danger',
                                                     default => 'badge-outline'
                                                 };
+                                                $priorityClass = match(strtolower($b['priorite'] ?? 'normale')) {
+                                                    'urgente' => 'badge-danger',
+                                                    'elevee' => 'badge-warning',
+                                                    'normale' => 'badge-info',
+                                                    'faible' => 'badge-secondary',
+                                                    default => 'badge-outline'
+                                                };
                                             ?>
                                         <tr>
                                             <td><?= htmlspecialchars($b['categorie_nom'] ?? '') ?></td>
                                             <td><strong><?= htmlspecialchars($b['quantite'] ?? '') ?></strong></td>
+                                            <td>
+                                                <span class="badge <?= $priorityClass ?>">
+                                                    <?= htmlspecialchars(ucfirst($b['priorite'] ?? 'normale')) ?>
+                                                </span>
+                                            </td>
                                             <td><?= htmlspecialchars($b['ville_nom'] ?? '') ?></td>
                                             <td><?= htmlspecialchars($b['region_nom'] ?? '') ?></td>
                                             <td><span class="badge <?= $statusClass ?>"><?= htmlspecialchars($b['status_nom'] ?? '') ?></span></td>
@@ -346,7 +433,7 @@
                                         <?php }
                                         } else { ?>
                                         <tr>
-                                            <td colspan="6" class="text-center py-6 text-gray-500">
+                                            <td colspan="7" class="text-center py-6 text-gray-500">
                                                 <i class="bi bi-inbox text-3xl block mb-2"></i>
                                                 Aucun besoin enregistré
                                             </td>

@@ -4,10 +4,8 @@ namespace app\controllers;
 
 use app\services\AchatService;
 use app\services\BesoinService;
-use app\services\DonService;
 use app\models\Achat;
 use app\models\Besoin;
-use app\models\Don;
 use app\models\Ville;
 use flight\Engine;
 
@@ -15,13 +13,11 @@ class AchatController
 {
     protected $achatService;
     protected $besoinService;
-    protected $donService;
 
     public function __construct()
     {
         $this->achatService = new AchatService();
         $this->besoinService = new BesoinService();
-        $this->donService = new DonService();
     }
 
     /**

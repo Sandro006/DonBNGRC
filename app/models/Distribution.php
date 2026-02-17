@@ -16,16 +16,24 @@ class Distribution extends BaseModel
                     d.id,
                     d.quantite_distribuee,
                     d.date_distribution,
+                    d.methode_distribution,
+                    d.responsable,
+                    d.notes as distribution_notes,
                     -- Don Global info
                     dg.id as don_global_id,
                     dg.quantite as don_quantite_totale,
                     dg.date_don,
+                    dg.valeur_unitaire,
+                    dg.notes as don_notes,
                     donateur.nom as donateur_nom,
                     donateur.telephone as donateur_telephone,
+                    donateur.type_donateur,
                     -- Besoin info
                     b.id as besoin_id,
                     b.quantite as besoin_quantite_totale,
                     b.date_besoin,
+                    b.priorite,
+                    b.description as besoin_description,
                     -- Location info
                     v.nom as ville_nom,
                     r.nom as region_nom,
@@ -88,7 +96,7 @@ class Distribution extends BaseModel
     /**
      * Add a new distribution record
      */
-    public function addDistribution($don_global_id, $besoin_id, $quantite_distribuee)
+    public function addDistribution($don_global_id, $besoin_id, $quantite_distribuee, $options = [])
     {
         // Validation
         if (!is_numeric($quantite_distribuee) || $quantite_distribuee <= 0) {
@@ -110,12 +118,29 @@ class Distribution extends BaseModel
             throw new \Exception("Besoin non trouvé");
         }
 
-        // Ajouter la distribution
-        $result = $this->create([
+        // Préparer les données de distribution
+        $data = [
             'don_global_id' => $don_global_id,
             'besoin_id' => $besoin_id,
-            'quantite_distribuee' => $quantite_distribuee
-        ]);
+            'quantite_distribuee' => $quantite_distribuee,
+            'methode_distribution' => $options['methode_distribution'] ?? 'automatique'
+        ];
+
+        // Ajouter les champs optionnels
+        if (!empty($options['responsable'])) {
+            $data['responsable'] = $options['responsable'];
+        }
+
+        if (!empty($options['notes'])) {
+            $data['notes'] = $options['notes'];
+        }
+
+        if (!empty($options['date_distribution'])) {
+            $data['date_distribution'] = $options['date_distribution'];
+        }
+
+        // Ajouter la distribution
+        $result = $this->create($data);
 
         if ($result) {
             // Mettre à jour le statut du don global si nécessaire

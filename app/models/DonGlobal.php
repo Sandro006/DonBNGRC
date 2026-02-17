@@ -14,9 +14,13 @@ class DonGlobal extends BaseModel
     {
         $query = "SELECT dg.*, 
                   c.libelle as categorie_nom,
+                  c.description as categorie_description,
                   dn.nom as donateur_nom, 
                   dn.email as donateur_email, 
-                  dn.telephone as donateur_telephone
+                  dn.telephone as donateur_telephone,
+                  dn.type_donateur,
+                  dn.adresse as donateur_adresse,
+                  (dg.quantite * COALESCE(dg.valeur_unitaire, 0)) as valeur_totale
                   FROM {$this->table} dg
                   INNER JOIN bngrc_categorie c ON dg.categorie_id = c.id
                   INNER JOIN bngrc_donateur dn ON dg.donateur_id = dn.id
@@ -31,9 +35,13 @@ class DonGlobal extends BaseModel
     {
         $query = "SELECT dg.*, 
                   c.libelle as categorie_nom,
+                  c.description as categorie_description,
                   dn.nom as donateur_nom, 
                   dn.email as donateur_email, 
-                  dn.telephone as donateur_telephone
+                  dn.telephone as donateur_telephone,
+                  dn.type_donateur,
+                  dn.adresse as donateur_adresse,
+                  (dg.quantite * COALESCE(dg.valeur_unitaire, 0)) as valeur_totale
                   FROM {$this->table} dg
                   INNER JOIN bngrc_categorie c ON dg.categorie_id = c.id
                   INNER JOIN bngrc_donateur dn ON dg.donateur_id = dn.id
@@ -96,8 +104,17 @@ class DonGlobal extends BaseModel
             'categorie_id' => $data['categorie_id'],
             'donateur_id' => $data['donateur_id'],
             'quantite' => $data['quantite'],
-            'status_distribution' => 'disponible'
+            'status_distribution' => $data['status_distribution'] ?? 'disponible'
         ];
+
+        // Ajouter les champs optionnels s'ils sont fournis
+        if (!empty($data['valeur_unitaire']) && is_numeric($data['valeur_unitaire'])) {
+            $insertData['valeur_unitaire'] = $data['valeur_unitaire'];
+        }
+
+        if (!empty($data['notes'])) {
+            $insertData['notes'] = $data['notes'];
+        }
 
         // Ajouter la date si fournie, sinon utiliser la valeur par défaut de la DB
         if (!empty($data['date_don'])) {
@@ -112,9 +129,9 @@ class DonGlobal extends BaseModel
      */
     public function updateDistributionStatus($id, $status)
     {
-        $validStatuses = ['disponible', 'distribue', 'reserve'];
+        $validStatuses = ['disponible', 'distribue', 'reserve', 'expire'];
         if (!in_array($status, $validStatuses)) {
-            throw new \Exception("Statut de distribution invalide");
+            throw new \Exception("Statut de distribution invalide. Valeurs acceptées: " . implode(', ', $validStatuses));
         }
 
         return $this->update($id, ['status_distribution' => $status]);
@@ -167,5 +184,58 @@ class DonGlobal extends BaseModel
                   WHERE dg.id = :don_global_id
                   GROUP BY dg.id, dg.quantite";
         return $this->db->fetchRow($query, [':don_global_id' => $don_global_id]);
+    }
+
+    /**
+     * Get donations statistics overall
+     */
+    public function getStatistics()
+    {
+        $query = "SELECT
+                    COUNT(*) as total_dons,
+                    SUM(quantite) as total_quantity,
+                    SUM(CASE WHEN status_distribution = 'disponible' THEN quantite ELSE 0 END) as quantite_disponible,
+                    SUM(CASE WHEN status_distribution = 'distribue' THEN quantite ELSE 0 END) as quantite_distribuee,
+                    SUM(CASE WHEN status_distribution = 'reserve' THEN quantite ELSE 0 END) as quantite_reservee,
+                    AVG(COALESCE(valeur_unitaire, 0)) as valeur_unitaire_moyenne,
+                    SUM(quantite * COALESCE(valeur_unitaire, 0)) as valeur_totale_estimee
+                  FROM {$this->table}";
+        return $this->db->fetchRow($query);
+    }
+
+    /**
+     * Get donations by donor type
+     */
+    public function getByDonorType($type_donateur)
+    {
+        $query = "SELECT dg.*, 
+                  c.libelle as categorie_nom,
+                  dn.nom as donateur_nom,
+                  dn.type_donateur
+                  FROM {$this->table} dg
+                  INNER JOIN bngrc_categorie c ON dg.categorie_id = c.id
+                  INNER JOIN bngrc_donateur dn ON dg.donateur_id = dn.id
+                  WHERE dn.type_donateur = :type_donateur
+                  ORDER BY dg.date_don DESC";
+        return $this->db->fetchAll($query, [':type_donateur' => $type_donateur]);
+    }
+
+    /**
+     * Get donations expiring soon (if they have perishable nature)
+     */
+    public function getExpiringSoon($days = 30)
+    {
+        $query = "SELECT dg.*, 
+                  c.libelle as categorie_nom,
+                  dn.nom as donateur_nom,
+                  DATEDIFF(DATE_ADD(dg.date_don, INTERVAL :days DAY), CURDATE()) as jours_avant_expiration
+                  FROM {$this->table} dg
+                  INNER JOIN bngrc_categorie c ON dg.categorie_id = c.id
+                  INNER JOIN bngrc_donateur dn ON dg.donateur_id = dn.id
+                  WHERE dg.status_distribution = 'disponible'
+                  AND c.libelle IN ('Alimentation', 'Médicaments')
+                  AND DATE_ADD(dg.date_don, INTERVAL :days DAY) <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+                  ORDER BY dg.date_don ASC";
+        return $this->db->fetchAll($query, [':days' => $days]);
     }
 }

@@ -11,7 +11,7 @@
                     <ul style="list-style: none; padding: 0; margin: 0;">
                         <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-house-door"></i> Accueil</a></li>
                         <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>/dashboard" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-speedometer2"></i> Tableau de bord</a></li>
-                        <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-gift"></i> Faire un don</a></li>
+                        <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-gift"></i> Créer Don Global</a></li>
                         <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>/don-global" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-box-seam"></i> Dons Globaux</a></li>
                         <li style="margin-bottom: var(--spacing-2);"><a href="<?= Flight::get('flight.base_url') ?>/achat" style="color: var(--gray-400); text-decoration: none; transition: color var(--transition-fast);"><i class="bi bi-cart3"></i> Achats</a></li>
                     </ul>
