@@ -155,7 +155,7 @@ class SimulationDistributionService
                 'description' => 'Trie les besoins par quantité: choisissez de prioriser les petits besoins (répartition) ou les gros (efficacité)',
                 'icone' => 'bar-chart-fill',
                 'parametres' => [
-                    'ordre' => ['asc' => 'Plus petites quantités d\'abord', 'desc' => 'Plus grosses quantités d\'abord']
+                    'ordre' => ['asc' => 'Petites quantités d\'abord', 'desc' => 'Grosses quantités d\'abord']
                 ]
             ],
             'region' => [

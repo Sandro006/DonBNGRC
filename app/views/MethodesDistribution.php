@@ -120,6 +120,22 @@
                                                     </div>
                                                 </label>
                                             </div>
+                                            <?php if ($key === 'quantite'): ?>
+                                                <div class="ms-4 mt-2" style="padding-left: 0.5rem;">
+                                                    <div class="form-check form-check-sm">
+                                                        <input class="form-check-input" type="radio" name="quantite_order" id="ordre_asc" value="asc" checked>
+                                                        <label class="form-check-label" for="ordre_asc" style="font-size: 0.875rem;">
+                                                            Petites quantités d'abord
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-sm mt-2">
+                                                        <input class="form-check-input" type="radio" name="quantite_order" id="ordre_desc" value="desc">
+                                                        <label class="form-check-label" for="ordre_desc" style="font-size: 0.875rem;">
+                                                            Grosses quantités d'abord
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
@@ -176,15 +192,7 @@
                                 <p><small>Privilégie les besoins exprimés depuis le plus longtemps. Équitable dans le temps.</small></p>
                                 
                                 <h6>📊 Distribution par Quantité</h6>
-                                <p><small>Priorise selon la taille des besoins: <strong>petits d'abord</strong> pour une meilleure répartition.</small></p>
-                                <div class="ms-2 mt-2" style="padding-left: 0.5rem; border-left: 3px solid var(--primary);">
-                                    <div class="form-check form-check-sm">
-                                        <input class="form-check-input" type="radio" name="quantite_order" id="ordre_asc" value="asc" checked>
-                                        <label class="form-check-label" for="ordre_asc" style="font-size: 0.875rem;">
-                                            <i class="bi bi-arrow-up-short"></i> Petites quantités d'abord
-                                        </label>
-                                    </div>
-                                </div>
+                                <p><small>Priorise selon la taille des besoins: <strong>petits d'abord</strong> pour une meilleure répartition, ou <strong>gros d'abord</strong> pour plus d'efficacité.</small></p>
                                 
                                 <h6>🗺️ Distribution par Région</h6>
                                 <p><small>Permet de définir des zones prioritaires selon la stratégie gouvernementale.</small></p>
@@ -228,14 +236,26 @@
             });
         });
 
-        // Gestionnaire de changement du choix quantité dans la section "À propos"
+        // Gestionnaire de changement du choix quantité
         document.querySelectorAll('input[name="quantite_order"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 // Sélectionne la méthode "quantite"
                 document.getElementById('methode_quantite').checked = true;
+                
+                // Crée ou met à jour l'input hidden pour le paramètre ordre
+                let ordreInput = document.querySelector('input[name="parametres[ordre]"]');
+                if (!ordreInput) {
+                    ordreInput = document.createElement('input');
+                    ordreInput.type = 'hidden';
+                    ordreInput.name = 'parametres[ordre]';
+                    document.getElementById('distributionForm').appendChild(ordreInput);
+                }
+                ordreInput.value = this.value;
+                
+                // Met à jour l'affichage des paramètres
                 updateParametres('quantite');
                 
-                // Attendre que les paramètres soient mis à jour, puis définir la valeur sélectionnée
+                // Sélectionne aussi le radio button correspondant dans le panneau "Paramètres"
                 setTimeout(() => {
                     const ordreRadios = document.querySelectorAll('input[name="parametres[ordre]"]');
                     ordreRadios.forEach(radio => {
@@ -361,6 +381,13 @@
         .form-check-input {
             position: absolute;
             opacity: 0;
+        }
+        
+        /* Rendre les radio buttons de quantité visibles */
+        input[name="quantite_order"] {
+            position: relative !important;
+            opacity: 1 !important;
+            margin-right: 0.5rem;
         }
         
         .parametres-form .form-group {
