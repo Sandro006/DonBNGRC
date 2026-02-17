@@ -5,6 +5,7 @@ namespace app\services;
 use app\models\Achat;
 use app\models\Don;
 use app\models\Besoin;
+use Flight;
 
 /**
  * Service for managing purchases and associated donations
@@ -299,6 +300,6 @@ class AchatService
 
         $query .= " ORDER BY a.date_achat DESC";
 
-        return $this->achatModel->db->fetchAll($query, $params);
+        return Flight::db()->fetchAll($query, $params);
     }
 }

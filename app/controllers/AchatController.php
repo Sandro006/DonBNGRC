@@ -9,6 +9,7 @@ use app\models\Achat;
 use app\models\Besoin;
 use app\models\Don;
 use app\models\Ville;
+use app\models\Categorie;
 use flight\Engine;
 
 class AchatController
@@ -314,7 +315,7 @@ class AchatController
             $villeModel = new Ville();
             $villes = $villeModel->getAll();
             
-            $categorieModel = new \app\models\Categorie();
+            $categorieModel = new Categorie();
             $categories = $categorieModel->getAll();
 
             $app->render('Achat', [
