@@ -6,3 +6,6 @@ app/views/Config
 todo.md
 ~$todo.xlsx
 *.xlsx
+app/config/config.php
+public/.htaccess
+public/.htaccess
