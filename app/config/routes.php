@@ -129,9 +129,16 @@ $router->group('', function (Router $router) use ($app) {
 		echo '<h1>Hello world! Oh hey ' . $name . '!</h1>';
 	});
 
+	// Configuration Routes
+	$router->get('/configuration/frais', [app\controllers\ConfigurationFraisController::class, 'index']);
+
 	$router->group('/api', function () use ($router) {
 		$router->get('/users', [ApiExampleController::class, 'getUsers']);
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
 		$router->post('/users/@id:[0-9]', [ApiExampleController::class, 'updateUser']);
+
+		// Configuration API Routes
+		$router->get('/configuration/frais', [app\controllers\ConfigurationFraisController::class, 'getFraisConfig']);
+		$router->post('/configuration/frais', [app\controllers\ConfigurationFraisController::class, 'updateFrais']);
 	});
 }, [SecurityHeadersMiddleware::class]);
