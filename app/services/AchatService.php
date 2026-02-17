@@ -3,7 +3,7 @@
 namespace app\services;
 
 use app\models\Achat;
-use app\models\Don;
+use app\models\DonGlobal;
 use app\models\Besoin;
 
 /**
@@ -22,7 +22,7 @@ class AchatService
     public function __construct()
     {
         $this->achatModel = new Achat();
-        $this->donModel = new Don();
+        $this->donModel = new DonGlobal();
         $this->besoinModel = new Besoin();
     }
 
