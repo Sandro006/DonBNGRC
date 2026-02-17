@@ -376,6 +376,7 @@ $router->group('', function (Router $router) use ($app) {
 	$router->get('/achat', [AchatController::class, 'index']);
 	$router->get('/achat/add', [AchatController::class, 'create']);
 	$router->get('/achat/ajouter', [AchatController::class, 'create']);
+	$router->get('/achat/non-argent', [AchatController::class, 'nonMoneyDonations']);
 	$router->get('/achat/@id:[0-9]+', [AchatController::class, 'show']);
 	$router->post('/achat', [AchatController::class, 'store']);
 	$router->post('/achat/add', [AchatController::class, 'store']);
