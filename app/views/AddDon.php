@@ -220,7 +220,7 @@
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= Flight::get('csp_nonce') ?>">
         // Responsive sidebar toggle
         document.querySelector('.sidebar-toggle')?.addEventListener('click', function () {
             document.querySelector('.sidebar').classList.toggle('show');

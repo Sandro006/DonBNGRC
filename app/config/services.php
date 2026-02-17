@@ -75,6 +75,15 @@ if (Debugger::$showBar === true && php_sapi_name() !== 'cli') {
 }
 
 /**********************************************
+ *         Content Security Policy Nonce      *
+ *********************************************
+ * Generate a random nonce for inline scripts and pass it to views
+ * This prevents CSP violations for inline <script> tags
+ **********************************************/
+$csp_nonce = bin2hex(random_bytes(16));
+$app->set('csp_nonce', $csp_nonce);
+
+/**********************************************
  *           Database Service Setup           *
  **********************************************/
 // Uncomment and configure the following for your database:

@@ -90,10 +90,10 @@
                     <div class="page-title">
                         <h2 style="margin: 0; display: flex; align-items: center; gap: var(--spacing-2);">
                             <i class="bi bi-bag-fill"></i>
-                            Dons (Nature & Matériaux)
+                            Achats
                         </h2>
                         <p style="margin: var(--spacing-2) 0 0 0; color: var(--text-secondary);">
-                            Listing de tous les dons qui ne sont pas en argent
+                            Listing de tous les achats avec gestion des frais
                         </p>
                     </div>
                 </div>
@@ -105,67 +105,84 @@
                             <i class="bi bi-bag"></i>
                         </div>
                         <div class="stat-content">
-                            <span class="stat-label">Total Dons</span>
-                            <span class="stat-value"><?= count($dons ?? []) ?></span>
+                            <span class="stat-label">Total Achats</span>
+                            <span class="stat-value"><?= count($achats ?? []) ?></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: var(--success-100); color: var(--success);">
+                            <i class="bi bi-currency-exchange"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-label">Montant Total</span>
+                            <span class="stat-value"><?= number_format($stats['total_montant'] ?? 0, 0, ',', '.') ?> Ar</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: var(--warning-100); color: var(--warning);">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-label">Total Frais</span>
+                            <span class="stat-value"><?= number_format($stats['total_with_fees'] - ($stats['total_montant'] ?? 0), 0, ',', '.') ?> Ar</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Donations Table -->
+                <!-- Achats Table -->
                 <div class="card">
-                    <div class="card-header">
-                        <h5 style="margin: 0; display: flex; align-items: center; gap: var(--spacing-2);">
-                            <i class="bi bi-table"></i>
-                            Liste des Dons (Non-Argent)
-                        </h5>
-                    </div>
                     <div class="card-body">
-                        <?php if (!empty($dons) && is_array($dons)): ?>
+                        <?php if (!empty($achats) && is_array($achats)): ?>
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
-                                            <th>Donateur</th>
-                                            <th>Catégorie</th>
                                             <th>Ville</th>
-                                            <th>Région</th>
-                                            <th>Quantité</th>
-                                            <th>Actions</th>
+                                            <th>Catégorie</th>
+                                            <th>Montant</th>
+                                            <th>Frais %</th>
+                                            <th>Montant Total</th>
+                                            <th>Configuration</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($dons as $d): ?>
+                                        <?php foreach ($achats as $achat): ?>
                                             <tr>
                                                 <td>
                                                     <span style="font-size: var(--font-size-sm);">
-                                                        <?= date('d/m/Y', strtotime($d['date_don'] ?? 'now')) ?>
+                                                        <?= date('d/m/Y', strtotime($achat['date_achat'] ?? 'now')) ?>
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <strong><?= htmlspecialchars($d['donateur_nom'] ?? 'N/A') ?></strong>
-                                                    <br />
-                                                    <small style="color: var(--text-secondary);">
-                                                        <?= htmlspecialchars($d['donateur_email'] ?? '') ?>
-                                                    </small>
+                                                    <strong><?= htmlspecialchars($achat['ville_nom'] ?? 'N/A') ?></strong>
                                                 </td>
                                                 <td>
                                                     <span class="badge" style="background-color: var(--primary-100); color: var(--primary);">
-                                                        <?= htmlspecialchars($d['categorie_nom'] ?? 'N/A') ?>
+                                                        <?= htmlspecialchars($achat['categorie_nom'] ?? 'N/A') ?>
                                                     </span>
                                                 </td>
-                                                <td><?= htmlspecialchars($d['ville_nom'] ?? 'N/A') ?></td>
-                                                <td><?= htmlspecialchars($d['region_nom'] ?? 'N/A') ?></td>
                                                 <td>
-                                                    <strong><?= number_format($d['quantite'] ?? 0, 2) ?></strong>
+                                                    <strong><?= number_format($achat['montant'] ?? 0, 2, ',', '.') ?></strong>
                                                 </td>
                                                 <td>
-                                                    <div style="display: flex; gap: var(--spacing-2);">
-                                                        <a href="<?= Flight::get('flight.base_url') ?>/don/<?= htmlspecialchars($d['id'] ?? '') ?>" 
-                                                           class="btn btn-sm" title="Voir détails">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-                                                    </div>
+                                                    <span style="font-weight: 600; color: var(--warning);">
+                                                        <?= number_format($achat['frais_percent'] ?? 0, 2, ',', '.') ?>%
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span style="font-weight: 600; color: var(--success);">
+                                                        <?= number_format($achat['montant_total'] ?? 0, 2, ',', '.') ?>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="<?= Flight::get('flight.base_url') ?>/achat/<?= htmlspecialchars($achat['id'] ?? '') ?>/frais-config" 
+                                                       class="btn btn-sm" 
+                                                       title="Configurer les frais %"
+                                                       style="background-color: var(--warning-100); color: var(--warning); border: 1px solid var(--warning); padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius); text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-1); font-size: var(--font-size-sm); font-weight: 600;">
+                                                        <i class="bi bi-percent"></i>
+                                                        <span>Configuration%</span>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -175,7 +192,7 @@
                         <?php else: ?>
                             <div style="padding: var(--spacing-6); text-align: center; color: var(--text-secondary);">
                                 <i class="bi bi-inbox" style="font-size: 2rem; display: block; margin-bottom: var(--spacing-2);"></i>
-                                <p>Aucun don trouvé</p>
+                                <p>Aucun achat trouvé</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -184,7 +201,7 @@
         </div>
     </div>
 
-    <script>
+    <script nonce="<?= Flight::get('csp_nonce') ?>">
         // Toggle sidebar on mobile
         document.querySelector('.sidebar-toggle')?.addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');

@@ -189,4 +189,75 @@ class AchatService
     {
         return $this->achatModel->delete($id);
     }
+
+    /**
+     * Update fee percentage for a specific purchase
+     * Recalculates montant_total based on new percentage
+     */
+    public function updateFeePercent($achatId, $newFeePercent)
+    {
+        try {
+            if ($newFeePercent < 0 || $newFeePercent > 100) {
+                return [
+                    'success' => false,
+                    'error' => 'Le pourcentage de frais doit être entre 0 et 100'
+                ];
+            }
+
+            // Get the purchase
+            $achat = $this->achatModel->getById($achatId);
+            if (!$achat) {
+                return [
+                    'success' => false,
+                    'error' => 'Achat introuvable'
+                ];
+            }
+
+            // Calculate new total
+            $montant = $achat['montant'];
+            $newFees = ($montant * $newFeePercent) / 100;
+            $newTotal = $montant + $newFees;
+
+            // Update in database
+            $query = "UPDATE bngrc_achat 
+                      SET frais_percent = :frais_percent, 
+                          montant_total = :montant_total 
+                      WHERE id = :id";
+            
+            $result = $this->achatModel->db->run($query, [
+                ':frais_percent' => $newFeePercent,
+                ':montant_total' => $newTotal,
+                ':id' => $achatId
+            ]);
+
+            if ($result) {
+                return [
+                    'success' => true,
+                    'old_percent' => $achat['frais_percent'],
+                    'new_percent' => $newFeePercent,
+                    'old_total' => $achat['montant_total'],
+                    'new_total' => $newTotal,
+                    'error' => null
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => 'Erreur lors de la mise à jour'
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'error' => 'Erreur: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get all purchases with details
+     */
+    public function getAllWithDetails()
+    {
+        return $this->achatModel->getAllWithDetails();
+    }
 }

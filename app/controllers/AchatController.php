@@ -267,4 +267,160 @@ class AchatController
             $app->halt(500, ['error' => 'Erreur lors de la récupération des achats']);
         }
     }
+
+    /**
+     * Display list of all purchases
+     */
+    public function listAchats(Engine $app)
+    {
+        try {
+            $achats = $this->achatService->getAllWithDetails();
+            $stats = $this->achatService->getStatistics();
+
+            $app->render('Achat', [
+                'achats' => $achats,
+                'stats' => $stats,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController listAchats error: ' . $e->getMessage());
+            $app->halt(500, 'Erreur lors du chargement des achats');
+        }
+    }
+
+    /**
+     * Show purchase fee configuration form
+     */
+    public function showFeeConfig(Engine $app, $id)
+    {
+        try {
+            $achat = $this->achatService->getById($id);
+            if (empty($achat)) {
+                $app->halt(404, 'Achat introuvable');
+            }
+
+            // Get full details including ville_nom, categorie_nom
+            $achatModel = new Achat();
+            $achatDetails = $achatModel->getByIdWithDetails($id);
+
+            $app->render('ConfigFraisPourcentage', [
+                'achat' => $achatDetails,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController showFeeConfig error: ' . $e->getMessage());
+            $app->halt(500, 'Erreur lors du chargement de la configuration');
+        }
+    }
+
+    /**
+     * Handle fee percentage update (POST)
+     */
+    public function updateFeePercent(Engine $app, $id)
+    {
+        $req = $app->request();
+
+        try {
+            $frais_percent = filter_var(
+                $req->data->frais_percent,
+                FILTER_VALIDATE_FLOAT
+            );
+
+            if ($frais_percent === false) {
+                $app->halt(400, 'Pourcentage de frais invalide');
+            }
+
+            $result = $this->achatService->updateFeePercent($id, $frais_percent);
+
+            if (!$result['success']) {
+                // Re-render with error
+                $achatModel = new Achat();
+                $achatDetails = $achatModel->getByIdWithDetails($id);
+                
+                $app->render('ConfigFraisPourcentage', [
+                    'achat' => $achatDetails,
+                    'error_message' => $result['error'],
+                ]);
+                return;
+            }
+
+            // Redirect with success message
+            $app->redirect('/achat/non-argent?success=1');
+        } catch (\Throwable $e) {
+            error_log('AchatController updateFeePercent error: ' . $e->getMessage());
+            $app->halt(500, 'Erreur lors de la mise à jour');
+        }
+    }
+
+    /**
+     * API: Get all purchases
+     */
+    public function apiGetAll(Engine $app)
+    {
+        try {
+            $achats = $this->achatService->getAllWithDetails();
+
+            $app->json([
+                'success' => true,
+                'achats' => $achats,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController apiGetAll error: ' . $e->getMessage());
+            $app->halt(500, ['error' => 'Erreur lors de la récupération des achats']);
+        }
+    }
+
+    /**
+     * API: Get purchase by ID
+     */
+    public function apiGetById(Engine $app, $id)
+    {
+        try {
+            $achat = $this->achatService->getById($id);
+
+            if (empty($achat)) {
+                $app->json([
+                    'success' => false,
+                    'error' => 'Achat introuvable',
+                ]);
+                return;
+            }
+
+            $app->json([
+                'success' => true,
+                'achat' => $achat,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController apiGetById error: ' . $e->getMessage());
+            $app->halt(500, ['error' => 'Erreur lors de la récupération de l\'achat']);
+        }
+    }
+
+    /**
+     * API: Update fee percentage
+     */
+    public function apiUpdateFeePercent(Engine $app, $id)
+    {
+        $req = $app->request();
+
+        try {
+            $frais_percent = filter_var(
+                $req->data->frais_percent,
+                FILTER_VALIDATE_FLOAT
+            );
+
+            if ($frais_percent === false) {
+                $app->json([
+                    'success' => false,
+                    'error' => 'Pourcentage de frais invalide',
+                ]);
+                return;
+            }
+
+            $result = $this->achatService->updateFeePercent($id, $frais_percent);
+
+            $app->json($result);
+        } catch (\Throwable $e) {
+            error_log('AchatController apiUpdateFeePercent error: ' . $e->getMessage());
+            $app->halt(500, ['error' => 'Erreur lors de la mise à jour']);
+        }
+    }
 }
