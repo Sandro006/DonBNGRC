@@ -129,6 +129,78 @@
                     </div>
                 </div>
 
+                <!-- Filters Card -->
+                <div class="card" style="margin-bottom: var(--spacing-6);">
+                    <div class="card-body">
+                        <h3 style="margin: 0 0 var(--spacing-4) 0; font-size: var(--font-size-lg); display: flex; align-items: center; gap: var(--spacing-2);">
+                            <i class="bi bi-funnel"></i> Filtres
+                        </h3>
+                        <form method="GET" action="<?= Flight::get('flight.base_url') ?>/achat/non-argent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4);">
+                            <!-- Filter by Date From -->
+                            <div>
+                                <label style="display: block; margin-bottom: var(--spacing-2); font-weight: 600;">Date From</label>
+                                <input 
+                                    type="date" 
+                                    name="date_from" 
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>"
+                                />
+                            </div>
+
+                            <!-- Filter by Date To -->
+                            <div>
+                                <label style="display: block; margin-bottom: var(--spacing-2); font-weight: 600;">Date To</label>
+                                <input 
+                                    type="date" 
+                                    name="date_to" 
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>"
+                                />
+                            </div>
+
+                            <!-- Filter by City -->
+                            <div>
+                                <label style="display: block; margin-bottom: var(--spacing-2); font-weight: 600;">Ville</label>
+                                <select name="ville_id" class="form-control">
+                                    <option value="">-- Toutes les villes --</option>
+                                    <?php if (!empty($villes) && is_array($villes)): ?>
+                                        <?php foreach ($villes as $ville): ?>
+                                            <option value="<?= htmlspecialchars($ville['id']) ?>" <?= ($_GET['ville_id'] ?? '') == $ville['id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($ville['nom'] ?? '') ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+
+                            <!-- Filter by Category -->
+                            <div>
+                                <label style="display: block; margin-bottom: var(--spacing-2); font-weight: 600;">Catégorie</label>
+                                <select name="categorie_id" class="form-control">
+                                    <option value="">-- Toutes les catégories --</option>
+                                    <?php if (!empty($categories) && is_array($categories)): ?>
+                                        <?php foreach ($categories as $cat): ?>
+                                            <option value="<?= htmlspecialchars($cat['id']) ?>" <?= ($_GET['categorie_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($cat['libelle'] ?? '') ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div style="display: flex; gap: var(--spacing-2); align-items: flex-end;">
+                                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                    <i class="bi bi-search"></i> Filtrer
+                                </button>
+                                <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="btn btn-secondary" style="flex: 1; text-decoration: none; text-align: center;">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Réinitialiser
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Achats Table -->
                 <div class="card">
                     <div class="card-body">
