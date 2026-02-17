@@ -1,10 +1,12 @@
-<<<<<<< Updated upstream
-RewriteEngine On
-RewriteBase /DonBNGRC/public/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
-=======
-# This .htaccess is not used when running with PHP development server
-# For development, use: cd public && php -S localhost:8000
->>>>>>> Stashed changes
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /DonBNGRC/
+    
+    # Ne pas réécrire les fichiers/dossiers existants
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Éviter une double rewrite avec une variable ENV
+    RewriteCond %{ENV:REWRITTEN} !=1
+    RewriteRule ^(.*)$ public/$1 [E=REWRITTEN:1,L]
+</IfModule>

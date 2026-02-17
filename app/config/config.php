@@ -49,16 +49,8 @@ define('PROJECT_ROOT', __DIR__ . '/../..');
 $app->path(PROJECT_ROOT);
 
 // Core config variables
-<<<<<<< Updated upstream
-$app->set('flight.base_url', '/DonBNGRC/public');           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
-=======
-<<<<<<< Updated upstream
-$app->set('flight.base_url', '/DonBNGRC/public/',);           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
-=======
 $app->set('flight.base_url', '/DonBNGRC');           // Base URL for your app. Change if app is in a subdirectory (e.g., '/myapp/')
 $app->set('flight.base_path', '/');          // For routes/links
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 $app->set('flight.case_sensitive', false);    // Set true for case sensitive routes. Default: false
 $app->set('flight.log_errors', true);         // Log errors to file. Recommended: true in production
 $app->set('flight.handle_errors', false);     // Let Tracy handle errors if false. Set true to use Flight's error handler
