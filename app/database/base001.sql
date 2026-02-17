@@ -87,6 +87,7 @@ CREATE TABLE bngrc_don (
     donateur_id INT NOT NULL,
     date_don DATETIME DEFAULT CURRENT_TIMESTAMP,
     quantite INT NOT NULL,
+    frais_percent DECIMAL(5,2) DEFAULT NULL,
 
     CONSTRAINT fk_don_ville
         FOREIGN KEY (ville_id)
