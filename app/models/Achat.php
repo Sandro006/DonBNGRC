@@ -105,10 +105,23 @@ class Achat extends BaseModel
     /**
      * Count total purchases
      */
-    public function count()
+    public function count($conditions = [])
     {
-        $query = "SELECT COUNT(*) as count FROM {$this->table}";
-        $result = $this->db->fetchRow($query);
-        return $result['count'] ?? 0;
+        $where = [];
+        $params = [];
+
+        foreach ($conditions as $key => $value) {
+            $where[] = "{$key} = :{$key}";
+            $params[":{$key}"] = $value;
+        }
+
+        $query = "SELECT COUNT(*) as total FROM {$this->table}";
+        
+        if (!empty($where)) {
+            $query .= " WHERE " . implode(" AND ", $where);
+        }
+
+        $result = $this->db->fetchRow($query, $params);
+        return $result['total'] ?? 0;
     }
 }
