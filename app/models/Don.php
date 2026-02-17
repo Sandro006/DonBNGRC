@@ -167,4 +167,24 @@ class Don extends BaseModel
                   ORDER BY total_quantity DESC";
         return $this->db->fetchAll($query);
     }
+
+    /**
+     * Get donations that are NOT money (non-monetary donations)
+     * Excludes donations from the "Argent" category
+     */
+    public function getNonMoneyDonations()
+    {
+        $query = "SELECT d.*, 
+                  v.nom as ville_nom, v.region_id, r.nom as region_nom,
+                  c.libelle as categorie_nom,
+                  dn.nom as donateur_nom, dn.email as donateur_email, dn.telephone as donateur_telephone
+                  FROM {$this->table} d
+                  INNER JOIN bngrc_ville v ON d.ville_id = v.id
+                  INNER JOIN bngrc_region r ON v.region_id = r.id
+                  INNER JOIN bngrc_categorie c ON d.categorie_id = c.id
+                  INNER JOIN bngrc_donateur dn ON d.donateur_id = dn.id
+                  WHERE c.libelle != 'Argent'
+                  ORDER BY d.date_don DESC, d.id DESC";
+        return $this->db->fetchAll($query);
+    }
 }
