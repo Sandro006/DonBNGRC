@@ -174,23 +174,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>🕒 Distribution par Date</h6>
-                                <p><small>Privilégie les besoins exprimés depuis le plus longtemps. Équitable dans le temps.</small></p>
-                                
-                                <h6>📊 Distribution par Quantité</h6>
-                                <p><small>Peut prioriser les gros besoins (efficacité) ou les petits (répartition).</small></p>
-                                
-                                <h6>🗺️ Distribution par Région</h6>
-                                <p><small>Permet de définir des zones prioritaires selon la stratégie gouvernementale.</small></p>
+                                <p><small>Privilégie les besoins avec les plus grosses quantités demandées. Les besoins les plus importants sont traités en premier, triés par date.</small></p>
                             </div>
                             <div class="col-md-6">
-                                <h6>🏷️ Distribution par Catégorie</h6>
-                                <p><small>Priorise certains types d'aide (urgence médicale, nourriture, logement).</small></p>
-                                
-                                <h6>⚡ Distribution par Urgence</h6>
-                                <p><small>Basée sur les jours d'attente, identifie automatiquement les cas urgents.</small></p>
-                                
-                                <h6>⚖️ Distribution Équilibrée</h6>
-                                <p><small>Répartit équitablement entre toutes les régions pour éviter les déséquilibres.</small></p>
+                                <h6>📊 Distribution par Plus Petit Nombre</h6>
+                                <p><small>Distribue en minimisant le nombre de besoins restants. Priorité aux petites quantités pour satisfaire le maximum de besoins.</small></p>
                             </div>
                         </div>
                     </div>

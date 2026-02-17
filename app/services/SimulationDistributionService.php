@@ -146,49 +146,15 @@ class SimulationDistributionService
         return [
             'date' => [
                 'nom' => 'Distribution par Date',
-                'description' => 'Distribue aux besoins les plus anciens en premier (date de besoin)',
+                'description' => 'Privilégie les besoins avec les plus grosses quantités demandées, triés par date',
                 'icone' => 'calendar-event',
                 'parametres' => []
             ],
-            'quantite' => [
-                'nom' => 'Distribution par Quantité',
-                'description' => 'Privilégie les besoins avec les plus grosses quantités demandées',
-                'icone' => 'bar-chart-fill',
-                'parametres' => [
-                    'ordre' => ['asc' => 'Plus petites quantités', 'desc' => 'Plus grosses quantités']
-                ]
-            ],
-            'region' => [
-                'nom' => 'Distribution par Région',
-                'description' => 'Distribue par ordre de priorité des régions',
-                'icone' => 'geo-alt-fill',
-                'parametres' => [
-                    'regions_prioritaires' => 'Liste des régions par ordre de priorité'
-                ]
-            ],
-            'categorie' => [
-                'nom' => 'Distribution par Catégorie',
-                'description' => 'Privilégie certaines catégories (urgence, nourriture, etc.)',
-                'icone' => 'tags-fill',
-                'parametres' => [
-                    'categories_prioritaires' => 'Ordre de priorité des catégories'
-                ]
-            ],
-            'urgence' => [
-                'nom' => 'Distribution par Urgence',
-                'description' => 'Basée sur les jours d\'attente (plus urgent = plus de jours d\'attente)',
-                'icone' => 'exclamation-triangle-fill',
-                'parametres' => [
-                    'seuil_urgent' => 'Nombre de jours pour considérer comme urgent (défaut: 15)'
-                ]
-            ],
-            'equilibre' => [
-                'nom' => 'Distribution Équilibrée',
-                'description' => 'Répartit équitablement entre toutes les régions',
-                'icone' => 'diagram-3-fill',
-                'parametres' => [
-                    'max_par_region' => 'Quantité maximum par région par tour'
-                ]
+            'plus_petit_nombre' => [
+                'nom' => 'Distribution par Plus Petit Nombre',
+                'description' => 'Distribue en minimisant le nombre de besoins restants (satisfait le maximum de besoins)',
+                'icone' => 'list-ol',
+                'parametres' => []
             ]
         ];
     }
@@ -200,39 +166,24 @@ class SimulationDistributionService
     {
         switch ($methode) {
             case 'date':
-                return $this->besoinModel->getNeedsForSimulation(); // Déjà trié par date
+                // Priorité aux grosses quantités, triées par date
+                return $this->getBesoinsParQuantiteDate();
                 
-            case 'quantite':
-                $ordre = $parametres['ordre'] ?? 'desc';
-                return $this->getBesoinsParQuantite($ordre);
-                
-            case 'region':
-                $regionsPrioritaires = $parametres['regions_prioritaires'] ?? [];
-                return $this->getBesoinsParRegion($regionsPrioritaires);
-                
-            case 'categorie':
-                $categoriesPrioritaires = $parametres['categories_prioritaires'] ?? [];
-                return $this->getBesoinsParCategorie($categoriesPrioritaires);
-                
-            case 'urgence':
-                $seuilUrgent = $parametres['seuil_urgent'] ?? 15;
-                return $this->getBesoinsParUrgence($seuilUrgent);
-                
-            case 'equilibre':
-                $maxParRegion = $parametres['max_par_region'] ?? null;
-                return $this->getBesoinsEquilibres($maxParRegion);
+            case 'plus_petit_nombre':
+                // Priorité aux besoins les plus faciles à satisfaire
+                return $this->getBesoinsParPlusPetitNombre();
                 
             default:
-                return $this->besoinModel->getNeedsForSimulation();
+                return $this->getBesoinsParQuantiteDate();
         }
     }
 
     /**
-     * Get needs sorted by quantity
+     * Get needs sorted by quantity (biggest first) and then by date
+     * Méthode: Distribution par Date - Privilégie les grosses quantités
      */
-    private function getBesoinsParQuantite($ordre = 'desc')
+    private function getBesoinsParQuantiteDate()
     {
-        $orderBy = $ordre === 'asc' ? 'ASC' : 'DESC';
         $query = "SELECT 
                     b.id as besoin_id,
                     b.ville_id,
@@ -258,89 +209,17 @@ class SimulationDistributionService
                            b.quantite, b.prix_unitaire, b.date_besoin, s.libelle
                   HAVING quantite_manquante > 0
                   AND s.libelle NOT IN ('satisfait', 'completed')
-                  ORDER BY quantite_manquante {$orderBy}, b.date_besoin ASC";
+                  ORDER BY quantite_manquante DESC, b.date_besoin ASC";
         
         return $this->besoinModel->rawQuery($query);
     }
 
     /**
-     * Get needs sorted by region priority
+     * Get needs sorted to minimize the number of remaining needs
+     * Méthode: Distribution par Plus Petit Nombre - satisfait le maximum de besoins
+     * Priorité aux petites quantités pour satisfaire plus de besoins
      */
-    private function getBesoinsParRegion($regionsPrioritaires = [])
-    {
-        $besoins = $this->besoinModel->getNeedsForSimulation();
-        
-        if (empty($regionsPrioritaires)) {
-            // Si aucune priorité définie, grouper par région alphabétique
-            usort($besoins, function($a, $b) {
-                $regionComp = strcmp($a['region_nom'], $b['region_nom']);
-                if ($regionComp === 0) {
-                    return strtotime($a['date_besoin']) - strtotime($b['date_besoin']);
-                }
-                return $regionComp;
-            });
-            return $besoins;
-        }
-        
-        // Trier selon l'ordre des régions prioritaires
-        usort($besoins, function($a, $b) use ($regionsPrioritaires) {
-            $priorityA = array_search($a['region_nom'], $regionsPrioritaires);
-            $priorityB = array_search($b['region_nom'], $regionsPrioritaires);
-            
-            $priorityA = $priorityA !== false ? $priorityA : 999;
-            $priorityB = $priorityB !== false ? $priorityB : 999;
-            
-            if ($priorityA === $priorityB) {
-                return strtotime($a['date_besoin']) - strtotime($b['date_besoin']);
-            }
-            
-            return $priorityA - $priorityB;
-        });
-        
-        return $besoins;
-    }
-
-    /**
-     * Get needs sorted by category priority
-     */
-    private function getBesoinsParCategorie($categoriesPrioritaires = [])
-    {
-        $besoins = $this->besoinModel->getNeedsForSimulation();
-        
-        if (empty($categoriesPrioritaires)) {
-            // Si aucune priorité définie, grouper par catégorie alphabétique
-            usort($besoins, function($a, $b) {
-                $catComp = strcmp($a['categorie_nom'], $b['categorie_nom']);
-                if ($catComp === 0) {
-                    return strtotime($a['date_besoin']) - strtotime($b['date_besoin']);
-                }
-                return $catComp;
-            });
-            return $besoins;
-        }
-        
-        // Trier selon l'ordre des catégories prioritaires
-        usort($besoins, function($a, $b) use ($categoriesPrioritaires) {
-            $priorityA = array_search($a['categorie_nom'], $categoriesPrioritaires);
-            $priorityB = array_search($b['categorie_nom'], $categoriesPrioritaires);
-            
-            $priorityA = $priorityA !== false ? $priorityA : 999;
-            $priorityB = $priorityB !== false ? $priorityB : 999;
-            
-            if ($priorityA === $priorityB) {
-                return strtotime($a['date_besoin']) - strtotime($b['date_besoin']);
-            }
-            
-            return $priorityA - $priorityB;
-        });
-        
-        return $besoins;
-    }
-
-    /**
-     * Get needs sorted by urgency (days waiting)
-     */
-    private function getBesoinsParUrgence($seuilUrgent = 15)
+    private function getBesoinsParPlusPetitNombre()
     {
         $query = "SELECT 
                     b.id as besoin_id,
@@ -356,11 +235,7 @@ class SimulationDistributionService
                     COALESCE(SUM(d.quantite_distribuee), 0) as quantite_recue,
                     (b.quantite - COALESCE(SUM(d.quantite_distribuee), 0)) as quantite_manquante,
                     DATEDIFF(NOW(), b.date_besoin) as jours_attente,
-                    (b.quantite * b.prix_unitaire) as montant_total,
-                    CASE 
-                        WHEN DATEDIFF(NOW(), b.date_besoin) >= {$seuilUrgent} THEN 1 
-                        ELSE 0 
-                    END as est_urgent
+                    (b.quantite * b.prix_unitaire) as montant_total
                   FROM bngrc_besoin b
                   INNER JOIN bngrc_ville v ON b.ville_id = v.id
                   INNER JOIN bngrc_region r ON v.region_id = r.id
@@ -371,47 +246,12 @@ class SimulationDistributionService
                            b.quantite, b.prix_unitaire, b.date_besoin, s.libelle
                   HAVING quantite_manquante > 0
                   AND s.libelle NOT IN ('satisfait', 'completed')
-                  ORDER BY est_urgent DESC, jours_attente DESC, b.id ASC";
+                  ORDER BY quantite_manquante ASC, b.date_besoin ASC";
         
         return $this->besoinModel->rawQuery($query);
     }
 
-    /**
-     * Get needs with balanced distribution across regions
-     */
-    private function getBesoinsEquilibres($maxParRegion = null)
-    {
-        $besoins = $this->besoinModel->getNeedsForSimulation();
-        
-        if ($maxParRegion === null) {
-            // Distribution équilibrée simple: alterner entre régions
-            $besoinsParRegion = [];
-            foreach ($besoins as $besoin) {
-                $region = $besoin['region_nom'];
-                if (!isset($besoinsParRegion[$region])) {
-                    $besoinsParRegion[$region] = [];
-                }
-                $besoinsParRegion[$region][] = $besoin;
-            }
-            
-            // Entrelacer les besoins des différentes régions
-            $besoinsEquilibres = [];
-            $maxIndex = max(array_map('count', $besoinsParRegion));
-            
-            for ($i = 0; $i < $maxIndex; $i++) {
-                foreach ($besoinsParRegion as $regionBesoins) {
-                    if (isset($regionBesoins[$i])) {
-                        $besoinsEquilibres[] = $regionBesoins[$i];
-                    }
-                }
-            }
-            
-            return $besoinsEquilibres;
-        }
-        
-        // Distribution avec limite par région
-        return $besoins; // TODO: implémenter la limitation
-    }
+
 
     /**
      * Distribute donations specifically by date priority (oldest needs first)
