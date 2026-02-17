@@ -17,8 +17,12 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
+        <div class="layout-main">
+            <!-- Main Content -->
+            <main class="layout-content">
             <!-- HEADER -->
             <header class="header">
                 <div class="header-container">
@@ -35,8 +39,6 @@
                 </div>
             </header>
 
-            <!-- CONTENT -->
-            <div class="layout-content">
                 <!-- BREADCRUMB -->
                 <div class="breadcrumb-nav">
                     <ol>

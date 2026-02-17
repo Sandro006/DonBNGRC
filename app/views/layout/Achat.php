@@ -16,46 +16,10 @@
 </head>
 
 <body>
+    <?php include __DIR__ . '/../partials/navbar.php'; ?>
+
     <div class="layout">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="sidebar-menu-link active">
-                        <i class="bi bi-bag"></i>
-                        <span>Achat</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link">
-                        <i class="bi bi-diagram-3"></i>
-                        <span>Simulation</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- Main Layout -->
         <div class="layout-main">
             <!-- Header -->
             <header class="header">

@@ -17,26 +17,29 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
-            <!-- HEADER -->
-            <header class="header">
-                <div class="header-container">
-                    <button class="sidebar-toggle">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700;">🆘 BNGRC - Liste des Besoins</h1>
-                    <div class="header-actions" style="margin-left: auto;">
-                        <div class="header-user">
-                            <div class="header-user-avatar">AD</div>
-                            <span style="font-size: 0.875rem;">Admin</span>
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
+        <div class="layout-main">
+            <!-- Main Content -->
+            <main class="layout-content">
+                <!-- HEADER -->
+                <header class="header">
+                    <div class="header-container">
+                        <button class="sidebar-toggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <h1 style="margin: 0; font-size: 1.25rem; font-weight: 700;">🆘 BNGRC - Liste des Besoins</h1>
+                        <div class="header-actions" style="margin-left: auto;">
+                            <div class="header-user">
+                                <div class="header-user-avatar">AD</div>
+                                <span style="font-size: 0.875rem;">Admin</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </header>
+                </header>
 
-            <!-- CONTENT -->
-            <div class="layout-content">
+                <!-- CONTENT -->
                 <!-- BREADCRUMB -->
                 <div class="breadcrumb-nav">
                     <ol>
@@ -184,11 +187,9 @@
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-
-    <?php include __DIR__ . '/partials/footer.php'; ?>
 
     <script src="<?= Flight::get('flight.base_url') ?>/js/bootstrap.bundle.min.js"></script>
     <script src="<?= Flight::get('flight.base_url') ?>/js/app.js"></script>

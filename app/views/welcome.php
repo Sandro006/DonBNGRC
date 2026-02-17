@@ -267,8 +267,14 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
+        <div class="layout-main">
+            <!-- Main Content -->
+            <main class="layout-content">
+                <!-- Hero Section -->
+                <section class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">Bureau National de Gestion des Risques et Catastrophes</h1>
             <p class="hero-subtitle">Ensemble, aidons les communautés touchées par les catastrophes naturelles à Madagascar</p>
@@ -345,15 +351,12 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer-section">
-        <div class="footer-links">
-            <a href="<?= Flight::get('flight.base_url') ?>">Accueil</a>
-            <a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a>
-            <a href="<?= Flight::get('flight.base_url') ?>/don-global/nouveau">Créer Don Global</a>
+            </main>
+
+            <!-- Footer -->
+            <?php include __DIR__ . '/partials/footer.php'; ?>
         </div>
-        <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
-    </footer>
+    </div>
 
     <script src="<?php echo Flight::get('flight.base_url'); ?>/js/app.js"></script>
 </body>

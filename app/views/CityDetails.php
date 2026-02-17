@@ -18,39 +18,9 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
-                        <i class="bi bi-box-seam"></i>
-                        <span>Dons Globaux</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link">
-                        <i class="bi bi-diagram-3"></i>
-                        <span>Simulation</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- Main Layout -->
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
         <div class="layout-main">
             <!-- Header -->
             <header class="header">

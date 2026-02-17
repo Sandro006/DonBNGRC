@@ -17,45 +17,9 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
-                        <i class="bi bi-box-seam"></i>
-                        <span>Dons Globaux</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
-                        <i class="bi bi-globe"></i>
-                        <span>Dons Globaux</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global/methodes" class="sidebar-menu-link active">
-                        <i class="bi bi-gear-fill"></i>
-                        <span>Méthodes Distribution</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- MAIN CONTENT -->
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
         <div class="layout-main">
             <!-- HEADER -->
             <header class="header">
@@ -74,7 +38,7 @@
             </header>
 
             <!-- CONTENT -->
-            <div class="layout-content">
+            <main class="layout-content">
                 <!-- BREADCRUMB -->
                 <div class="breadcrumb-nav">
                     <ol>
@@ -184,15 +148,12 @@
                     </div>
                 </div>
 
-            </div>
+            </main>
 
             <!-- FOOTER -->
-            <footer class="layout-footer">
-                <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
-            </footer>
+            <?php include __DIR__ . '/partials/footer.php'; ?>
         </div>
-
-        <?php include __DIR__ . '/partials/footer.php'; ?>
+    </div>
 
     <script>
         // Responsive sidebar toggle
