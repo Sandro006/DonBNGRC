@@ -5,3 +5,4 @@ app/config/config.php
 app/views/Config
 todo.md
 ~$todo.xlsx
+*.xlsx
