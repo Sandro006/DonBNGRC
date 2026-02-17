@@ -167,17 +167,11 @@
 </head>
 
 <body>
-    <!-- Layout Container -->
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
+
+    <!-- MAIN CONTENT -->
+    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
+        <!-- Layout Container -->
 
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
@@ -577,12 +571,8 @@
             data-don-id="<?= (int)$don_id ?>"></script>
     <?php endif; ?>
 
-    <!-- Responsive sidebar toggle script -->
-    <script nonce="<?= Flight::get('csp_nonce') ?>">
-        document.querySelector('.sidebar-toggle')?.addEventListener('click', function () {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-    </script>
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+
 </body>
 
 </html>

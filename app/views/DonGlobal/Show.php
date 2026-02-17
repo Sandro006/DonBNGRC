@@ -15,47 +15,10 @@
 </head>
 
 <body>
-    <div class="layout">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
+    <?php include __DIR__ . '/../partials/navbar.php'; ?>
 
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
-                        <i class="bi bi-gift"></i>
-                        <span>Ajouter don</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link active">
-                        <i class="bi bi-globe"></i>
-                        <span>Dons Globaux</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global/methodes" class="sidebar-menu-link">
-                        <i class="bi bi-gear-fill"></i>
-                        <span>Méthodes Distribution</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <div class="layout-main">
+    <!-- MAIN CONTENT -->
+    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
             <!-- HEADER -->
             <header class="header">
                 <div class="header-container">
@@ -335,8 +298,8 @@
                 <?php endif; ?>
                 
             </div>
-        </div>
-    </div>
+
+            <?php include __DIR__ . '/../partials/footer.php'; ?>
 
     <script src="<?= Flight::get('flight.base_url') ?>/js/app.js"></script>
     <script>

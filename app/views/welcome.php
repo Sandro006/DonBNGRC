@@ -265,29 +265,7 @@
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="header">
-        <div class="header-container">
-            <a href="<?= Flight::get('flight.base_url') ?>" class="header-brand">
-                <div class="header-brand-icon">🌊</div>
-                <div>
-                    <h1>BNGRC</h1>
-                    <small>Gestion des Risques</small>
-                </div>
-            </a>
-            <ul class="header-nav">
-                <li class="header-nav-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>" class="active">Accueil</a>
-                </li>
-                <li class="header-nav-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a>
-                </li>
-                <li class="header-nav-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter">Faire un don</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
 
     <!-- Hero Section -->
     <section class="hero-section">

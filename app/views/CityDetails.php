@@ -16,9 +16,10 @@
 </head>
 
 <body>
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
+
+    <!-- MAIN CONTENT -->
+    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
             <div class="sidebar-header">
                 <div class="sidebar-brand">🌊</div>
                 <div class="sidebar-brand-text">

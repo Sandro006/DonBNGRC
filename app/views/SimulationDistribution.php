@@ -15,9 +15,10 @@
 </head>
 
 <body>
-    <div class="layout">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
+    <?php include __DIR__ . '/partials/navbar.php'; ?>
+
+    <!-- MAIN CONTENT -->
+    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
             <div class="sidebar-header">
                 <div class="sidebar-brand">🌊</div>
                 <div class="sidebar-brand-text">
@@ -337,7 +338,8 @@
                 <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
             </footer>
         </div>
-    </div>
+
+        <?php include __DIR__ . '/partials/footer.php'; ?>
 
     <script>
         // Responsive sidebar toggle
