@@ -2,18 +2,20 @@
 
 namespace app\controllers;
 
+use flight\Engine;
 use app\services\SimulationService;
 use app\services\SmartDistributionService;
 use app\models\DonGlobal;
-use Flight;
 
 class SimulationController
 {
+    private $app;
     protected SimulationService $simulationService;
     protected SmartDistributionService $smartDistributionService;
 
-    public function __construct()
+    public function __construct(Engine $app)
     {
+        $this->app = $app;
         $this->simulationService = new SimulationService();
         $this->smartDistributionService = new SmartDistributionService();
     }
@@ -32,7 +34,7 @@ class SimulationController
                 return ($don['status_distribution'] ?? '') === 'disponible';
             });
 
-            Flight::render('Simulation', [
+            $this->app->render('Simulation', [
                 'dons' => $availableDons,
                 'all_dons' => $dons,
                 'is_list' => true,
@@ -40,7 +42,7 @@ class SimulationController
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController index error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur interne');
+            $this->app->halt(500, 'Erreur interne');
         }
     }
 
@@ -54,7 +56,7 @@ class SimulationController
             $don = $donGlobalModel->getByIdWithDetails($id);
 
             if (empty($don)) {
-                Flight::halt(404, 'Don global introuvable');
+                $this->app->halt(404, 'Don global introuvable');
             }
 
             // Get the distribution simulation preview
@@ -63,7 +65,7 @@ class SimulationController
             // Get smart suggestions
             $suggestions = $this->simulationService->getDistributionSuggestions($id);
 
-            Flight::render('Simulation', [
+            $this->app->render('Simulation', [
                 'don' => $don,
                 'simulation' => $simulation,
                 'suggestions' => $suggestions,
@@ -72,7 +74,7 @@ class SimulationController
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController show error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur interne');
+            $this->app->halt(500, 'Erreur interne');
         }
     }
 
@@ -84,14 +86,14 @@ class SimulationController
         try {
             $recommendations = $this->smartDistributionService->suggestOptimalDistribution($id);
             
-            Flight::render('SimulationDistribution', [
+            $this->app->render('SimulationDistribution', [
                 'don_id' => $id,
                 'recommendations' => $recommendations,
                 'is_smart_mode' => true,
             ]);
         } catch (\Throwable $e) {
             error_log('SimulationController smartSuggestions error: ' . $e->getMessage());
-            Flight::halt(500, 'Erreur interne: ' . $e->getMessage());
+            $this->app->halt(500, 'Erreur interne: ' . $e->getMessage());
         }
     }
 
@@ -107,16 +109,16 @@ class SimulationController
             $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
+                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $simulation = $this->simulationService->simulateDistribution($don_id);
 
-            Flight::app()->json($simulation, $simulation['success'] ? 200 : 400);
+            $this->app->json($simulation, $simulation['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiSimulate error: ' . $e->getMessage());
-            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -131,16 +133,16 @@ class SimulationController
             $don_id = $data['don_id'] ?? null;
 
             if (empty($don_id)) {
-                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
+                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $suggestions = $this->simulationService->getDistributionSuggestions($don_id);
 
-            Flight::app()->json($suggestions, $suggestions['success'] ? 200 : 400);
+            $this->app->json($suggestions, $suggestions['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiSuggestions error: ' . $e->getMessage());
-            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -158,16 +160,16 @@ class SimulationController
             $responsable = $data['responsable'] ?? 'Système Auto';
 
             if (empty($don_id)) {
-                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
+                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $result = $this->simulationService->validateDistribution($don_id, $methode, $responsable);
 
-            Flight::app()->json($result, $result['success'] ? 200 : 400);
+            $this->app->json($result, $result['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiValidate error: ' . $e->getMessage());
-            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -183,16 +185,16 @@ class SimulationController
             $options = $data['options'] ?? [];
 
             if (empty($don_id)) {
-                Flight::app()->json(['success' => false, 'error' => 'don_id requis'], 400);
+                $this->app->json(['success' => false, 'error' => 'don_id requis'], 400);
                 return;
             }
 
             $result = $this->smartDistributionService->executeBatchDistribution($don_id, $options);
 
-            Flight::app()->json($result, $result['success'] ? 200 : 400);
+            $this->app->json($result, $result['success'] ? 200 : 400);
         } catch (\Throwable $e) {
             error_log('SimulationController apiSmartDistribute error: ' . $e->getMessage());
-            Flight::app()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            $this->app->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 }
