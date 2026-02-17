@@ -177,4 +177,87 @@ class Besoin extends BaseModel
                   ORDER BY total_amount DESC";
         return $this->db->fetchAll($query);
     }
+
+    /**
+     * TASK 6: Get total needs (SUM quantity × unit_price)
+     */
+    public function getTotalBesoins()
+    {
+        $query = "SELECT 
+                  COUNT(id) as count,
+                  SUM(quantite) as total_quantity,
+                  SUM(quantite * prix_unitaire) as total_amount,
+                  AVG(prix_unitaire) as avg_unit_price
+                  FROM {$this->table}";
+        $result = $this->db->fetchRow($query);
+        return $result ?? [
+            'count' => 0,
+            'total_quantity' => 0,
+            'total_amount' => 0,
+            'avg_unit_price' => 0
+        ];
+    }
+
+    /**
+     * TASK 7: Get total satisfied needs
+     */
+    public function getTotalSatisfaits()
+    {
+        $query = "SELECT 
+                  COUNT(b.id) as count,
+                  SUM(b.quantite) as total_quantity,
+                  SUM(b.quantite * b.prix_unitaire) as total_amount
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  WHERE LOWER(s.libelle) = 'satisfied' 
+                     OR LOWER(s.libelle) LIKE '%satisf%'
+                     OR LOWER(s.libelle) = 'completed'";
+        $result = $this->db->fetchRow($query);
+        return $result ?? [
+            'count' => 0,
+            'total_quantity' => 0,
+            'total_amount' => 0
+        ];
+    }
+
+    /**
+     * TASK 8: Get total remaining needs
+     */
+    public function getTotalRestants()
+    {
+        $query = "SELECT 
+                  COUNT(b.id) as count,
+                  SUM(b.quantite) as total_quantity,
+                  SUM(b.quantite * b.prix_unitaire) as total_amount
+                  FROM {$this->table} b
+                  INNER JOIN bngrc_status s ON b.status_id = s.id
+                  WHERE LOWER(s.libelle) != 'satisfied' 
+                    AND LOWER(s.libelle) NOT LIKE '%satisf%'
+                    AND LOWER(s.libelle) != 'completed'";
+        $result = $this->db->fetchRow($query);
+        return $result ?? [
+            'count' => 0,
+            'total_quantity' => 0,
+            'total_amount' => 0
+        ];
+    }
+
+    /**
+     * Delete a need
+     */
+    public function delete($id)
+    {
+        $query = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = :id";
+        return $this->db->run($query, [':id' => $id]);
+    }
+
+    /**
+     * Count total needs
+     */
+    public function count()
+    {
+        $query = "SELECT COUNT(*) as count FROM {$this->table}";
+        $result = $this->db->fetchRow($query);
+        return $result['count'] ?? 0;
+    }
 }
