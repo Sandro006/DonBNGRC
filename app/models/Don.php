@@ -167,4 +167,13 @@ class Don extends BaseModel
                   ORDER BY total_quantity DESC";
         return $this->db->fetchAll($query);
     }
+
+    /**
+     * Get category by ID
+     */
+    public function getCategoryById($categorie_id)
+    {
+        $query = "SELECT * FROM bngrc_categorie WHERE id = :id";
+        return $this->db->fetchRow($query, [':id' => $categorie_id]);
+    }
 }
