@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 RewriteEngine On
 RewriteBase /DonBNGRC/public/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
+=======
+# This .htaccess is not used when running with PHP development server
+# For development, use: cd public && php -S localhost:8000
+>>>>>>> Stashed changes
