@@ -352,9 +352,9 @@ $router->group('', function (Router $router) use ($app) {
 	// Achat: purchase management
 	$router->get('/achat', [AchatController::class, 'index']);
 	$router->get('/achat/ajouter', [AchatController::class, 'create']);
-	$router->get('/achat/non-argent', function () use ($app) {
-		(new AchatController())->nonMoneyDonations($app);
-	});
+	$router->get('/achat/non-argent', [AchatController::class, 'listAchats']);
+	$router->get('/achat/@id:[0-9]+/frais-config', [AchatController::class, 'showFeeConfig']);
+	$router->post('/achat/@id:[0-9]+/frais-update', [AchatController::class, 'updateFeePercent']);
 	$router->get('/achat/@id:[0-9]+', [AchatController::class, 'show']);
 	$router->post('/achat', [AchatController::class, 'store']);
 	$router->post('/achat/ajouter', [AchatController::class, 'store']);
