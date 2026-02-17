@@ -313,6 +313,59 @@ class DonGlobalController
     }
 
     /**
+     * Reset all distributions (delete executed distributions)
+     */
+    public function resetDistribution()
+    {
+        try {
+            // Parse JSON input from request body
+            $rawInput = file_get_contents('php://input');
+            $data = json_decode($rawInput, true) ?? [];
+            
+            // Get all recent distributions
+            $distributions = $this->distributionModel->getAllWithDetails();
+            
+            if (empty($distributions)) {
+                $this->app->json([
+                    'success' => true,
+                    'message' => 'Aucune distribution à réinitialiser',
+                    'result' => [
+                        'nombre_distributions_supprimees' => 0
+                    ]
+                ]);
+                return;
+            }
+            
+            // Delete all distributions
+            $nombreSupprimees = 0;
+            foreach ($distributions as $distribution) {
+                try {
+                    $result = $this->distributionModel->deleteDistribution($distribution['id']);
+                    if ($result) {
+                        $nombreSupprimees++;
+                    }
+                } catch (\Exception $e) {
+                    error_log('Erreur lors de la suppression de la distribution ' . $distribution['id'] . ': ' . $e->getMessage());
+                }
+            }
+            
+            $this->app->json([
+                'success' => true,
+                'message' => "Réinitialisation effectuée avec succès",
+                'result' => [
+                    'nombre_distributions_supprimees' => $nombreSupprimees
+                ]
+            ]);
+        } catch (\Exception $e) {
+            $this->app->response()->status(500);
+            $this->app->json([
+                'success' => false,
+                'message' => "Erreur lors de la réinitialisation: " . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
      * Get available donations for a specific category (AJAX)
      */
     public function getAvailableByCategory($categorieId)
