@@ -218,17 +218,13 @@ class AchatService
             $newFees = ($montant * $newFeePercent) / 100;
             $newTotal = $montant + $newFees;
 
-            // Update in database
-            $query = "UPDATE bngrc_achat 
-                      SET frais_percent = :frais_percent, 
-                          montant_total = :montant_total 
-                      WHERE id = :id";
-            
-            $result = $this->achatModel->db->run($query, [
-                ':frais_percent' => $newFeePercent,
-                ':montant_total' => $newTotal,
-                ':id' => $achatId
-            ]);
+            // Update the purchase
+            $updateData = [
+                'frais_percent' => $newFeePercent,
+                'montant_total' => $newTotal
+            ];
+
+            $result = $this->achatModel->update($achatId, $updateData);
 
             if ($result) {
                 return [
