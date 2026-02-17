@@ -164,6 +164,25 @@ class AchatController
     }
 
     /**
+     * Display list of non-money donations (Nature and Materials)
+     */
+    public function nonMoneyDonations(Engine $app)
+    {
+        try {
+            $donModel = new Don();
+            $dons = $donModel->getNonMoneyDonations();
+            
+            $app->render('Achat', [
+                'message' => 'Dons (Nature & Matériaux)',
+                'dons' => $dons,
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController nonMoneyDonations error: ' . $e->getMessage());
+            $app->halt(500, 'Erreur lors du chargement des dons');
+        }
+    }
+
+    /**
      * API: Calculate purchase with fees
      */
     public function apiCalculate(Engine $app)
