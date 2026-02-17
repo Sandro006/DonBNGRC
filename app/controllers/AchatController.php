@@ -298,12 +298,8 @@ class AchatController
                 $app->halt(404, 'Achat introuvable');
             }
 
-            // Get full details including ville_nom, categorie_nom
-            $achatModel = new Achat();
-            $achatDetails = $achatModel->getByIdWithDetails($id);
-
             $app->render('ConfigFraisPourcentage', [
-                'achat' => $achatDetails,
+                'achat' => $achat,
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController showFeeConfig error: ' . $e->getMessage());
@@ -332,18 +328,17 @@ class AchatController
 
             if (!$result['success']) {
                 // Re-render with error
-                $achatModel = new Achat();
-                $achatDetails = $achatModel->getByIdWithDetails($id);
+                $achat = $this->achatService->getById($id);
                 
                 $app->render('ConfigFraisPourcentage', [
-                    'achat' => $achatDetails,
+                    'achat' => $achat,
                     'error_message' => $result['error'],
                 ]);
                 return;
             }
 
-            // Redirect with success message
-            $app->redirect('/achat/non-argent?success=1');
+            // Redirect with success message via session or query param
+            $app->redirect('/achat/non-argent');
         } catch (\Throwable $e) {
             error_log('AchatController updateFeePercent error: ' . $e->getMessage());
             $app->halt(500, 'Erreur lors de la mise à jour');
