@@ -323,29 +323,6 @@ $router->group('', function (Router $router) use ($app) {
 	});
 
 	// Delete donation
-	$router->delete('/don/@id:[0-9]+', function ($id) use ($app) {
-		try {
-			// Get the donation to find the city
-			$donModel = new Don();
-			$don = $donModel->getById($id);
-
-			if (empty($don)) {
-				$app->halt(404, 'Don introuvable');
-			}
-
-			$ville_id = $don['ville_id'];
-			$donService = new DonService();
-			$donService->delete($id);
-
-			// Redirect back to city details
-			$app->redirect('/ville/' . $ville_id);
-		} catch (\Throwable $e) {
-			error_log('Delete donation error: ' . $e->getMessage());
-			$app->halt(500, 'Erreur lors de la suppression du don');
-		}
-	});
-
-	// Delete donation (POST version for form compatibility)
 	$router->post('/don/supprimer/@id:[0-9]+', function ($id) use ($app) {
 		try {
 			// Get the donation to find the city
@@ -374,12 +351,12 @@ $router->group('', function (Router $router) use ($app) {
 
 	// Achat: purchase management
 	$router->get('/achat', [AchatController::class, 'index']);
-	$router->get('/achat/add', [AchatController::class, 'create']);
 	$router->get('/achat/ajouter', [AchatController::class, 'create']);
-	$router->get('/achat/non-argent', [AchatController::class, 'nonMoneyDonations']);
+	$router->get('/achat/non-argent', function () use ($app) {
+		(new AchatController())->nonMoneyDonations($app);
+	});
 	$router->get('/achat/@id:[0-9]+', [AchatController::class, 'show']);
 	$router->post('/achat', [AchatController::class, 'store']);
-	$router->post('/achat/add', [AchatController::class, 'store']);
 	$router->post('/achat/ajouter', [AchatController::class, 'store']);
 	$router->delete('/achat/@id:[0-9]+', [AchatController::class, 'delete']);
 	$router->post('/achat/supprimer/@id:[0-9]+', [AchatController::class, 'delete']);
@@ -398,5 +375,9 @@ $router->group('', function (Router $router) use ($app) {
 		$router->get('/achat/stats', [AchatController::class, 'apiStats']);
 		$router->get('/achat/needs-stats', [AchatController::class, 'apiNeedsStats']);
 		$router->get('/achat/city/@id:[0-9]+', [AchatController::class, 'apiGetByCity']);
+
+		
 	});
 }, [SecurityHeadersMiddleware::class]);
+
+Flight::start();

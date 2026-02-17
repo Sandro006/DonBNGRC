@@ -41,6 +41,11 @@
 			"@php -r \"mkdir('app/log/');\""
 		]
     },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app/"
+        }
+    },
     "require-dev": {
         "flightphp/tracy-extensions": "^0.1 || ^0.2"
     }

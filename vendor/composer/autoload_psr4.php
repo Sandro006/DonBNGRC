@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'app\\' => array($baseDir . '/app'),
     'flight\\' => array($vendorDir . '/flightphp/runway/src'),
     'Tracy\\' => array($vendorDir . '/tracy/tracy/src'),
     'Nette\\' => array($vendorDir . '/nette/php-generator/src', $vendorDir . '/nette/utils/src'),

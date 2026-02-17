@@ -41,6 +41,18 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+                    <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="sidebar-menu-link">
+                        <i class="bi bi-bag"></i>
+                        <span>Achat</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="sidebar-menu-link">
+                        <i class="bi bi-bag"></i>
+                        <span>Achat</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
                     <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link">
                         <i class="bi bi-diagram-3"></i>
                         <span>Simulation</span>
