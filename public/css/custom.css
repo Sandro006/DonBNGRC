@@ -1,0 +1,252 @@
+/* Custom CSS for DonBNGRC - Enhanced Styling */
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f9fafb;
+    color: #1f2937;
+}
+
+/* -------- HEADER NAVIGATION -------- */
+.header {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    position: relative;
+    z-index: 100;
+}
+
+.header-nav-item a:hover i {
+    transform: scale(1.15);
+    transition: transform var(--transition-fast);
+}
+
+.header-brand {
+    font-weight: 700 !important;
+    transition: transform var(--transition-fast) !important;
+}
+
+.header-brand:hover {
+    transform: scale(1.02);
+}
+
+/* Enhanced form styling */
+.card {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Breadcrumb enhancement */
+.breadcrumb-nav {
+    border: 1px solid var(--primary-200) !important;
+    background: linear-gradient(135deg, var(--primary-50) 0%, rgba(89, 104, 255, 0.05) 100%) !important;
+}
+
+/* Form info box styling */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* Enhanced sidebar styling */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 260px;
+    background: #ffffff;
+    padding: 1rem;
+    box-shadow: 1px 0 12px rgba(15, 23, 42, 0.06) !important;
+    z-index: 200;
+    overflow-y: auto;
+    transition: transform 0.22s ease, width 0.2s ease;
+}
+
+.sidebar-container { display: flex; flex-direction: column; height: 100%; }
+.sidebar-brand { display: flex; gap: 0.75rem; align-items: center; text-decoration: none; color: inherit; }
+.sidebar-brand-icon { font-size: 1.35rem; }
+
+.sidebar-nav ul { list-style: none; padding: 0; margin: 1rem 0; display: flex; flex-direction: column; gap: 0.25rem; }
+.sidebar-item { margin: 0; }
+.sidebar-item a { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 8px; color: #374151; text-decoration: none; }
+.sidebar-item a i { font-size: 1.05rem; color: #6b7280; }
+.sidebar-item a:hover { background: rgba(99,102,241,0.06); color: var(--primary); }
+.sidebar-item a:hover i { color: var(--primary); }
+.sidebar-item a.active { background: linear-gradient(90deg, rgba(59,130,246,0.08), rgba(99,102,241,0.04)); color: var(--primary); }
+
+.sidebar-footer { margin-top: auto; padding-top: 1rem; }
+.sidebar-user { display: flex; gap: 0.75rem; align-items: center; }
+.sidebar-user-avatar { width: 40px; height: 40px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); font-weight: 700; }
+.sidebar-user-info span { display: block; color: #374151; font-weight: 600; }
+
+/* Collapsed / mobile behavior */
+.sidebar { transform: translateX(0); }
+@media (max-width: 992px) {
+    .sidebar { transform: translateX(-100%); position: fixed; }
+    .sidebar.show { transform: translateX(0); }
+    .sidebar.show + .layout-main, .sidebar.show ~ .layout-main { margin-left: 260px; }
+}
+
+/* Ensure content shifts when sidebar is visible on desktop */
+.layout-main, .layout-content { margin-left: 260px; transition: margin 0.18s ease; }
+
+/* Header user avatar enhancement */
+.header-user-avatar {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+}
+
+/* Layout content enhancement */
+.layout-content {
+    scroll-behavior: smooth;
+}
+
+/* Form group spacing improvement */
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Better looking disabled state */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* Section styling for card headers */
+.card-header h5 {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.card-header i {
+    font-size: 1.25rem;
+}
+
+/* Animation for page entry */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-header, .card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Enhanced focus states */
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    box-shadow: 0 0 0 4px var(--primary-50);
+}
+
+/* Button group improvements */
+.btn-group {
+    display: flex;
+    gap: var(--spacing-3);
+}
+
+/* Card footer button alignment */
+.card-footer {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(249, 250, 251, 0.5) 100%);
+}
+
+/* Footer link hover effects */
+footer a {
+    transition: color var(--transition-fast) !important;
+}
+
+footer a:hover {
+    color: white !important;
+}
+
+/* ------------------ Simulation page improvements ------------------ */
+.layout-main { padding: 1.25rem; }
+
+/* Utility helpers used by the Simulation view (lightweight replacements) */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mt-8 { margin-top: 2rem; }
+.p-4 { padding: 1rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-primary { color: var(--primary) !important; }
+.text-white { color: #fff !important; }
+.min-w-max { min-width: 0; }
+
+/* Cards and needs list */
+.need-item { border: 1px solid rgba(31,41,55,0.06); border-radius: 8px; background: #fff; }
+.card { border-radius: 8px; background: #fff; box-shadow: 0 6px 18px rgba(31,41,55,0.04); }
+.card-body { padding: 1rem; }
+.card-header { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(31,41,55,0.04); }
+
+/* Badges */
+.badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 999px; background: #f3f4f6; color: #111827; font-size: 0.875rem; }
+.badge-outline { background: transparent; border: 1px solid rgba(31,41,55,0.06); }
+.badge-success { background: #ecfdf5; color: #059669; border: 1px solid rgba(5,150,105,0.12); }
+.badge-primary { background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
+
+/* Alerts */
+.alert { border-radius: 8px; padding: 0.75rem 1rem; background: #fff; border: 1px solid rgba(31,41,55,0.04); }
+.alert-info { border-left: 4px solid var(--primary); }
+.alert-warning { border-left: 4px solid #f59e0b; }
+.alert-danger { border-left: 4px solid #ef4444; }
+.alert-header { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.stat-card { display: flex; gap: 0.75rem; align-items: center; padding: 0.75rem 1rem; background: #fff; border-radius: 8px; border: 1px solid rgba(31,41,55,0.04); }
+.stat-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+.stat-content { flex: 1; }
+.stat-label { font-size: 0.75rem; color: #6b7280; }
+.stat-value { font-size: 1.125rem; font-weight: 700; }
+
+/* Simulation container spacing */
+#simulation-container { margin-top: 1rem; }
+
+/* Action buttons */
+.btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 8px; border: none; cursor: pointer; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-secondary { background: #e5e7eb; color: #111827; }
+.btn-success { background: #10b981; color: #fff; }
+.btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .layout-main { padding: 0.75rem; }
+    .card-header h5 { font-size: 1rem; }
+}
+
+/* Small helper for centered empty states */
+.empty-state { text-align: center; padding: 2rem 1rem; }
+
+/* Keep animations subtle */
+.animate-spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Toast notification styling adjustments */
+.toast-notification { border-radius: 8px; padding: 0.75rem 1rem; box-shadow: 0 8px 24px rgba(31,41,55,0.08); }
+
+/* Ensure sidebar toggle doesn't overlap content on small screens */
+.sidebar.show + .layout-main, .sidebar.show ~ .layout-main { margin-left: 260px; transition: margin 0.2s ease; }
+
+/* Accessibility: focus outlines */
+.btn:focus, .card:focus, a:focus { outline: 3px solid rgba(59,130,246,0.15); outline-offset: 2px; }
+
