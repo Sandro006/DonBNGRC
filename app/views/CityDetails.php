@@ -29,19 +29,31 @@
 
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/dashboard" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-speedometer2"></i>
                         <span>Tableau de bord</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-gift"></i>
                         <span>Ajouter don</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/simulation" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-diagram-3"></i>
                         <span>Simulation</span>
                     </a>
@@ -61,7 +73,11 @@
                         <i class="bi bi-geo-alt"></i> <?= htmlspecialchars($ville['nom'] ?? 'Ville') ?>
                     </h1>
                     <div class="header-actions" style="margin-left: auto;">
+<<<<<<< Updated upstream
                         <a href="<?= Flight::get('flight.base_url') ?>" class="btn btn-secondary btn-sm">
+=======
+                        <a href="<?= Flight::get('flight.base_path') ?>" class="btn btn-secondary btn-sm">
+>>>>>>> Stashed changes
                             <i class="bi bi-arrow-left"></i> Retour
                         </a>
                     </div>
@@ -73,8 +89,13 @@
                 <!-- Breadcrumb -->
                 <div class="breadcrumb-nav">
                     <ol>
+<<<<<<< Updated upstream
                         <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
                         <li><a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a></li>
+=======
+                        <li><a href="<?= Flight::get('flight.base_path') ?>">Accueil</a></li>
+                        <li><a href="<?= Flight::get('flight.base_path') ?>/dashboard">Tableau de bord</a></li>
+>>>>>>> Stashed changes
                         <li><?= htmlspecialchars($ville['nom'] ?? 'Ville') ?></li>
                     </ol>
                 </div>
@@ -91,7 +112,11 @@
                         </p>
                     </div>
                     <div class="page-actions">
+<<<<<<< Updated upstream
                         <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter?ville_id=<?= htmlspecialchars($ville['id'] ?? '') ?>" class="btn btn-primary">
+=======
+                        <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter?ville_id=<?= htmlspecialchars($ville['id'] ?? '') ?>" class="btn btn-primary">
+>>>>>>> Stashed changes
                             <i class="bi bi-plus-circle"></i> Ajouter Don
                         </a>
                     </div>
@@ -161,11 +186,19 @@
                                                     </td>
                                                     <td>
                                                         <div style="display: flex; gap: var(--spacing-2);">
+<<<<<<< Updated upstream
                                                             <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" 
                                                                class="btn btn-sm btn-secondary" title="Simuler la distribution">
                                                                 <i class="bi bi-arrow-repeat"></i>
                                                             </a>
                                                             <form method="POST" action="<?= Flight::get('flight.base_url') ?>/don/supprimer/<?= htmlspecialchars($d['id'] ?? '') ?>" 
+=======
+                                                            <a href="<?= Flight::get('flight.base_path') ?>/simulation/<?= htmlspecialchars($d['id'] ?? '') ?>" 
+                                                               class="btn btn-sm btn-secondary" title="Simuler la distribution">
+                                                                <i class="bi bi-arrow-repeat"></i>
+                                                            </a>
+                                                            <form method="POST" action="<?= Flight::get('flight.base_path') ?>/don/supprimer/<?= htmlspecialchars($d['id'] ?? '') ?>" 
+>>>>>>> Stashed changes
                                                                   style="display: inline;">
                                                                 <button type="submit" class="btn btn-sm btn-danger" 
                                                                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce don ?');"

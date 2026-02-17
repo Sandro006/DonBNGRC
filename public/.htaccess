@@ -1,5 +1,13 @@
 RewriteEngine On
+<<<<<<< Updated upstream
 RewriteBase /Sarobidy/DonBNGRC/public/
+=======
+<<<<<<< Updated upstream
+RewriteBase /S3/projet_final/DonBNGRC/public
+=======
+RewriteBase /
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

@@ -264,6 +264,7 @@
     </style>
 </head>
 
+<<<<<<< Updated upstream
 <body>
     <!-- Navigation -->
     <nav class="header">
@@ -289,21 +290,78 @@
         </div>
     </nav>
 
+=======
+<<<<<<< Updated upstream
+<?php if (!empty($besoin_stats)) { ?>
+    <h4>Besoins</h4>
+    <ul>
+        <li>Total de besoins: <?= htmlspecialchars($besoin_stats['total_needs'] ?? 0) ?></li>
+        <li>Quantité totale: <?= htmlspecialchars($besoin_stats['total_quantity'] ?? 0) ?></li>
+        <li>Montant total estimé: <?= htmlspecialchars($besoin_stats['total_amount'] ?? 0) ?></li>
+    </ul>
+<?php } ?>
+
+<?php if (!empty($cities)) { ?>
+    <h4>Villes (extrait)</h4>
+    <ul>
+        <?php foreach (array_slice($cities, 0, 10) as $c) { ?>
+            <li><?= htmlspecialchars($c['nom'] ?? ($c['name'] ?? '')) ?> - Région: <?= htmlspecialchars($c['region_nom'] ?? '') ?></li>
+        <?php } ?>
+    </ul>
+<?php } ?>
+=======
+<body>
+    <!-- Navigation -->
+    <nav class="header">
+        <div class="header-container">
+            <a href="<?= Flight::get('flight.base_path') ?>" class="header-brand">
+                <div class="header-brand-icon">🌊</div>
+                <div>
+                    <h1>BNGRC</h1>
+                    <small>Gestion des Risques</small>
+                </div>
+            </a>
+            <ul class="header-nav">
+                <li class="header-nav-item">
+                    <a href="<?= Flight::get('flight.base_path') ?>" class="active">Accueil</a>
+                </li>
+                <li class="header-nav-item">
+                    <a href="<?= Flight::get('flight.base_path') ?>/dashboard">Tableau de bord</a>
+                </li>
+                <li class="header-nav-item">
+                    <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter">Faire un don</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+>>>>>>> Stashed changes
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">Bureau National de Gestion des Risques et Catastrophes</h1>
             <p class="hero-subtitle">Ensemble, aidons les communautés touchées par les catastrophes naturelles à Madagascar</p>
             <div class="hero-buttons">
+<<<<<<< Updated upstream
                 <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn hero-btn hero-btn-primary">
                     <i class="bi bi-gift"></i> Faire un don
                 </a>
                 <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="btn hero-btn hero-btn-secondary">
+=======
+                <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter" class="btn hero-btn hero-btn-primary">
+                    <i class="bi bi-gift"></i> Faire un don
+                </a>
+                <a href="<?= Flight::get('flight.base_path') ?>/dashboard" class="btn hero-btn hero-btn-secondary">
+>>>>>>> Stashed changes
                     <i class="bi bi-bar-chart"></i> Voir le tableau de bord
                 </a>
             </div>
         </div>
     </section>
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     <!-- Stats Section -->
     <section class="stats-section">
@@ -327,6 +385,34 @@
         </div>
     </section>
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+<?php if (!empty($recent_besoins)) { ?>
+    <h4>Derniers besoins</h4>
+    <table border="1" cellpadding="4" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>Ville</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Montant total</th>
+            <th>Statut</th>
+        </tr>
+        <?php foreach ($recent_besoins as $b) { ?>
+            <tr>
+                <td><?= htmlspecialchars($b['id'] ?? '') ?></td>
+                <td><?= htmlspecialchars($b['ville_nom'] ?? '') ?></td>
+                <td><?= htmlspecialchars($b['quantite'] ?? '') ?></td>
+                <td><?= htmlspecialchars($b['prix_unitaire'] ?? '') ?></td>
+                <td><?= htmlspecialchars($b['montant_total'] ?? '') ?></td>
+                <td><?= htmlspecialchars($b['status_nom'] ?? '') ?></td>
+            </tr>
+        <?php } ?>
+    </table>
+<?php } ?>
+=======
+>>>>>>> Stashed changes
     <!-- Features Section -->
     <section class="features-section">
         <h2 class="section-title">Nos Services</h2>
@@ -370,9 +456,15 @@
     <!-- Footer -->
     <footer class="footer-section">
         <div class="footer-links">
+<<<<<<< Updated upstream
             <a href="<?= Flight::get('flight.base_url') ?>">Accueil</a>
             <a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a>
             <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter">Faire un don</a>
+=======
+            <a href="<?= Flight::get('flight.base_path') ?>">Accueil</a>
+            <a href="<?= Flight::get('flight.base_path') ?>/dashboard">Tableau de bord</a>
+            <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter">Faire un don</a>
+>>>>>>> Stashed changes
         </div>
         <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
     </footer>
@@ -381,3 +473,7 @@
 </body>
 
 </html>
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes

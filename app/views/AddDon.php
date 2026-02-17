@@ -28,19 +28,31 @@
 
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/dashboard" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-speedometer2"></i>
                         <span>Tableau de bord</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link active">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter" class="sidebar-menu-link active">
+>>>>>>> Stashed changes
                         <i class="bi bi-gift"></i>
                         <span>Ajouter don</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/Simulation" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/simulation" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-diagram-3"></i>
                         <span>Simulation</span>
                     </a>
@@ -71,7 +83,11 @@
                 <!-- BREADCRUMB -->
                 <div class="breadcrumb-nav">
                     <ol>
+<<<<<<< Updated upstream
                         <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
+=======
+                        <li><a href="<?= Flight::get('flight.base_path') ?>">Accueil</a></li>
+>>>>>>> Stashed changes
                         <li>Ajouter un don</li>
                     </ol>
                 </div>
@@ -92,7 +108,11 @@
 
                 <!-- FORM CARD -->
                 <div class="card" style="max-width: 850px; margin: 0 auto;">
+<<<<<<< Updated upstream
                     <form method="post" action="<?= Flight::get('flight.base_url') ?>/don/ajouter" id="donForm">
+=======
+                    <form method="post" action="<?= Flight::get('flight.base_path') ?>/don/ajouter" id="donForm">
+>>>>>>> Stashed changes
                         <!-- SECTION 1: INFORMATIONS DU DON -->
                         <div class="card-header bg-primary">
                             <h5 style="margin: 0; color: white; display: flex; align-items: center; gap: var(--spacing-2);">
@@ -187,7 +207,11 @@
 
                         <!-- ACTIONS -->
                         <div class="card-footer" style="display: flex; gap: var(--spacing-3); justify-content: flex-end;">
+<<<<<<< Updated upstream
                             <a href="<?= Flight::get('flight.base_url') ?>" class="btn btn-secondary">
+=======
+                            <a href="<?= Flight::get('flight.base_path') ?>" class="btn btn-secondary">
+>>>>>>> Stashed changes
                                 <i class="bi bi-x-circle"></i>
                                 Annuler
                             </a>

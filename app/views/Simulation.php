@@ -181,19 +181,31 @@
 
             <ul class="sidebar-menu">
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/dashboard" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-speedometer2"></i>
                         <span>Tableau de bord</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="sidebar-menu-link">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter" class="sidebar-menu-link">
+>>>>>>> Stashed changes
                         <i class="bi bi-gift"></i>
                         <span>Ajouter don</span>
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
+<<<<<<< Updated upstream
                     <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="sidebar-menu-link active">
+=======
+                    <a href="<?= Flight::get('flight.base_path') ?>/simulation" class="sidebar-menu-link active">
+>>>>>>> Stashed changes
                         <i class="bi bi-diagram-3"></i>
                         <span>Simulation</span>
                     </a>
@@ -230,7 +242,11 @@
                     <!-- BREADCRUMB -->
                     <div class="breadcrumb-nav">
                         <ol>
+<<<<<<< Updated upstream
                             <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
+=======
+                            <li><a href="<?= Flight::get('flight.base_path') ?>">Accueil</a></li>
+>>>>>>> Stashed changes
                             <li>Simulation</li>
                         </ol>
                     </div>
@@ -270,7 +286,11 @@
                                                 <p style="margin: var(--spacing-2) 0; color: var(--text-secondary);">
                                                     <strong>Donateur:</strong> <?= htmlspecialchars($d['donateur_nom'] ?? 'Anonyme') ?>
                                                 </p>
+<<<<<<< Updated upstream
                                                 <a href="<?= Flight::get('flight.base_url') ?>/simulation/<?= htmlspecialchars($d['id']) ?>" class="btn btn-primary btn-block" style="margin-top: var(--spacing-3);">
+=======
+                                                <a href="<?= Flight::get('flight.base_path') ?>/simulation/<?= htmlspecialchars($d['id']) ?>" class="btn btn-primary btn-block" style="margin-top: var(--spacing-3);">
+>>>>>>> Stashed changes
                                                     <i class="bi bi-play"></i> Simuler la distribution
                                                 </a>
                                             </div>
@@ -285,7 +305,11 @@
                                     <div class="empty-state-title">Aucun don disponible</div>
                                     <p class="empty-state-description">Aucun don disponible pour la simulation</p>
                                     <div class="empty-state-action">
+<<<<<<< Updated upstream
                                         <a href="<?= Flight::get('flight.base_url') ?>/don/ajouter" class="btn btn-primary">
+=======
+                                        <a href="<?= Flight::get('flight.base_path') ?>/don/ajouter" class="btn btn-primary">
+>>>>>>> Stashed changes
                                             <i class="bi bi-plus"></i> Ajouter un don
                                         </a>
                                     </div>
@@ -302,8 +326,13 @@
                     <!-- BREADCRUMB -->
                     <div class="breadcrumb-nav">
                         <ol>
+<<<<<<< Updated upstream
                             <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
                             <li><a href="<?= Flight::get('flight.base_url') ?>/simulation">Simulation</a></li>
+=======
+                            <li><a href="<?= Flight::get('flight.base_path') ?>">Accueil</a></li>
+                            <li><a href="<?= Flight::get('flight.base_path') ?>/simulation">Simulation</a></li>
+>>>>>>> Stashed changes
                             <li>Dispatch #<?= (int)$don_id ?></li>
                         </ol>
                     </div>
@@ -315,7 +344,11 @@
                             <p>Visualiser et valider la distribution du don sur les besoins</p>
                         </div>
                         <div class="page-actions">
+<<<<<<< Updated upstream
                             <a href="<?= Flight::get('flight.base_url') ?>/simulation" class="btn btn-secondary">
+=======
+                            <a href="<?= Flight::get('flight.base_path') ?>/simulation" class="btn btn-secondary">
+>>>>>>> Stashed changes
                                 <i class="bi bi-arrow-left"></i> Retour
                             </a>
                         </div>
