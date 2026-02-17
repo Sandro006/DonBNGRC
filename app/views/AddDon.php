@@ -102,15 +102,27 @@
                         </div>
 
                         <div class="card-body">
-                            <input type="hidden" name="ville_id" value="<?= htmlspecialchars($ville_id ?? '') ?>" />
-
                             <div class="form-group">
                                 <label class="form-label required">Ville</label>
-                                <?php if (!empty($ville_id)) { ?>
-                                    <input type="text" class="form-control" value="Ville ID: <?= htmlspecialchars($ville_id) ?>" disabled />
-                                <?php } else { ?>
-                                    <input type="text" name="ville_libre" class="form-control" placeholder="Entrez l'ID ou le nom de la ville" />
-                                <?php } ?>
+                                <select name="ville_id" class="form-select" required>
+                                    <option value="">-- Sélectionnez une ville --</option>
+                                    <?php 
+                                    $currentRegion = '';
+                                    foreach ($villes as $v) { 
+                                        $region = $v['region_nom'] ?? 'Autre';
+                                        if ($region !== $currentRegion) {
+                                            if ($currentRegion !== '') echo '</optgroup>';
+                                            echo '<optgroup label="' . htmlspecialchars($region) . '">';
+                                            $currentRegion = $region;
+                                        }
+                                    ?>
+                                        <option value="<?= htmlspecialchars($v['id']) ?>" <?= isset($ville_id) && $ville_id == $v['id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($v['nom']) ?>
+                                        </option>
+                                    <?php } ?>
+                                    <?php if ($currentRegion !== '') echo '</optgroup>'; ?>
+                                </select>
+                                <span class="form-helper">Sélectionnez la ville concernée par le don</span>
                             </div>
 
                             <div class="form-group">

@@ -190,14 +190,17 @@ $router->group('', function (Router $router) use ($app) {
 		try {
 			$categorieModel = new Categorie();
 			$donateurModel = new Donateur();
+			$villeModel = new app\models\Ville();
 			$categories = $categorieModel->getAll();
 			$donateurs = $donateurModel->getAll();
+			$villes = $villeModel->getAllWithRegion();
 			$req = $app->request();
 			$ville_id = !empty($req->query->ville_id) ? $req->query->ville_id : null;
 
 			$app->render('AddDon', [
 				'categories' => $categories,
 				'donateurs' => $donateurs,
+				'villes' => $villes,
 				'ville_id' => $ville_id,
 			]);
 		} catch (\Throwable $e) {
