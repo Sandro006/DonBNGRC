@@ -274,12 +274,55 @@ class AchatController
     public function listAchats(Engine $app)
     {
         try {
-            $achats = $this->achatService->getAllWithDetails();
-            $stats = $this->achatService->getStatistics();
+            $req = $app->request();
+            
+            // Get filter parameters from GET request
+            $filters = [
+                'date_from' => $req->query->date_from ?? null,
+                'date_to' => $req->query->date_to ?? null,
+                'ville_id' => $req->query->ville_id ?? null,
+                'categorie_id' => $req->query->categorie_id ?? null,
+            ];
+
+            // Get purchases with or without filters
+            $hasFilters = !empty(array_filter($filters));
+            if ($hasFilters) {
+                $achats = $this->achatService->filterAchats($filters);
+            } else {
+                $achats = $this->achatService->getAllWithDetails();
+            }
+
+            // Get statistics based on filtered/all data
+            if ($hasFilters) {
+                // Calculate stats from filtered data
+                $totalMontant = 0;
+                $totalWithFees = 0;
+                foreach ($achats as $achat) {
+                    $totalMontant += $achat['montant'] ?? 0;
+                    $totalWithFees += $achat['montant_total'] ?? 0;
+                }
+                $stats = [
+                    'total_count' => count($achats),
+                    'total_montant' => $totalMontant,
+                    'total_with_fees' => $totalWithFees,
+                ];
+            } else {
+                $stats = $this->achatService->getStatistics();
+            }
+
+            // Get all villes and categories for filter dropdowns
+            $villeModel = new Ville();
+            $villes = $villeModel->getAll();
+            
+            $categorieModel = new \app\models\Categorie();
+            $categories = $categorieModel->getAll();
 
             $app->render('Achat', [
                 'achats' => $achats,
                 'stats' => $stats,
+                'villes' => $villes,
+                'categories' => $categories,
+                'filters' => $filters,
             ]);
         } catch (\Throwable $e) {
             error_log('AchatController listAchats error: ' . $e->getMessage());

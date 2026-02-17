@@ -256,4 +256,49 @@ class AchatService
     {
         return $this->achatModel->getAllWithDetails();
     }
+
+    /**
+     * Filter purchases by date, city, and category
+     */
+    public function filterAchats($filters = [])
+    {
+        $query = "SELECT a.*, 
+                  v.nom as ville_nom,
+                  b.quantite, b.prix_unitaire,
+                  c.libelle as categorie_nom
+                  FROM bngrc_achat a
+                  INNER JOIN bngrc_ville v ON a.ville_id = v.id
+                  INNER JOIN bngrc_besoin b ON a.besoin_id = b.id
+                  INNER JOIN bngrc_categorie c ON b.categorie_id = c.id
+                  WHERE 1=1";
+        
+        $params = [];
+
+        // Filter by date range
+        if (!empty($filters['date_from'])) {
+            $query .= " AND a.date_achat >= :date_from";
+            $params[':date_from'] = $filters['date_from'] . ' 00:00:00';
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query .= " AND a.date_achat <= :date_to";
+            $params[':date_to'] = $filters['date_to'] . ' 23:59:59';
+        }
+
+        // Filter by city
+        if (!empty($filters['ville_id'])) {
+            $query .= " AND a.ville_id = :ville_id";
+            $params[':ville_id'] = $filters['ville_id'];
+        }
+
+        // Filter by category
+        if (!empty($filters['categorie_id'])) {
+            $query .= " AND b.categorie_id = :categorie_id";
+            $params[':categorie_id'] = $filters['categorie_id'];
+        }
+
+        $query .= " ORDER BY a.date_achat DESC";
+
+        return $this->achatModel->db->fetchAll($query, $params);
+    }
 }
