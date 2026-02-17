@@ -113,7 +113,7 @@ class Distribution extends BaseModel
 
         // Vérifier que le besoin existe
         $besoinModel = new \app\models\Besoin();
-        $besoin = $besoinModel->find($besoin_id);
+        $besoin = $besoinModel->getById($besoin_id);
         if (!$besoin) {
             throw new \Exception("Besoin non trouvé");
         }

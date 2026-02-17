@@ -341,7 +341,7 @@
 
         <?php include __DIR__ . '/partials/footer.php'; ?>
 
-    <script>
+    <script nonce="<?= Flight::get('csp_nonce') ?>">
         // Responsive sidebar toggle
         document.querySelector('.sidebar-toggle')?.addEventListener('click', function () {
             document.querySelector('.sidebar').classList.toggle('show');
@@ -364,13 +364,21 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     methode: '<?= $methode_courante ?? 'date' ?>',
                     parametres: <?= json_encode($parametres_courants ?? []) ?>
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error('Erreur serveur: ' + response.status + ' - ' + text);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     alert(`Distribution exécutée avec succès!\n\n${data.result.nombre_distributions} distributions effectuées.`);
@@ -386,7 +394,8 @@
                 }
             })
             .catch(error => {
-                alert('Erreur réseau: ' + error.message);
+                console.error('Erreur:', error);
+                alert('Erreur: ' + error.message);
             })
             .finally(() => {
                 // Réactiver le bouton

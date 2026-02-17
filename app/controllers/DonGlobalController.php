@@ -284,7 +284,15 @@ class DonGlobalController
     public function executeDistribution()
     {
         try {
-            $data = $this->app->request()->data->getData();
+            // Parse JSON input from request body
+            $rawInput = file_get_contents('php://input');
+            $data = json_decode($rawInput, true) ?? [];
+            
+            // Fallback to form data if JSON parsing fails
+            if (empty($data)) {
+                $data = $this->app->request()->data->getData();
+            }
+            
             $methode = $data['methode'] ?? 'date';
             $parametres = $data['parametres'] ?? [];
             
