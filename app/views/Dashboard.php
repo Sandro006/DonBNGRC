@@ -11,7 +11,7 @@
     <link href="<?= Flight::get('flight.base_url') ?>/css/utilities.css" rel="stylesheet" />
     <link href="<?= Flight::get('flight.base_url') ?>/css/pages.css" rel="stylesheet" />
     <link href="<?= Flight::get('flight.base_url') ?>/css/custom.css" rel="stylesheet" />
-    <link href="<?= Flight::get('flight.base_url') ?>/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="<?= Flight::get('flight.base_url') ?>/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 
 <body>

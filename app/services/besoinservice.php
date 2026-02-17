@@ -52,4 +52,28 @@ class BesoinService
     {
         return $this->model->count();
     }
+
+    /**
+     * TASK 6: Get total needs (SUM quantity × unit_price)
+     */
+    public function getTotalBesoins()
+    {
+        return $this->model->getTotalBesoins();
+    }
+
+    /**
+     * TASK 7: Get total satisfied needs
+     */
+    public function getTotalSatisfaits()
+    {
+        return $this->model->getTotalSatisfaits();
+    }
+
+    /**
+     * TASK 8: Get total remaining needs
+     */
+    public function getTotalRestants()
+    {
+        return $this->model->getTotalRestants();
+    }
 }

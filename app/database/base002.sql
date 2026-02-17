@@ -17,3 +17,4 @@ CREATE TABLE bngrc_dispatch (
         REFERENCES bngrc_besoin(id)
         ON DELETE CASCADE
 );
+
