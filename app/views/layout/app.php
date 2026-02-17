@@ -17,15 +17,22 @@
     <link href="<?= Flight::get('flight.base_url') ?>/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
 </head>
 <body>
+    <!-- Sidebar -->
     <?php include 'partials/navbar.php'; ?>
 
-    <!-- Main Content -->
-    <main class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
-        <?= $content ?>
-    </main>
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
+        <div class="layout-main">
+            <!-- Main Content -->
+            <main class="layout-content">
+                <?= $content ?>
+            </main>
 
-    <!-- Footer -->
-    <?php include 'partials/footer.php'; ?>
+            <!-- Footer -->
+            <?php include 'partials/footer.php'; ?>
+        </div>
+    </div>
 
     <script src="<?= Flight::get('flight.base_url') ?>/js/app.js"></script>
 </body>

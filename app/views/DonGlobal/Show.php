@@ -17,8 +17,10 @@
 <body>
     <?php include __DIR__ . '/../partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
+        <div class="layout-main">
             <!-- HEADER -->
             <header class="header">
                 <div class="header-container">
@@ -36,7 +38,7 @@
             </header>
 
             <!-- CONTENT -->
-            <div class="layout-content">
+            <main class="layout-content">
                 <!-- BREADCRUMB -->
                 <div class="breadcrumb-nav">
                     <ol>
@@ -297,9 +299,11 @@
                 </div>
                 <?php endif; ?>
                 
-            </div>
+            </main>
 
             <?php include __DIR__ . '/../partials/footer.php'; ?>
+        </div>
+    </div>
 
     <script src="<?= Flight::get('flight.base_url') ?>/js/app.js"></script>
     <script>
@@ -310,5 +314,8 @@
     }, 30000);
     <?php endif; ?>
     </script>
+</body>
+
+</html>
 </body>
 </html>

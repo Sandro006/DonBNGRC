@@ -38,6 +38,15 @@ $router->group('', function (Router $router) {
 	$router->post('/don-global/ajouter', [DonGlobalController::class, 'store']); // French alias
 	$router->get('/don-global/@id:[0-9]+', [DonGlobalController::class, 'show']);
 	
+	// Alias shorter routes /don instead of /don-global
+	$router->get('/don', [DonGlobalController::class, 'index']);
+	$router->get('/don/create', [DonGlobalController::class, 'create']);
+	$router->get('/don/nouveau', [DonGlobalController::class, 'create']); // French alias
+	$router->get('/don/ajouter', [DonGlobalController::class, 'create']); // GET alias for form
+	$router->post('/don/store', [DonGlobalController::class, 'store']);
+	$router->post('/don/ajouter', [DonGlobalController::class, 'store']); // French alias
+	$router->get('/don/@id:[0-9]+', [DonGlobalController::class, 'show']);
+	
 	// Méthodes et Simulation de Distribution
 	$router->get('/don-global/methodes', [DonGlobalController::class, 'methodes']);
 	$router->get('/don-global/simulation', [DonGlobalController::class, 'simulation']);

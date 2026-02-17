@@ -17,39 +17,9 @@
 <body>
     <?php include __DIR__ . '/partials/navbar.php'; ?>
 
-    <!-- MAIN CONTENT -->
-    <div class="layout-content" style="padding: var(--spacing-8); min-height: calc(100vh - 200px);">
-            <div class="sidebar-header">
-                <div class="sidebar-brand">🌊</div>
-                <div class="sidebar-brand-text">
-                    <h2>BNGRC</h2>
-                    <small>Management System</small>
-                </div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/dashboard" class="sidebar-menu-link active">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/don-global" class="sidebar-menu-link">
-                        <i class="bi bi-box-seam"></i>
-                        <span>Dons Globaux</span>
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/besoin/create" class="sidebar-menu-link">
-                        <i class="bi bi-exclamation-triangle"></i>
-                        <span>Nouveau Besoin</span>
-                    </a>
-                </li>
-            </ul>
-        </aside>
-
-        <!-- MAIN CONTENT -->
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Main Content Area -->
         <div class="layout-main">
             <!-- HEADER -->
             <header class="header">
@@ -68,7 +38,7 @@
             </header>
 
             <!-- CONTENT -->
-            <div class="layout-content">
+            <main class="layout-content">
                 <!-- FILTER SECTION -->
                 <div class="card mb-6">
                     <div class="card-header">
@@ -447,13 +417,10 @@
                 </div>
             </div>
 
-            <!-- FOOTER -->
-            <footer class="layout-footer">
-                <p>&copy; <?= date('Y') ?> Bureau National de Gestion des Risques et Catastrophes (BNGRC). Tous droits réservés.</p>
-            </footer>
+            </main>
+            
         </div>
-
-        <?php include __DIR__ . '/partials/footer.php'; ?>
+    </div>
 
     <!-- Scripts -->
     <script>

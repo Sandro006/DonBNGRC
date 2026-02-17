@@ -28,6 +28,7 @@
             <hr style="border-color: var(--gray-700); margin: var(--spacing-6) 0;">
             <div style="text-align: center;">
                 <p>&copy; <?= date('Y') ?> BNGRC. Tous droits réservés.</p>
+                <p>ETU004168 & ETU004349 & ETU004123</p>
             </div>
         </div>
     </footer>
