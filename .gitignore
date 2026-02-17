@@ -1,7 +1,7 @@
 .runway-creds.json
 .htaccess
 public/.htaccess
-app/config/config.php
+
 app/views/Config
 todo.md
 ~$todo.xlsx
