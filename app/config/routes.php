@@ -376,8 +376,14 @@ $router->get('/dashboard', function () use ($app) {
 		$router->get('/users/@id:[0-9]', [ApiExampleController::class, 'getUser']);
 		$router->post('/users/@id:[0-9]', [ApiExampleController::class, 'updateUser']);
 
+
 		// Simulation API endpoints
 		$router->post('/simulation/simulate', [SimulationController::class, 'apiSimulate']);
 		$router->post('/simulation/validate', [SimulationController::class, 'apiValidate']);
+
+
+		// Don Frais API endpoints
+		$router->get('/don/@id:[0-9]+/frais', [app\controllers\DonFraisController::class, 'getDonFrais']);
+		$router->post('/don/@id:[0-9]+/frais', [app\controllers\DonFraisController::class, 'updateDonFrais']);
 	});
 }, [SecurityHeadersMiddleware::class]);
