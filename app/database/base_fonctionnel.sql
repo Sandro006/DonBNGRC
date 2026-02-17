@@ -189,7 +189,7 @@ CREATE TABLE bngrc_distribution (
 );
 
 -- =========================
--- TABLE ACHAT
+-- TABLE 55
 -- =========================
 CREATE TABLE bngrc_achat (
     id INT AUTO_INCREMENT PRIMARY KEY,

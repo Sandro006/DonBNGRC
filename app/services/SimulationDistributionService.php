@@ -25,6 +25,11 @@ class SimulationDistributionService
      */
     public function simulateDistribution($methode = 'date', $parametres = [])
     {
+        // Router vers la méthode appropriée selon le type de distribution
+        if ($methode === 'distribution_proportionnelle') {
+            return $this->simulateDistributionProportionnelle($parametres);
+        }
+        
         // Récupérer tous les dons globaux disponibles
         $donsDisponibles = $this->donGlobalModel->getAllAvailable();
         
@@ -155,7 +160,220 @@ class SimulationDistributionService
                 'description' => 'Distribue en minimisant le nombre de besoins restants (satisfait le maximum de besoins)',
                 'icone' => 'list-ol',
                 'parametres' => []
+            ],
+            'distribution_proportionnelle' => [
+                'nom' => 'Distribution Proportionnelle',
+                'description' => 'Distribue les dons proportionnellement aux besoins: (besoin/total_besoins)*don, arrondi à l\'inférieur avec gestion des décimales pour les restes',
+                'icone' => 'percent',
+                'parametres' => []
             ]
+        ];
+    }
+
+    /**
+     * Simulate distribution using proportional method
+     * Formula: (quantite_besoin / somme_total_besoins_categorie) * quantite_don
+     * Quantities are floored, decimals are collected and distributed to highest decimals first
+     */
+    private function simulateDistributionProportionnelle($parametres = [])
+    {
+        $donsDisponibles = $this->donGlobalModel->getAllAvailable();
+        $besoins = $this->getBesoinsSelonMethode('date', $parametres);  // On récupère tous les besoins
+        
+        // Grouper les besoins par catégorie
+        $besoinsParCategorie = [];
+        foreach ($besoins as $besoin) {
+            if ($besoin['quantite_manquante'] > 0) {
+                $categorieId = $besoin['categorie_id'];
+                if (!isset($besoinsParCategorie[$categorieId])) {
+                    $besoinsParCategorie[$categorieId] = [];
+                }
+                $besoinsParCategorie[$categorieId][] = $besoin;
+            }
+        }
+        
+        $simulationResults = [];
+        $donsUtilises = [];
+        $decimalesPourBesoin = [];  // Track decimals per besoin globally
+        
+        // Traiter chaque don
+        foreach ($donsDisponibles as $don) {
+            if ($don['status_distribution'] !== 'disponible') {
+                continue;
+            }
+            
+            $donId = $don['id'];
+            $categorieId = $don['categorie_id'];
+            $quantiteDon = $don['quantite'];
+            
+            // Vérifier si ce don a déjà été partiellement utilisé
+            if (isset($donsUtilises[$donId])) {
+                $quantiteDon -= $donsUtilises[$donId];
+                if ($quantiteDon <= 0) {
+                    continue;
+                }
+            }
+            
+            // Si pas de besoins pour cette catégorie
+            if (!isset($besoinsParCategorie[$categorieId]) || empty($besoinsParCategorie[$categorieId])) {
+                continue;
+            }
+            
+            // Calculer la somme totale des besoins non satisfaits de cette catégorie
+            $totalBesoinsCategorie = 0;
+            foreach ($besoinsParCategorie[$categorieId] as $besoin) {
+                if (isset($simulationResults[$besoin['besoin_id']])) {
+                    $quantiteRestante = $besoin['quantite_manquante'] - $simulationResults[$besoin['besoin_id']]['quantite_satisfaite'];
+                } else {
+                    $quantiteRestante = $besoin['quantite_manquante'];
+                }
+                if ($quantiteRestante > 0) {
+                    $totalBesoinsCategorie += $quantiteRestante;
+                }
+            }
+            
+            if ($totalBesoinsCategorie <= 0) {
+                continue;
+            }
+            
+            $quantiteDonDistribuee = 0;
+            
+            // Distribuer le don proportionnellement à chaque besoin
+            foreach ($besoinsParCategorie[$categorieId] as $besoin) {
+                $besoinId = $besoin['besoin_id'];
+                
+                // Calculer la quantité restante du besoin
+                if (isset($simulationResults[$besoinId])) {
+                    $quantiteRestanteBesoin = $besoin['quantite_manquante'] - $simulationResults[$besoinId]['quantite_satisfaite'];
+                } else {
+                    $quantiteRestanteBesoin = $besoin['quantite_manquante'];
+                }
+                
+                if ($quantiteRestanteBesoin <= 0) {
+                    continue;
+                }
+                
+                // Calculer la part proportionnelle: (besoin_restant / total_besoins) * quantite_don
+                $partProportionnelle = ($quantiteRestanteBesoin / $totalBesoinsCategorie) * $quantiteDon;
+                $partEntiere = floor($partProportionnelle);
+                $partDecimale = $partProportionnelle - $partEntiere;
+                
+                // Accumuler les décimales globalement par besoin
+                if (!isset($decimalesPourBesoin[$besoinId])) {
+                    $decimalesPourBesoin[$besoinId] = 0;
+                }
+                $decimalesPourBesoin[$besoinId] += $partDecimale;
+                
+                if ($partEntiere > 0) {
+                    // Initialiser le résultat du besoin s'il n'existe pas
+                    if (!isset($simulationResults[$besoinId])) {
+                        $simulationResults[$besoinId] = [
+                            'besoin_info' => $besoin,
+                            'quantite_satisfaite' => 0,
+                            'quantite_decimale_attribuee' => 0,
+                            'distributions' => []
+                        ];
+                    }
+                    
+                    // Enregistrer cette distribution
+                    $simulationResults[$besoinId]['distributions'][] = [
+                        'don_global_id' => $donId,
+                        'don_info' => $don,
+                        'quantite_distribuee' => $partEntiere,
+                        'part_proportionnelle' => $partProportionnelle,
+                        'reste_don_apres' => $quantiteDon - $partEntiere
+                    ];
+                    
+                    $simulationResults[$besoinId]['quantite_satisfaite'] += $partEntiere;
+                    $quantiteDonDistribuee += $partEntiere;
+                }
+            }
+            
+            // Mettre à jour le total utilisé du don
+            if (!isset($donsUtilises[$donId])) {
+                $donsUtilises[$donId] = 0;
+            }
+            $donsUtilises[$donId] += $quantiteDonDistribuee;
+        }
+        
+        // Redistribuer les décimales: donner priorité aux plus grosses décimales
+        $decimalesTriees = $decimalesPourBesoin;
+        arsort($decimalesTriees);  // Trier par ordre décroissant
+        
+        $quantiteDecimaleTotalDisponible = array_sum($decimalesTriees);
+        
+        // Distribuer les décimales complètes aux besoins avec les plus grandes décimales
+        foreach ($decimalesTriees as $besoinId => $decimal) {
+            if ($decimal >= 1) {
+                $quantiteAjoutee = floor($decimal);
+                
+                // Initialiser le résultat du besoin s'il n'existe pas
+                if (!isset($simulationResults[$besoinId])) {
+                    $besoin = null;
+                    // Chercher le besoin correspondant
+                    foreach ($besoins as $b) {
+                        if ($b['besoin_id'] === $besoinId) {
+                            $besoin = $b;
+                            break;
+                        }
+                    }
+                    if ($besoin) {
+                        $simulationResults[$besoinId] = [
+                            'besoin_info' => $besoin,
+                            'quantite_satisfaite' => 0,
+                            'quantite_decimale_attribuee' => 0,
+                            'distributions' => []
+                        ];
+                    }
+                }
+                
+                if (isset($simulationResults[$besoinId])) {
+                    $simulationResults[$besoinId]['quantite_satisfaite'] += $quantiteAjoutee;
+                    $simulationResults[$besoinId]['quantite_decimale_attribuee'] = $quantiteAjoutee;
+                    $decimalesPourBesoin[$besoinId] -= $quantiteAjoutee;
+                }
+            }
+        }
+        
+        // Formater les résultats de simulation
+        $resultsFormatted = [];
+        foreach ($besoins as $besoin) {
+            $besoinId = $besoin['besoin_id'];
+            
+            if (isset($simulationResults[$besoinId])) {
+                $quantiteSatisfaite = $simulationResults[$besoinId]['quantite_satisfaite'];
+                $distributions = $simulationResults[$besoinId]['distributions'];
+                $decimaleAttribuee = $simulationResults[$besoinId]['quantite_decimale_attribuee'];
+            } else {
+                $quantiteSatisfaite = 0;
+                $distributions = [];
+                $decimaleAttribuee = 0;
+            }
+            
+            $quantiteManquante = $besoin['quantite_manquante'];
+            $quantiteRestante = $quantiteManquante - $quantiteSatisfaite;
+            
+            $resultsFormatted[] = [
+                'besoin_info' => $besoin,
+                'quantite_satisfaite' => $quantiteSatisfaite,
+                'quantite_restante_apres' => max(0, $quantiteRestante),
+                'quantite_decimale_attribuee' => $decimaleAttribuee,
+                'pourcentage_satisfaction' => $quantiteManquante > 0 ? ($quantiteSatisfaite / $quantiteManquante) * 100 : 0,
+                'distributions' => $distributions,
+                'statut_final' => $quantiteRestante <= 0 ? 'satisfait' : ($quantiteSatisfaite > 0 ? 'partiellement_satisfait' : 'non_satisfait')
+            ];
+        }
+        
+        // Calculer les résumés
+        $resumeSimulation = $this->calculerResumeSimulation($resultsFormatted, $donsDisponibles, $donsUtilises);
+        
+        return [
+            'details' => $resultsFormatted,
+            'resume' => $resumeSimulation,
+            'methode_utilisee' => 'distribution_proportionnelle',
+            'parametres' => $parametres,
+            'date_simulation' => date('Y-m-d H:i:s'),
+            'description' => 'Distribution proportionnelle: (quantite_besoin / total_besoins_categorie) * quantite_don, avec redistribution des décimales aux plus grandes décimales'
         ];
     }
 
@@ -172,6 +390,10 @@ class SimulationDistributionService
             case 'plus_petit_nombre':
                 // Priorité aux besoins les plus faciles à satisfaire
                 return $this->getBesoinsParPlusPetitNombre();
+                
+            case 'distribution_proportionnelle':
+                // Distribution proportionnelle au besoin
+                return $this->getBesoinsParQuantiteDate();
                 
             default:
                 return $this->getBesoinsParQuantiteDate();
@@ -268,6 +490,25 @@ class SimulationDistributionService
     public function simulerDistributionParDate()
     {
         return $this->simulateDistribution('date', []);
+    }
+
+    /**
+     * Simulate distribution using proportional method
+     * Formula: (quantite_besoin / total_besoins_categorie) * quantite_don
+     * Quantities are floored, decimals are collected and distributed
+     */
+    public function simulerDistributionProportionnelle()
+    {
+        return $this->simulateDistribution('distribution_proportionnelle', []);
+    }
+
+    /**
+     * Actually perform proportional distribution
+     * Saves the results to the database
+     */
+    public function distribuerProportionnellement()
+    {
+        return $this->effectuerDistributionAutomatique('distribution_proportionnelle', []);
     }
 
     /**
