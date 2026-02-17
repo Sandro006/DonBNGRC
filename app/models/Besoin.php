@@ -254,10 +254,14 @@ class Besoin extends BaseModel
     /**
      * Count total needs
      */
-    public function count()
+    public function count($conditions = [])
     {
-        $query = "SELECT COUNT(*) as count FROM {$this->table}";
-        $result = $this->db->fetchRow($query);
-        return $result['count'] ?? 0;
+        if (empty($conditions)) {
+            $query = "SELECT COUNT(*) as count FROM {$this->table}";
+            $result = $this->db->fetchRow($query);
+            return $result['count'] ?? 0;
+        }
+
+        return parent::count($conditions);
     }
 }
