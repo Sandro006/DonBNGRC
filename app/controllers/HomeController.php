@@ -2,23 +2,16 @@
 
 namespace app\controllers;
 
-use flight\Engine;
+use Flight;
 
 class HomeController
 {
-    private $app;
-
-    public function __construct(Engine $app)
-    {
-        $this->app = $app;
-    }
-
     /**
      * Display welcome page
      */
     public function index()
     {
-        $this->app->render('welcome');
+        Flight::render('welcome');
     }
 
     /**

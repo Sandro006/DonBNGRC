@@ -2,24 +2,22 @@
 
 namespace app\controllers;
 
-use flight\Engine;
 use app\services\BesoinService;
 use app\services\VilleService;
 use app\services\SmartDistributionService;
 use app\models\Categorie;
 use app\models\DonGlobal;
+use Flight;
 
 class DashboardController
 {
-    private $app;
     protected $donGlobalModel;
     protected $besoinService;
     protected $villeService;
     protected $smartDistributionService;
 
-    public function __construct(Engine $app)
+    public function __construct()
     {
-        $this->app = $app;
         $this->donGlobalModel = new DonGlobal();
         $this->besoinService = new BesoinService();
         $this->villeService = new VilleService();
@@ -41,7 +39,7 @@ class DashboardController
             $categories = $categorieModel->getAllWithUsageCount();
 
             // Get filter parameters
-            $req = $this->app->request();
+            $req = Flight::request();
             $qs = $req->query;
             $start = !empty($qs['start_date']) ? $qs['start_date'] : null;
             $end = !empty($qs['end_date']) ? $qs['end_date'] : null;
@@ -97,7 +95,7 @@ class DashboardController
             // Get priority recommendations
             $priority_recommendations = $this->smartDistributionService->getPriorityRecommendations(10);
 
-            $this->app->render('Dashboard', [
+            Flight::render('Dashboard', [
                 'message' => 'Tableau de bord intelligent',
                 'don_stats' => $dashboardStats['don_stats'],
                 'besoin_stats' => $dashboardStats['besoin_stats'],
@@ -117,7 +115,7 @@ class DashboardController
             ]);
         } catch (\Throwable $e) {
             error_log('Dashboard error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            $this->app->render('Dashboard', [
+            Flight::render('Dashboard', [
                 'message' => 'Dashboard indisponible: ' . $e->getMessage(),
                 'don_stats' => [],
                 'besoin_stats' => [],

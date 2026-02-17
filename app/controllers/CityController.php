@@ -2,19 +2,17 @@
 
 namespace app\controllers;
 
-use flight\Engine;
 use app\services\BesoinService;
 use app\services\VilleService;
+use Flight;
 
 class CityController
 {
-    private $app;
     protected $besoinService;
     protected $villeService;
 
-    public function __construct(Engine $app)
+    public function __construct()
     {
-        $this->app = $app;
         $this->besoinService = new BesoinService();
         $this->villeService = new VilleService();
     }
@@ -27,18 +25,18 @@ class CityController
         try {
             $ville = $this->villeService->getById($id);
             if (empty($ville)) {
-                $this->app->halt(404, 'Ville introuvable');
+                Flight::halt(404, 'Ville introuvable');
             }
 
             $besoins = $this->besoinService->getByCity($id);
 
-            $this->app->render('CityDetails', [
+            Flight::render('CityDetails', [
                 'ville' => $ville,
                 'besoins' => $besoins,
             ]);
         } catch (\Throwable $e) {
             error_log('City details error: ' . $e->getMessage());
-            $this->app->halt(500, 'Erreur interne');
+            Flight::halt(500, 'Erreur interne');
         }
     }
 }

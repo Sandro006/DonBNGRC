@@ -253,68 +253,122 @@ INSERT INTO bngrc_region (nom) VALUES
 
 -- ===== VILLES =====
 INSERT INTO bngrc_ville (region_id, nom, nombre_sinistres) VALUES
-(11, 'Toamasina', 7),
-(10, 'Mananjary', 6),
+(1, 'Antananarivo', 3),
+(1, 'Ambohidratrimo', 1),
+(2, 'Antsiranana', 5),
+(3, 'Sambava', 4),
+(4, 'Miarinarivo', 2),
+(5, 'Tsiroanomandidy', 3),
+(6, 'Fianarantsoa', 4),
+(7, 'Ambositra', 2),
+(8, 'Manakara', 6),
+(9, 'Ihosy', 3),
 (10, 'Farafangana', 5),
-(2, 'Nosy Be', 4),
-(21, 'Morondava', 5);
+(11, 'Toamasina', 7),
+(12, 'Maroantsetra', 4),
+(13, 'Ambatondrazaka', 2),
+(14, 'Mahajanga', 6),
+(15, 'Antsohihy', 3),
+(16, 'Kandreho', 1),
+(17, 'Besalampy', 2),
+(18, 'Toliara', 8),
+(19, 'Ambovombe', 5),
+(20, 'Tôlanaro', 4),
+(21, 'Morondava', 5),
+(22, 'Antsirabe', 3);
 
 -- ===== CATÉGORIES =====
 INSERT INTO bngrc_categorie (libelle, description) VALUES
-('nature', 'Produits alimentaires et ressources naturelles'),
-('materiel', 'Matériaux et équipements'),
-('argent', 'Dons financiers pour achats urgents');
+('Alimentation', 'Denrées alimentaires de première nécessité'),
+('Matériaux', 'Matériaux de construction et équipements'),
+('Argent', 'Dons financiers pour achats urgents'),
+('Vêtements', 'Habits et textiles'),
+('Médicaments', 'Produits pharmaceutiques et matériel médical'),
+('Eau et Assainissement', 'Équipements pour accès à l''eau potable'),
+('Éducation', 'Matériel scolaire et éducatif'),
+('Électronique', 'Matériel électronique et de communication');
 
 -- ===== STATUS =====
 INSERT INTO bngrc_status (libelle, description) VALUES
 ('En attente', 'Besoin enregistré mais pas encore traité'),
 ('En cours', 'Besoin en cours de traitement'),
-('Satisfait', 'Besoin complètement couvert');
+('Satisfait', 'Besoin complètement couvert'),
+('Partiellement satisfait', 'Besoin partiellement couvert'),
+('Annulé', 'Besoin annulé ou plus d''actualité'),
+('Urgent', 'Besoin urgent nécessitant une action immédiate');
 
 -- ===== DONATEURS D'EXEMPLE =====
 INSERT INTO bngrc_donateur (nom, telephone, email, type_donateur) VALUES
-('BNGRC', '00 00 00 00 00', 'contact@bngrc.mg', 'association');
+('Jean Dupont', '06 12 34 56 78', 'jean.dupont@email.com', 'particulier'),
+('Marie Martin', '06 23 45 67 89', 'marie.martin@email.com', 'particulier'),
+('Association Solidarité Madagascar', '01 23 45 67 89', 'contact@solidarite-mg.fr', 'association'),
+('Entreprise BTP Malagasy', '01 34 56 78 90', 'rh@btp-malagasy.mg', 'entreprise'),
+('ONG Aide Humanitaire International', '01 45 67 89 01', 'contact@ahi.org', 'ong'),
+('Sophie Laurent', '06 56 78 90 12', 'sophie.laurent@email.com', 'particulier'),
+('Fondation Développement Rural', '01 56 78 90 12', 'contact@fdr.mg', 'association'),
+('Coopérative Agricole du Sud', '02 67 89 01 23', 'admin@coop-sud.mg', 'association');
 
 -- ===== BESOINS D'EXEMPLE =====
-INSERT INTO bngrc_besoin (ville_id, categorie_id, quantite, prix_unitaire, status_id, priorite, date_besoin, description) VALUES
+INSERT INTO bngrc_besoin (ville_id, categorie_id, quantite, prix_unitaire, status_id, priorite, description) VALUES
+-- Antananarivo
+(1, 1, 500, 2500, 1, 'haute', 'Riz et légumes secs pour 200 familles sinistrées'),
+(1, 2, 50, 150000, 1, 'normale', 'Tôles ondulées pour reconstruction'),
+(1, 5, 100, 5000, 6, 'urgente', 'Médicaments de première urgence'),
+
+-- Antsiranana  
+(3, 1, 1000, 2000, 1, 'haute', 'Alimentation d''urgence post-cyclone'),
+(3, 6, 20, 250000, 1, 'normale', 'Pompes à eau et systèmes de purification'),
+
 -- Toamasina
-(1, 1, 800, 3000, 1, 'haute', '2026-02-16', 'Riz (kg)'),
-(1, 1, 1500, 1000, 1, 'haute', '2026-02-15', 'Eau (L)'),
-(1, 2, 120, 25000, 1, 'normale', '2026-02-16', 'Tôle'),
-(1, 2, 200, 15000, 1, 'normale', '2026-02-15', 'Bâche'),
-(1, 3, 12000000, 1, 1, 'urgente', '2026-02-16', 'Argent'),
-(1, 2, 3, 6750000, 1, 'normale', '2026-02-15', 'groupe'),
+(12, 1, 800, 1800, 1, 'haute', 'Vivres pour familles évacuées'),
+(12, 2, 100, 200000, 2, 'normale', 'Matériaux pour abris temporaires'),
+(12, 4, 300, 15000, 1, 'normale', 'Vêtements pour enfants et adultes'),
 
--- Mananjary
-(2, 1, 500, 3000, 1, 'haute', '2026-02-15', 'Riz (kg)'),
-(2, 1, 120, 6000, 1, 'normale', '2026-02-16', 'Huile (L)'),
-(2, 2, 80, 25000, 1, 'normale', '2026-02-15', 'Tôle'),
-(2, 2, 60, 8000, 1, 'normale', '2026-02-16', 'Clous (kg)'),
-(2, 3, 6000000, 1, 1, 'urgente', '2026-02-15', 'Argent'),
+-- Mahajanga
+(15, 1, 600, 2200, 1, 'haute', 'Denrées non-périssables'),
+(15, 3, 1, 5000000, 1, 'urgente', 'Fonds d''urgence pour achats immédiats'),
 
--- Farafangana
-(3, 1, 600, 3000, 1, 'haute', '2026-02-16', 'Riz (kg)'),
-(3, 1, 1000, 1000, 1, 'haute', '2026-02-15', 'Eau (L)'),
-(3, 2, 150, 15000, 1, 'normale', '2026-02-16', 'Bâche'),
-(3, 2, 100, 10000, 1, 'normale', '2026-02-15', 'Bois'),
-(3, 3, 8000000, 1, 1, 'urgente', '2026-02-16', 'Argent'),
+-- Toliara
+(19, 6, 15, 300000, 1, 'urgente', 'Systèmes d''adduction d''eau d''urgence'),
+(19, 1, 1200, 1500, 1, 'haute', 'Alimentation pour zone affectée par sécheresse'),
 
--- Nosy Be
-(4, 1, 300, 3000, 1, 'haute', '2026-02-15', 'Riz (kg)'),
-(4, 1, 200, 4000, 1, 'normale', '2026-02-16', 'Haricots'),
-(4, 2, 40, 25000, 1, 'normale', '2026-02-15', 'Tôle'),
-(4, 2, 30, 8000, 1, 'normale', '2026-02-16', 'Clous (kg)'),
-(4, 3, 4000000, 1, 1, 'urgente', '2026-02-15', 'Argent'),
-
--- Morondava
-(5, 1, 700, 3000, 1, 'haute', '2026-02-16', 'Riz (kg)'),
-(5, 1, 1200, 1000, 1, 'haute', '2026-02-15', 'Eau (L)'),
-(5, 2, 180, 15000, 1, 'normale', '2026-02-16', 'Bâche'),
-(5, 2, 150, 10000, 1, 'normale', '2026-02-15', 'Bois'),
-(5, 3, 10000000, 1, 1, 'urgente', '2026-02-16', 'Argent');
+-- Fianarantsoa
+(7, 2, 80, 180000, 1, 'normale', 'Matériaux de reconstruction post-inondations'),
+(7, 7, 200, 25000, 2, 'basse', 'Fournitures scolaires de remplacement');
 
 -- ===== DONS GLOBAUX D'EXEMPLE =====
--- Aucun don global préconfiguré (à ajouter via l'interface)
+INSERT INTO bngrc_don_global (categorie_id, donateur_id, quantite, status_distribution, valeur_unitaire, notes) VALUES
+-- Alimentation
+(1, 1, 200, 'disponible', 2500, 'Riz de qualité supérieure'),
+(1, 3, 500, 'disponible', 2000, 'Mélange riz, haricots, huile'),
+(1, 5, 300, 'disponible', 1800, 'Conserves et denrées non-périssables'),
+(1, 7, 800, 'disponible', 2200, 'Kit alimentaire famille 1 mois'),
+
+-- Matériaux
+(2, 4, 100, 'disponible', 150000, 'Tôles galvanisées neuves'),
+(2, 4, 50, 'disponible', 200000, 'Kit construction abri d''urgence'),
+(2, 8, 75, 'disponible', 180000, 'Matériaux divers construction'),
+
+-- Argent
+(3, 2, 1, 'disponible', 2000000, 'Don financier libre usage'),
+(3, 6, 1, 'disponible', 5000000, 'Fonds d''urgence catastrophe naturelle'),
+(3, 5, 1, 'disponible', 3000000, 'Aide financière reconstruction'),
+
+-- Vêtements
+(4, 1, 150, 'disponible', 15000, 'Vêtements chauds adultes'),
+(4, 3, 200, 'disponible', 12000, 'Habits enfants 5-15 ans'),
+
+-- Médicaments
+(5, 5, 50, 'disponible', 8000, 'Kit médical de base'),
+(5, 5, 20, 'reserve', 25000, 'Médicaments spécialisés'),
+
+-- Eau et assainissement
+(6, 4, 10, 'disponible', 250000, 'Pompe manuelle résistante'),
+(6, 8, 25, 'disponible', 50000, 'Kit purification eau familial'),
+
+-- Dons déjà distribués (historique)
+(1, 2, 300, 'distribue', 2300, 'Déjà distribué à Antananarivo'),
+(2, 4, 30, 'distribue', 160000, 'Matériaux envoyés à Toamasina');
 
 -- =========================
 -- VUES UTILES POUR LES RAPPORTS

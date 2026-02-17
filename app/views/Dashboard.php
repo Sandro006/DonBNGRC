@@ -178,15 +178,10 @@
                                     <tbody>
                                         <?php if (!empty($regional_stats)) {
                                             foreach ($regional_stats as $region) {
-                                                $nature_qty = (float)($region['nature_qty'] ?? 0);
-                                                $materiel_qty = (float)($region['materiel_qty'] ?? 0);
-                                                $total_qty = max(1, (float)($region['total_quantity'] ?? 1));
-                                                
-                                                // Calculer les pourcentages basés sur la quantité totale
-                                                $nature_pct = round(($nature_qty / $total_qty) * 100);
-                                                $materiel_pct = round(($materiel_qty / $total_qty) * 100);
-                                                $other_pct = 100 - $nature_pct - $materiel_pct;
-                                                
+                                                $total = (float)($region['total_amount'] ?? 1);
+                                                $nature_pct = $total > 0 ? round(((float)($region['nature_qty'] ?? 0) / max(1, (float)($region['total_quantity'] ?? 1))) * 100) : 0;
+                                                $materiel_pct = $total > 0 ? round(((float)($region['materiel_qty'] ?? 0) / max(1, (float)($region['total_quantity'] ?? 1))) * 100) : 0;
+                                                $fonds_pct = $total > 0 ? round(((float)($region['fonds_amount'] ?? 0) / $total) * 100) : 0;
                                                 $is_critical = !empty($region['is_critical']);
                                         ?>
                                         <tr>
@@ -195,21 +190,21 @@
                                                 <br/><small class="text-muted"><?= htmlspecialchars($region['region_nom'] ?? '') ?></small>
                                             </td>
                                             <td>
-                                                <div style="display: flex; gap: 0; height: 30px; align-items: center; border-radius: 4px; overflow: hidden;">
+                                                <div style="display: flex; gap: var(--spacing-1); height: 30px; align-items: center;">
                                                     <?php if ($nature_pct > 0): ?>
-                                                        <div class="progress-segment" style="width: <?= $nature_pct ?>%; background-color: #22c55e; height: 100%;"></div>
+                                                        <div class="progress-segment" style="width: <?= $nature_pct ?>%; background-color: #22c55e; border-radius: 4px 0 0 4px;"></div>
                                                     <?php endif; ?>
                                                     <?php if ($materiel_pct > 0): ?>
-                                                        <div class="progress-segment" style="width: <?= $materiel_pct ?>%; background-color: #3b82f6; height: 100%;"></div>
+                                                        <div class="progress-segment" style="width: <?= $materiel_pct ?>%; background-color: #3b82f6;"></div>
                                                     <?php endif; ?>
-                                                    <?php if ($other_pct > 0): ?>
-                                                        <div class="progress-segment" style="width: <?= $other_pct ?>%; background-color: #f59e0b; height: 100%;"></div>
+                                                    <?php if ($fonds_pct > 0): ?>
+                                                        <div class="progress-segment" style="width: <?= $fonds_pct ?>%; background-color: #f59e0b; border-radius: 0 4px 4px 0;"></div>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div style="display: flex; gap: var(--spacing-2); margin-top: var(--spacing-1); font-size: 0.75rem;">
-                                                    <span><i class="bi bi-square-fill" style="color: #22c55e; margin-right: 4px;"></i>Nature (<?= $nature_pct ?>%)</span>
-                                                    <span><i class="bi bi-square-fill" style="color: #3b82f6; margin-right: 4px;"></i>Matériel (<?= $materiel_pct ?>%)</span>
-                                                    <span><i class="bi bi-square-fill" style="color: #f59e0b; margin-right: 4px;"></i>Autres (<?= $other_pct ?>%)</span>
+                                                    <span><i class="bi bi-square-fill" style="color: #22c55e; margin-right: 4px;"></i>Nature</span>
+                                                    <span><i class="bi bi-square-fill" style="color: #3b82f6; margin-right: 4px;"></i>Matériel</span>
+                                                    <span><i class="bi bi-square-fill" style="color: #f59e0b; margin-right: 4px;"></i>Fonds</span>
                                                 </div>
                                             </td>
                                             <td>
@@ -425,7 +420,6 @@
             </main>
             
         </div>
-        
     </div>
 
     <!-- Scripts -->

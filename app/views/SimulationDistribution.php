@@ -72,10 +72,6 @@
                             <i class="bi bi-gear"></i>
                             Changer de Méthode
                         </a>
-                        <button type="button" class="btn btn-danger" id="resetDistribution" style="display: none;">
-                            <i class="bi bi-arrow-counterclockwise"></i>
-                            Réinitialiser
-                        </button>
                         <button type="button" class="btn btn-success" id="executeDistribution">
                             <i class="bi bi-play-circle"></i>
                             Exécuter cette Distribution
@@ -367,70 +363,6 @@
                 button.disabled = false;
                 button.innerHTML = originalText;
             });
-        });
-
-        // Réinitialiser les distributions
-        document.getElementById('resetDistribution')?.addEventListener('click', function () {
-            if (!confirm('Êtes-vous sûr de vouloir réinitialiser les distributions ?\n\nCette action supprimera toutes les distributions effectuées lors de cette exécution et ne peut pas être annulée.')) {
-                return;
-            }
-
-            const button = this;
-            const originalText = button.innerHTML;
-            
-            // Désactiver le bouton et afficher le loading
-            button.disabled = true;
-            button.innerHTML = '<i class="bi bi-hourglass-split"></i> Réinitialisation en cours...';
-            
-            fetch('<?= Flight::get('flight.base_url') ?>/don-global/reset-distribution', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    methode: '<?= $methode_courante ?? 'date' ?>'
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error('Erreur serveur: ' + response.status + ' - ' + text);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert(`Réinitialisation effectuée avec succès!\n\n${data.result.nombre_distributions_supprimees} distributions supprimées.`);
-                    // Redirect to same page
-                    const params = new URLSearchParams({
-                        methode: '<?= $methode_courante ?? 'date' ?>',
-                        reset: '1'
-                    });
-                    window.location.href = '<?= Flight::get('flight.base_url') ?>/don-global/simulation?' + params.toString();
-                } else {
-                    alert('Erreur lors de la réinitialisation: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Erreur: ' + error.message);
-            })
-            .finally(() => {
-                // Réactiver le bouton
-                button.disabled = false;
-                button.innerHTML = originalText;
-            });
-        });
-
-        // Afficher le bouton réinitialiser si on a déjà lancé une distribution
-        document.addEventListener('DOMContentLoaded', function() {
-            // Vérifier si on vient d'exécuter une distribution
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('executed') === '1' || params.get('reset') === '0') {
-                document.getElementById('resetDistribution').style.display = 'inline-block';
-            }
         });
     </script>
 </body>

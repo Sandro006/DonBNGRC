@@ -258,9 +258,6 @@ class SimulationDistributionService
                 $partEntiere = floor($partProportionnelle);
                 $partDecimale = $partProportionnelle - $partEntiere;
                 
-                // CORRECTION: Limiter la part entière à ne pas dépasser le besoin restant
-                $partEntiere = min($partEntiere, $quantiteRestanteBesoin);
-                
                 // Accumuler les décimales globalement par besoin
                 if (!isset($decimalesPourBesoin[$besoinId])) {
                     $decimalesPourBesoin[$besoinId] = 0;
@@ -331,18 +328,8 @@ class SimulationDistributionService
                 }
                 
                 if (isset($simulationResults[$besoinId])) {
-                    // CORRECTION: Vérifier que le total ne dépasse pas le besoin
-                    $quantiteActuellementSatisfaite = $simulationResults[$besoinId]['quantite_satisfaite'];
-                    $quantiteManquanteBesoin = $simulationResults[$besoinId]['besoin_info']['quantite_manquante'];
-                    $quantiteRestante = $quantiteManquanteBesoin - $quantiteActuellementSatisfaite;
-                    
-                    // Ne distribuer que ce qui reste à satisfaire
-                    $quantiteAjoutee = min($quantiteAjoutee, $quantiteRestante);
-                    
-                    if ($quantiteAjoutee > 0) {
-                        $simulationResults[$besoinId]['quantite_satisfaite'] += $quantiteAjoutee;
-                        $simulationResults[$besoinId]['quantite_decimale_attribuee'] = $quantiteAjoutee;
-                    }
+                    $simulationResults[$besoinId]['quantite_satisfaite'] += $quantiteAjoutee;
+                    $simulationResults[$besoinId]['quantite_decimale_attribuee'] = $quantiteAjoutee;
                     $decimalesPourBesoin[$besoinId] -= $quantiteAjoutee;
                 }
             }
