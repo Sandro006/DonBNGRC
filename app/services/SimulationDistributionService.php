@@ -152,10 +152,10 @@ class SimulationDistributionService
             ],
             'quantite' => [
                 'nom' => 'Distribution par Quantité',
-                'description' => 'Privilégie les besoins avec les plus grosses quantités demandées',
+                'description' => 'Trie les besoins par quantité: choisissez de prioriser les petits besoins (répartition) ou les gros (efficacité)',
                 'icone' => 'bar-chart-fill',
                 'parametres' => [
-                    'ordre' => ['asc' => 'Plus petites quantités', 'desc' => 'Plus grosses quantités']
+                    'ordre' => ['asc' => 'Plus petites quantités d\'abord', 'desc' => 'Plus grosses quantités d\'abord']
                 ]
             ],
             'region' => [
@@ -229,6 +229,12 @@ class SimulationDistributionService
 
     /**
      * Get needs sorted by quantity
+     * 
+     * @param string $ordre 'asc' pour petits besoins d'abord, 'desc' pour gros besoins d'abord
+     * - 'asc': Priorise les petits besoins (meilleure répartition, plus équitable)
+     * - 'desc': Priorise les gros besoins (plus efficace, aide plus de quantité aux gros demandes)
+     * 
+     * @return array Besoins triés selon la quantité manquante
      */
     private function getBesoinsParQuantite($ordre = 'desc')
     {

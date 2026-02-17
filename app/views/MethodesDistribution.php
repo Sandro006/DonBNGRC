@@ -176,7 +176,15 @@
                                 <p><small>Privilégie les besoins exprimés depuis le plus longtemps. Équitable dans le temps.</small></p>
                                 
                                 <h6>📊 Distribution par Quantité</h6>
-                                <p><small>Peut prioriser les gros besoins (efficacité) ou les petits (répartition).</small></p>
+                                <p><small>Priorise selon la taille des besoins: <strong>petits d'abord</strong> pour une meilleure répartition.</small></p>
+                                <div class="ms-2 mt-2" style="padding-left: 0.5rem; border-left: 3px solid var(--primary);">
+                                    <div class="form-check form-check-sm">
+                                        <input class="form-check-input" type="radio" name="quantite_order" id="ordre_asc" value="asc" checked>
+                                        <label class="form-check-label" for="ordre_asc" style="font-size: 0.875rem;">
+                                            <i class="bi bi-arrow-up-short"></i> Petites quantités d'abord
+                                        </label>
+                                    </div>
+                                </div>
                                 
                                 <h6>🗺️ Distribution par Région</h6>
                                 <p><small>Permet de définir des zones prioritaires selon la stratégie gouvernementale.</small></p>
@@ -220,6 +228,25 @@
             });
         });
 
+        // Gestionnaire de changement du choix quantité dans la section "À propos"
+        document.querySelectorAll('input[name="quantite_order"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Sélectionne la méthode "quantite"
+                document.getElementById('methode_quantite').checked = true;
+                updateParametres('quantite');
+                
+                // Attendre que les paramètres soient mis à jour, puis définir la valeur sélectionnée
+                setTimeout(() => {
+                    const ordreRadios = document.querySelectorAll('input[name="parametres[ordre]"]');
+                    ordreRadios.forEach(radio => {
+                        if (radio.value === this.value) {
+                            radio.checked = true;
+                        }
+                    });
+                }, 50);
+            });
+        });
+
         // Initialiser avec la méthode par défaut
         updateParametres('date');
 
@@ -243,13 +270,20 @@
                 html += `<div class="form-group mb-3">`;
                 
                 if (typeof config === 'object' && !Array.isArray(config)) {
-                    // Select dropdown
-                    html += `<label class="form-label">${param.replace('_', ' ')}</label>`;
-                    html += `<select name="parametres[${param}]" class="form-select form-select-sm">`;
+                    // Radio buttons
+                    html += `<label class="form-label d-block mb-2">${param.replace('_', ' ')}</label>`;
                     Object.entries(config).forEach(([value, label]) => {
-                        html += `<option value="${value}">${label}</option>`;
+                        html += `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="parametres[${param}]" 
+                                       id="param_${param}_${value}" value="${value}" 
+                                       ${value === 'asc' ? 'checked' : ''}>
+                                <label class="form-check-label" for="param_${param}_${value}">
+                                    ${label}
+                                </label>
+                            </div>
+                        `;
                     });
-                    html += `</select>`;
                 } else {
                     // Input text
                     html += `<label class="form-label">${param.replace('_', ' ')}</label>`;
