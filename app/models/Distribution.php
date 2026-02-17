@@ -166,6 +166,9 @@ class Distribution extends BaseModel
                 $donGlobalModel->updateDistributionStatus($don_global_id, 'distribue');
             } elseif ($remainingQuantity['quantite_distribuee'] > 0) {
                 $donGlobalModel->updateDistributionStatus($don_global_id, 'reserve');
+            } else {
+                // Si aucune distribution, revenir à disponible
+                $donGlobalModel->updateDistributionStatus($don_global_id, 'disponible');
             }
         }
     }
@@ -194,6 +197,9 @@ class Distribution extends BaseModel
             } elseif ($result['quantite_recue'] > 0) {
                 // Besoin partiellement satisfait
                 $besoinModel->update($besoin_id, ['status_id' => 2]); // Assumant que 2 = "partiellement_satisfait"
+            } else {
+                // Si aucune distribution, revenir au statut initial
+                $besoinModel->update($besoin_id, ['status_id' => 1]); // 1 = "non_satisfait" ou "identifié"
             }
         }
     }
