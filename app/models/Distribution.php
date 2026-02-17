@@ -166,6 +166,9 @@ class Distribution extends BaseModel
                 $donGlobalModel->updateDistributionStatus($don_global_id, 'distribue');
             } elseif ($remainingQuantity['quantite_distribuee'] > 0) {
                 $donGlobalModel->updateDistributionStatus($don_global_id, 'reserve');
+            } else {
+                // Si aucune distribution, revenir à disponible
+                $donGlobalModel->updateDistributionStatus($don_global_id, 'disponible');
             }
         }
     }
@@ -194,6 +197,9 @@ class Distribution extends BaseModel
             } elseif ($result['quantite_recue'] > 0) {
                 // Besoin partiellement satisfait
                 $besoinModel->update($besoin_id, ['status_id' => 2]); // Assumant que 2 = "partiellement_satisfait"
+            } else {
+                // Si aucune distribution, revenir au statut initial
+                $besoinModel->update($besoin_id, ['status_id' => 1]); // 1 = "non_satisfait" ou "identifié"
             }
         }
     }
@@ -267,5 +273,78 @@ class Distribution extends BaseModel
                   LIMIT :limit";
                   
         return $this->db->fetchAll($query, [':limit' => $limit]);
+    }
+
+    /**
+     * Delete a distribution by ID
+     */
+    public function deleteDistribution($distribution_id)
+    {
+        try {
+            // Get distribution details before deleting to update status
+            $distribution = $this->getById($distribution_id);
+            
+            if (!$distribution) {
+                throw new \Exception("Distribution introuvable");
+            }
+            
+            // Delete the distribution
+            $result = $this->delete($distribution_id);
+            
+            if ($result) {
+                // Update the status of the global donation
+                $this->updateDonGlobalStatus($distribution['don_global_id']);
+                
+                // Update the status of the need
+                $this->updateBesoinStatus($distribution['besoin_id']);
+            }
+            
+            return $result;
+        } catch (\Exception $e) {
+            error_log('Error deleting distribution: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete all distributions (for reset)
+     */
+    public function deleteAllDistributions()
+    {
+        try {
+            $query = "DELETE FROM {$this->table}";
+            $this->db->exec($query);
+            
+            // Reset all donation and need statuses
+            $this->resetAllStatuses();
+            
+            return true;
+        } catch (\Exception $e) {
+            error_log('Error deleting all distributions: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Reset all donation and need statuses to default
+     */
+    private function resetAllStatuses()
+    {
+        try {
+            // Reset donation statuses to 'disponible'
+            $query = "UPDATE bngrc_don_global SET status_distribution = 'disponible'";
+            $this->db->exec($query);
+            
+            // Reset need statuses - besoins without distributions should be in initial status
+            // This assumes status_id 1 is the initial state (e.g., 'identifié' or 'non_satisfait')
+            $query = "UPDATE bngrc_besoin b
+                      SET b.status_id = 1
+                      WHERE NOT EXISTS (
+                          SELECT 1 FROM {$this->table} d WHERE d.besoin_id = b.id
+                      )";
+            $this->db->exec($query);
+        } catch (\Exception $e) {
+            error_log('Error resetting statuses: ' . $e->getMessage());
+        }
     }
 }
