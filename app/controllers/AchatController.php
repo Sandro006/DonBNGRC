@@ -251,4 +251,66 @@ class AchatController
             Flight::halt(500, ['error' => 'Erreur lors de la récupération des achats']);
         }
     }
+
+    /**
+     * Display config frais pourcentage page for a purchase
+     */
+    public function configFraisPourcentage($id)
+    {
+        try {
+            $achat = $this->achatService->getById($id);
+            if (empty($achat)) {
+                Flight::halt(404, 'Achat introuvable');
+            }
+
+            Flight::render('layout/ConfigFraisPourcentage', [
+                'achat' => $achat,
+                'feePercent' => $this->achatService->getFeePercent(),
+            ]);
+        } catch (\Throwable $e) {
+            error_log('AchatController configFraisPourcentage error: ' . $e->getMessage());
+            Flight::halt(500, 'Erreur lors du chargement de la configuration');
+        }
+    }
+
+    /**
+     * Update frais pourcentage for a purchase
+     */
+    public function updateFraisPourcentage($id)
+    {
+        $req = Flight::request();
+
+        try {
+            $frais_percent = (float)($req->data->frais_percent ?? 0);
+
+            // Validation
+            if ($frais_percent < 0 || $frais_percent > 100) {
+                Flight::halt(400, 'Le pourcentage de frais doit être entre 0 et 100');
+            }
+
+            // Get current achat
+            $achat = $this->achatService->getById($id);
+            if (empty($achat)) {
+                Flight::halt(404, 'Achat introuvable');
+            }
+
+            // Calculate new total with fees
+            $montant_total = $achat['montant'] + ($achat['montant'] * $frais_percent / 100);
+
+            // Update achat
+            $updateData = [
+                'frais_percent' => $frais_percent,
+                'montant_total' => $montant_total,
+            ];
+
+            $achatModel = new Achat();
+            $achatModel->update($id, $updateData);
+
+            // Redirect to list with success
+            Flight::redirect('/achat');
+        } catch (\Throwable $e) {
+            error_log('AchatController updateFraisPourcentage error: ' . $e->getMessage());
+            Flight::halt(500, 'Erreur lors de la mise à jour');
+        }
+    }
 }

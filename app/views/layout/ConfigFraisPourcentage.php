@@ -41,7 +41,7 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="sidebar-menu-link active">
+                    <a href="<?= Flight::get('flight.base_url') ?>/achat" class="sidebar-menu-link active">
                         <i class="bi bi-bag"></i>
                         <span>Achat</span>
                     </a>
@@ -67,7 +67,7 @@
                         <i class="bi bi-percent"></i> Configuration Frais
                     </h1>
                     <div class="header-actions" style="margin-left: auto;">
-                        <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="btn btn-secondary btn-sm">
+                        <a href="<?= Flight::get('flight.base_url') ?>/achat" class="btn btn-secondary btn-sm">
                             <i class="bi bi-arrow-left"></i> Retour
                         </a>
                     </div>
@@ -81,7 +81,7 @@
                     <ol>
                         <li><a href="<?= Flight::get('flight.base_url') ?>">Accueil</a></li>
                         <li><a href="<?= Flight::get('flight.base_url') ?>/dashboard">Tableau de bord</a></li>
-                        <li><a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent">Achat</a></li>
+                        <li><a href="<?= Flight::get('flight.base_url') ?>/achat">Achat</a></li>
                         <li>Configuration Frais</li>
                     </ol>
                 </div>
@@ -186,7 +186,7 @@
 
                                 <!-- Action Buttons -->
                                 <div style="display: flex; gap: var(--spacing-3); justify-content: flex-end;">
-                                    <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="btn btn-secondary">
+                                    <a href="<?= Flight::get('flight.base_url') ?>/achat" class="btn btn-secondary">
                                         <i class="bi bi-x-circle"></i> Annuler
                                     </a>
                                     <button type="submit" class="btn btn-primary">
@@ -214,7 +214,7 @@
                             <div style="padding: var(--spacing-6); text-align: center; color: var(--text-secondary);">
                                 <i class="bi bi-exclamation-triangle" style="font-size: 3rem; display: block; margin-bottom: var(--spacing-2);"></i>
                                 <p>Achat introuvable</p>
-                                <a href="<?= Flight::get('flight.base_url') ?>/achat/non-argent" class="btn btn-sm btn-secondary">
+                                <a href="<?= Flight::get('flight.base_url') ?>/achat" class="btn btn-sm btn-secondary">
                                     <i class="bi bi-arrow-left"></i> Retour
                                 </a>
                             </div>

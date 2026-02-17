@@ -248,7 +248,7 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <a href="<?= Flight::get('flight.base_url') ?>/achat/<?= htmlspecialchars($achat['id'] ?? '') ?>/frais-config" 
+                                                    <a href="<?= Flight::get('flight.base_url') ?>/achat/<?= htmlspecialchars($achat['id'] ?? '') ?>/config-frais-pourcentage" 
                                                        class="btn btn-sm" 
                                                        title="Configurer les frais %"
                                                        style="background-color: var(--warning-100); color: var(--warning); border: 1px solid var(--warning); padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius); text-decoration: none; display: inline-flex; align-items: center; gap: var(--spacing-1); font-size: var(--font-size-sm); font-weight: 600;">
