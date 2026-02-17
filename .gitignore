@@ -2,3 +2,5 @@
 .htaccess
 public/.htaccess
 app/config/config.php
+~$todo.xlsx
+*.xlsx
